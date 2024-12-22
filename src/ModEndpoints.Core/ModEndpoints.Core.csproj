@@ -4,6 +4,15 @@
     <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Description>Base implementations for ModEndpoints project. Also contains a MinimalEndpoint implementation that organizes Minimal Apis in Repr format endpoints, without result pattern integration.</Description>
+    <NuGetTarget></NuGetTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="assets\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
