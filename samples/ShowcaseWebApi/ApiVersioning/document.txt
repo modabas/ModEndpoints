@@ -1,0 +1,3 @@
+Minimal Api Open Api example
+
+https://github.com/dotnet/aspnet-api-versioning/blob/main/examples/AspNetCore/WebApi/MinimalOpenApiExample/Program.cs

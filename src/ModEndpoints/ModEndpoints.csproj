@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModResults.FluentValidation" Version="0.1.2" />
+    <PackageReference Include="ModResults.MinimalApis" Version="0.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModEndpoints.Core\ModEndpoints.Core.csproj" />
+  </ItemGroup>
+
+</Project>

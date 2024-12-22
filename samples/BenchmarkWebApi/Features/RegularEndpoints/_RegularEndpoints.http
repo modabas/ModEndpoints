@@ -1,0 +1,16 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@BaseUrl =http://localhost:5102
+
+###Regular endpoint simple test
+GET {{BaseUrl}}/RegularEndpoints/BasicTest
+Accept: application/json
+
+###Regular endpoint in-process test
+POST {{BaseUrl}}/RegularEndpoints/InProcessTest/383dd966-67f2-4563-aea6-50d0b87f7f43
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Jonathan"
+}

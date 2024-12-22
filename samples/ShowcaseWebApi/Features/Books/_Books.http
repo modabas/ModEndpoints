@@ -1,0 +1,39 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@BaseUrl =https://localhost:7012
+
+###ListBooks
+GET {{BaseUrl}}/api/v1/books
+Accept: application/json
+
+###GetBookById
+GET {{BaseUrl}}/api/v1/books/00000000-0000-0000-0000-000000000001
+Accept: application/json
+
+###CreateBook
+POST {{BaseUrl}}/api/v1/books
+Accept: application/json
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "Title": "Programming for Dummies",
+  "Author": "Who Knows",
+  "Price": 5.95
+}
+
+###UpdateBook
+POST {{BaseUrl}}/api/v1/books/00000000-0000-0000-0000-000000000001
+Accept: application/json
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "Title": "Programming for Dummies",
+  "Author": "Who Knows",
+  "Price": 5.95
+}
+
+###DeleteBook
+DELETE {{BaseUrl}}/api/v1/books/00000000-0000-0000-0000-000000000001
+Accept: application/json

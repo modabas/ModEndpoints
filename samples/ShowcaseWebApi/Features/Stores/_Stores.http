@@ -1,0 +1,35 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@BaseUrl =https://localhost:7012
+
+###ListStores
+GET {{BaseUrl}}/api/v1/stores
+Accept: application/json
+
+###GetStoreById
+GET {{BaseUrl}}/api/v1/stores/00000000-0000-0000-0000-000000000001
+Accept: application/json
+
+###CreateStore
+POST {{BaseUrl}}/api/v1/stores
+Accept: application/json
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "name": "Big Bad Store"
+}
+
+###UpdateStore
+POST {{BaseUrl}}/api/v1/stores/00000000-0000-0000-0000-000000000001
+Accept: application/json
+Content-Type: application/json
+Accept-Language: en-US
+
+{
+  "name": "Big Bad Store"
+}
+
+###DeleteStore
+DELETE {{BaseUrl}}/api/v1/stores/00000000-0000-0000-0000-000000000001
+Accept: application/json
