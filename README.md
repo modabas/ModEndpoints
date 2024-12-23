@@ -14,17 +14,27 @@ The WebResultEndpoint and ServiceResultEndpoint abstractions are a structured ap
 
 ## Key Features
 
- - Encapsulates endpoint behaviors like request validation, business logic, and response mapping into a single class.
+ - Encapsulates endpoint behaviors like request validation, request handling, and response mapping.
  - Separates concerns to promote clean, maintainable code.
- - Uses the minimal APIs and routing system provided by ASP.NET Core. Configuration, parameter binding, authentication, Open Api tooling, filters, etc. are all minimal apis under the hood. Supports anything that Minimal Apis does.
+ - Uses the Minimal Apis and routing system provided by ASP.NET Core. Configuration, parameter binding, authentication, Open Api tooling, filters, etc. are all Minimal Apis under the hood. Supports anything that Minimal Apis does.
  - Abstracts the logic for converting business results into HTTP responses.
- - Supports auto discovery and registration of endpoints.
- - Has built-in validation support and integrates seamlessly with FluentValidation. If a validator is registered for request model, it is automatically validated before being handled.
- - Supports constructor dependency injection.
+ - Supports auto discovery and registration.
+ - Has built-in validation support with [FluentValidation](https://github.com/FluentValidation/FluentValidation). If a validator is registered for request model, it is automatically validated before being handled.
+ - Supports constructor dependency injection in endpoint implementations.
+
+## Performance
+
+WebResultEndpoints have a slight overhead (3-4%) over regular Minimal Apis on request/sec metric under load tests with 100 virtual users.
+
+MinimalEndpoints perform about same as regular Minimal Apis.
+
+The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
+
+See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ## Workflow
 
-An endpoint must implement 2 virtual methods: Configure and HandleAsync.
+An endpoint must implement two virtual methods: Configure and HandleAsync.
 
 ### Configuration:
 
@@ -32,7 +42,7 @@ The 'Configure' method is called at application startup to define routes and ass
 
 ### Request Handling:
 
-The request is processed in 'HandleAsync' method which returns a [result](https://github.com/modabas/ModResults). This result is handled differently for each endpoint type beofre being sent to client.
+The request is processed in 'HandleAsync' method which returns a [result](https://github.com/modabas/ModResults). This result is handled differently for each endpoint type before being sent to client.
 
 ## Endpoint Types
 
@@ -187,7 +197,6 @@ internal class UploadBookRequestValidator : AbstractValidator<UploadBookRequest>
   }
 }
 
-[RouteGroupMember(typeof(BooksV2RouteGroup))]
 internal class UploadBook
   : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
 {
@@ -195,7 +204,7 @@ internal class UploadBook
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    MapPost("/upload/{Title}")
+    MapPost("/books/upload/{Title}")
       .DisableAntiforgery()
       .Produces<UploadBookResponse>();
   }
