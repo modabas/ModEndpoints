@@ -24,17 +24,8 @@ The WebResultEndpoint and ServiceResultEndpoint abstractions are a structured ap
  - Supports auto discovery and registration.
  - Has built-in validation support with [FluentValidation](https://github.com/FluentValidation/FluentValidation). If a validator is registered for request model, request is automatically validated before being handled.
  - Supports constructor dependency injection in endpoint implementations.
+ - Enforces response model type safety in request handlers.
  - Abstracts the logic for converting business results into HTTP responses.
-
-## Performance
-
-WebResultEndpoints have a slight overhead (3-4%) over regular Minimal Apis on request/sec metric under load tests with 100 virtual users.
-
-MinimalEndpoints perform about same as regular Minimal Apis.
-
-The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
-
-See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ## Workflow
 
@@ -46,21 +37,11 @@ The 'Configure' method is called at application startup to define routes and ass
 
 ### Request Handling:
 
-The request is processed in 'HandleAsync' method which returns a [result](https://github.com/modabas/ModResults). This result is handled differently for each endpoint type before being sent to client.
+The request is processed in 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults). This business result is handled differently for each endpoint type before being sent to client.
 
-## Endpoint Types
+## Quickstart
 
-WebResultEndpoint and ServiceResultEndpoint, the two abstract endpoint bases, differ only in converting business results into HTTP responses before sending response to client. Other features described previously are common for both of them.
-
-### WebResultEndpoint
-
-A WebResultEndpoint implementation, after handling request, maps the [result](https://github.com/modabas/ModResults) of HandleAsync method to an IResult depending on the result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
-
-### ServiceResultEndpoint
-
-A ServiceResultEndpoint implementation, after handling request, encapsulates the [result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 IResult (Minimal Api response type) and sends to client. This behaviour makes ServiceResultEndpoints more suitable for internal services, where clients are aware of Result or Result&lt;TValue&gt; implementations.
-
-## Service Registration
+### Service Registration
 
 Use AddModEndpointsFromAssembly extension method to register all endpoints defined in an assembly.
 
@@ -80,13 +61,11 @@ app.MapModEndpoints();
 app.Run();
 ```
 
-## Usage
+### A basic sample: A GET endpoint with empty request
 
 Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint like a regular Minimal Api.
 
 Have a look at [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project for various kinds of endpoint implementations and configurations.
-
-### A basic sample: An endpoint with empty request and configured for GET
 
 This sample demonstrates a GET endpoint with basic configuration and without any request model binding.
 
@@ -224,27 +203,9 @@ internal class UploadBook
 }
 ```
 
-### Response mapping for WebResultEndpoint
-
-Default mapping behaviour is:
-- For an [endpoint without a response model](./samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
-- For an endpoint with a response model, return HTTP 200 OK with response model as body.
-
-For both cases, response HTTP status code can be changed by [calling 'Produces' extension method during configuration](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) with one of the following status codes:
-- StatusCodes.Status200OK,
-- StatusCodes.Status201Created,
-- StatusCodes.Status202Accepted,
-- StatusCodes.Status204NoContent,
-- StatusCodes.Status205ResetContent
-
-For implementing custom response mapping for an endpoint:
-- Create an IResultToResponseMapper implementation,
-- Add it to dependency injection service collection with a string key during app startup,
-- Apply ResultToResponseMapper attribute to endpoint classes that will be using custom mapper. Use service registration string key as Name property of attribute.
-
 ### Route groups
 
-By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method and to map Minimal Apis under said group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than regular Minimal Apis, but these are still Minimal Api route groups and can be configured by any extension method of RouteGroupConfigurator. Route groups are also subject to auto discovery and registration like endpoints.
+By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method and to map Minimal Apis under said group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than regular Minimal Apis, but these are still Minimal Api route groups and can be configured by any extension method of RouteGroupConfigurator. Route groups are also subject to auto discovery and registration, similar to endpoints.
 
 - [Create a route group implementation](./samples/ShowcaseWebApi/Features/FeaturesRouteGroup.cs) by inheriting RouteGroupConfigurator and implementing 'Configure' method,
 - Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like a regular Minimal Api route group.
@@ -300,3 +261,57 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
   }
 }
 ```
+
+## Performance
+
+WebResultEndpoints have a slight overhead (3-4%) over regular Minimal Apis on request/sec metric under load tests with 100 virtual users.
+
+MinimalEndpoints perform about same as regular Minimal Apis.
+
+The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
+
+See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
+
+## Endpoint Types
+
+WebResultEndpoint and ServiceResultEndpoint, the two abstract endpoint bases, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults).
+
+They differ only in converting these business results into HTTP responses before sending response to client. Other features described previously are common for both of them.
+
+Each type of andpoint has various implementations that accept a request model or not, that has a response model or not.
+
+### ServiceResultEndpoint
+
+A ServiceResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes ServiceResultEndpoints more suitable for internal services, where clients are aware of Result or Result&lt;TValue&gt; implementations.
+
+- ServiceResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- ServiceResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- ServiceResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- ServiceResultEndpointWithEmptyRequest: Doesn't have a request model and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+
+### WebResultEndpoint
+
+A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to an IResult depending on the result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
+
+- WebResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a response model as body of Minimal Api IResult if successful.
+- WebResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation, doesn't have a response model to return within Minimal Api IResult.
+- WebResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a response model as body of Minimal Api IResult if successful.
+- WebResultEndpointWithEmptyRequest: Doesn't have a request model, doesn't have a response model to return within Minimal Api IResult.
+
+When result returned from handler method is in Ok state, default WebResultEndpoint response mapping behaviour is:
+- For an [endpoint without a response model](./samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
+- For an endpoint with a response model, return HTTP 200 OK with response model as body.
+
+Response HTTP success status code can be configured by [calling 'Produces' extension method during configuration](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) of endpoint with one of the following status codes:
+- StatusCodes.Status200OK,
+- StatusCodes.Status201Created,
+- StatusCodes.Status202Accepted,
+- StatusCodes.Status204NoContent,
+- StatusCodes.Status205ResetContent
+
+When result returned from handler method is in Failed state, default WebResultEndpoint response mapping will create a Minimal Api IResult with a 4XX or 5XX HTTP Status Code depending on the FailureType of [business result](https://github.com/modabas/ModResults).
+
+It is also possible to implement a custom response mapping behaviour for a WebResultEndpoint. To do so:
+- Create an IResultToResponseMapper implementation,
+- Add it to dependency injection service collection with a string key during app startup,
+- Apply ResultToResponseMapper attribute to endpoint classes that will be using custom mapper. Use service registration string key as Name property of attribute.
