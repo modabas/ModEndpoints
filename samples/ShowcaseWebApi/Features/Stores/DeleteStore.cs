@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
@@ -31,7 +32,7 @@ internal class DeleteStore(ServiceDbContext db)
     DeleteStoreRequest req,
     CancellationToken ct)
   {
-    var entity = await db.Stores.FindAsync([req.Id], ct);
+    var entity = await db.Stores.FirstOrDefaultAsync(s => s.Id == req.Id, ct);
 
     if (entity is null)
     {

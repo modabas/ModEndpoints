@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
@@ -33,7 +34,7 @@ internal class GetStoreById(ServiceDbContext db)
     GetStoreByIdRequest req,
     CancellationToken ct)
   {
-    var entity = await db.Stores.FindAsync([req.Id], ct);
+    var entity = await db.Stores.FirstOrDefaultAsync(s => s.Id == req.Id, ct);
 
     var result = entity is null ?
       Result<GetStoreByIdResponse>.NotFound() :

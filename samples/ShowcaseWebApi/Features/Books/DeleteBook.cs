@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
@@ -31,7 +32,7 @@ internal class DeleteBook(ServiceDbContext db)
     DeleteBookRequest req,
     CancellationToken ct)
   {
-    var entity = await db.Books.FindAsync([req.Id], ct);
+    var entity = await db.Books.FirstOrDefaultAsync(b => b.Id == req.Id, ct);
 
     if (entity is null)
     {
