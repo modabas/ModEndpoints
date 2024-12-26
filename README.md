@@ -45,6 +45,8 @@ The request is processed in 'HandleAsync' method which returns a strongly typed 
 
 Use AddModEndpointsFromAssembly extension method to register all endpoints defined in an assembly.
 
+Optional: Use FluentValidation.DependencyInjectionExtensions package to add FluentValidation validators to dependency injection for request validation.
+
 Use MapModEndpoint extension method to map registered endpoints.
 
 These methods register and map services required for all endpoint types.
@@ -52,7 +54,9 @@ These methods register and map services required for all endpoint types.
  ``` csharp
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddModEndpointsFromAssembly(typeof(Program).Assembly);
+builder.Services.AddModEndpointsFromAssembly(typeof(MyEndpoint).Assembly);
+//Validation
+builder.Services.AddValidatorsFromAssemblyContaining<MyValidator>(includeInternalTypes: true);
 
 var app = builder.Build();
 
@@ -293,9 +297,9 @@ A ServiceResultEndpoint implementation, after handling request, encapsulates the
 
 A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to an IResult depending on the result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
 
-- WebResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a response model as body of Minimal Api IResult if successful.
+- WebResultEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model as body of Minimal Api IResult if successful.
 - WebResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation, doesn't have a response model to return within Minimal Api IResult.
-- WebResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a response model as body of Minimal Api IResult if successful.
+- WebResultEndpointWithEmptyRequest&lt;TResponse&gt;: Doesn't have a request model and returns a response model as body of Minimal Api IResult if successful.
 - WebResultEndpointWithEmptyRequest: Doesn't have a request model, doesn't have a response model to return within Minimal Api IResult.
 
 When result returned from handler method is in Ok state, default WebResultEndpoint response mapping behaviour is:

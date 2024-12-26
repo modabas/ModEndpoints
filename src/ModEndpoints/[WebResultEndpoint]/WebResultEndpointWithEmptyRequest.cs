@@ -5,11 +5,11 @@ using ModResults;
 
 namespace ModEndpoints;
 
-public abstract class WebResultEndpointWithEmptyRequest<TResultValue>
-  : BaseWebResultEndpoint<Result<TResultValue>>
+public abstract class WebResultEndpointWithEmptyRequest<TResponse>
+  : BaseWebResultEndpoint<Result<TResponse>>
 {
   protected override async ValueTask<IResult> ConvertResultToResponseAsync(
-    Result<TResultValue> result,
+    Result<TResponse> result,
     HttpContext context,
     CancellationToken ct)
   {

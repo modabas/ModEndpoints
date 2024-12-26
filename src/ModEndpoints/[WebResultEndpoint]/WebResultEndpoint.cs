@@ -7,12 +7,12 @@ using ModResults.FluentValidation;
 
 namespace ModEndpoints;
 
-public abstract class WebResultEndpoint<TRequest, TResultValue>
-  : BaseWebResultEndpoint<TRequest, Result<TResultValue>>
+public abstract class WebResultEndpoint<TRequest, TResponse>
+  : BaseWebResultEndpoint<TRequest, Result<TResponse>>
   where TRequest : notnull
 {
   protected override async ValueTask<IResult> ConvertResultToResponseAsync(
-    Result<TResultValue> result,
+    Result<TResponse> result,
     HttpContext context,
     CancellationToken ct)
   {
@@ -26,7 +26,7 @@ public abstract class WebResultEndpoint<TRequest, TResultValue>
     HttpContext context,
     CancellationToken ct)
   {
-    var invalidResult = validationResult.ToInvalidResult<TResultValue>();
+    var invalidResult = validationResult.ToInvalidResult<TResponse>();
     return await ConvertResultToResponseAsync(invalidResult, context, ct);
   }
 }
