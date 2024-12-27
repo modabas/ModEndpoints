@@ -11,5 +11,6 @@ public interface IResultToResponseMapper
   ValueTask<IResult> ToResponseAsync<TValue>(
     Result<TValue> result,
     HttpContext context,
-    CancellationToken ct);
+    CancellationToken ct)
+    where TValue : notnull;
 }

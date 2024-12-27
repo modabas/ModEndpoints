@@ -25,6 +25,7 @@ public static class HttpResponseMessageExtensions
   public static async Task<Result<T>> DeserializeResultAsync<T>(
     this HttpResponseMessage response,
     CancellationToken ct)
+    where T : notnull
   {
     if (!response.IsSuccessStatusCode)
     {

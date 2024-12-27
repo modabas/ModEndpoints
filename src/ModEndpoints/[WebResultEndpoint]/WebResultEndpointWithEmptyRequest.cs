@@ -7,6 +7,7 @@ namespace ModEndpoints;
 
 public abstract class WebResultEndpointWithEmptyRequest<TResponse>
   : BaseWebResultEndpoint<Result<TResponse>>
+  where TResponse : notnull
 {
   protected override async ValueTask<IResult> ConvertResultToResponseAsync(
     Result<TResponse> result,

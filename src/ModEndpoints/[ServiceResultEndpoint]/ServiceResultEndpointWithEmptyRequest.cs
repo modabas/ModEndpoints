@@ -4,6 +4,7 @@ using ModResults;
 namespace ModEndpoints;
 public abstract class ServiceResultEndpointWithEmptyRequest<TResultValue>
   : BaseServiceResultEndpoint<Result<TResultValue>>
+  where TResultValue : notnull
 {
 }
 

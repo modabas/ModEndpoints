@@ -94,6 +94,7 @@ public class DefaultResultToResponseMapper : IResultToResponseMapper
     Result<TValue> result,
     HttpContext context,
     CancellationToken ct)
+    where TValue : notnull
   {
     if (result.IsFailed)
     {

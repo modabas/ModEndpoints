@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ModResults" Version="0.1.3" />
+    <PackageReference Include="ModResults" Version="0.2.0" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@ namespace ModEndpoints;
 public abstract class ServiceResultEndpoint<TRequest, TResultValue>
   : BaseServiceResultEndpoint<TRequest, Result<TResultValue>>
   where TRequest : notnull
+  where TResultValue : notnull
 {
   protected override ValueTask<Result<TResultValue>> HandleInvalidValidationResultAsync(
     ValidationResult validationResult,
