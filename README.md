@@ -19,7 +19,7 @@ The WebResultEndpoint and ServiceResultEndpoint abstractions are a structured ap
 ## Key Features
 
  - Organizes ASP.NET Core Minimal Apis in REPR pattern endpoints
- - Encapsulates endpoint behaviors like request validation, request handling, and response mapping.
+ - Encapsulates endpoint behaviors like request validation, request handling, and response mapping*.
  - Supports anything that Minimal Apis does. Configuration, parameter binding, authentication, Open Api tooling, filters, etc. are all Minimal Apis under the hood.
  - Supports auto discovery and registration.
  - Has built-in validation support with [FluentValidation](https://github.com/FluentValidation/FluentValidation). If a validator is registered for request model, request is automatically validated before being handled.
@@ -27,6 +27,8 @@ The WebResultEndpoint and ServiceResultEndpoint abstractions are a structured ap
  - Enforces response model type safety in request handlers.
  - Abstracts the logic for converting business results into HTTP responses.
 
+ *WebResultEndpoint abstracts the logic for converting business results into HTTP responses.
+ 
 ## Workflow
 
 An endpoint must implement two virtual methods: Configure and HandleAsync.
@@ -280,9 +282,24 @@ See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_
 
 WebResultEndpoint and ServiceResultEndpoint, the two abstract endpoint bases, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults).
 
-They differ only in converting these business results into HTTP responses before sending response to client. Other features described previously are common for both of them.
+These two endpoint types differ only in converting these business results into HTTP responses before sending response to client.
+
+MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minimal Api. Its 'HandleAsync' method support the following types of return values:
+
+- string
+- T (Any other type)
+- Minimal Api IResult based
+
+Other features described previously are common for all of them.
 
 Each type of andpoint has various implementations that accept a request model or not, that has a response model or not.
+
+### MinimalEndpoint
+
+A MinimalEndpoint implementation, after handling request, returns the response model.
+
+- MinimalEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model.
+- MinimalEndpoint&lt;TResponse&gt;: Doesn't have a request model and returns a response model.
 
 ### ServiceResultEndpoint
 
@@ -295,7 +312,7 @@ A ServiceResultEndpoint implementation, after handling request, encapsulates the
 
 ### WebResultEndpoint
 
-A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to an IResult depending on the result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
+A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to a Minimal Api IResult depending on the business result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
 
 - WebResultEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model as body of Minimal Api IResult if successful.
 - WebResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation, doesn't have a response model to return within Minimal Api IResult.
