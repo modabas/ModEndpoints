@@ -21,7 +21,7 @@ Accept-Language: en-US
 }
 
 ###UpdateStore
-POST {{BaseUrl}}/api/v1/stores/00000000-0000-0000-0000-000000000001
+PUT {{BaseUrl}}/api/v1/stores/00000000-0000-0000-0000-000000000001
 Accept: application/json
 Content-Type: application/json
 Accept-Language: en-US
