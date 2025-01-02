@@ -21,7 +21,7 @@ internal class GetStoreByIdRequestValidator : AbstractValidator<GetStoreByIdRequ
 
 [RouteGroupMember(typeof(StoresRouteGroup))]
 internal class GetStoreById(ServiceDbContext db)
-  : ServiceResultEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
+  : BusinessResultEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,

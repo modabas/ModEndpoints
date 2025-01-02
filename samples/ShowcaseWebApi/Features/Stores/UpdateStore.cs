@@ -25,7 +25,7 @@ internal class UpdateStoreRequestValidator : AbstractValidator<UpdateStoreReques
 
 [RouteGroupMember(typeof(StoresRouteGroup))]
 internal class UpdateStore(ServiceDbContext db)
-  : ServiceResultEndpoint<UpdateStoreRequest, UpdateStoreResponse>
+  : BusinessResultEndpoint<UpdateStoreRequest, UpdateStoreResponse>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,

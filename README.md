@@ -4,7 +4,7 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-WebResultEndpoints and ServiceResultEndpoints organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box.
+WebResultEndpoints and BusinessResultEndpoints organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box.
 
 # ModEndpoints.Core
 
@@ -14,7 +14,7 @@ Also contains core classes for ModEndpoints project.
 
 ## Introduction
 
-The WebResultEndpoint and ServiceResultEndpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. It extends the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
+The WebResultEndpoint and BusinessResultEndpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. It extends the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
 
 ## Key Features
 
@@ -280,7 +280,7 @@ See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_
 
 ## Endpoint Types
 
-WebResultEndpoint and ServiceResultEndpoint, the two abstract endpoint bases, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults).
+WebResultEndpoint and BusinessResultEndpoint, the two abstract endpoint bases, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults).
 
 These two endpoint types differ only in converting these business results into HTTP responses before sending response to client.
 
@@ -292,7 +292,7 @@ MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minima
 
 Other features described previously are common for all of them.
 
-Each type of andpoint has various implementations that accept a request model or not, that has a response model or not.
+Each type of endpoint has various implementations that accept a request model or not, that has a response model or not.
 
 ### MinimalEndpoint
 
@@ -301,14 +301,14 @@ A MinimalEndpoint implementation, after handling request, returns the response m
 - MinimalEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model.
 - MinimalEndpoint&lt;TResponse&gt;: Doesn't have a request model and returns a response model.
 
-### ServiceResultEndpoint
+### BusinessResultEndpoint
 
-A ServiceResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes ServiceResultEndpoints more suitable for internal services, where clients are aware of Result or Result&lt;TValue&gt; implementations.
+A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for internal services, where clients are aware of Result or Result&lt;TValue&gt; implementations.
 
-- ServiceResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- ServiceResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- ServiceResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- ServiceResultEndpointWithEmptyRequest: Doesn't have a request model and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- BusinessResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- BusinessResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- BusinessResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- BusinessResultEndpointWithEmptyRequest: Doesn't have a request model and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 
 ### WebResultEndpoint
 

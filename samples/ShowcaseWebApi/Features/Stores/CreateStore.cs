@@ -22,7 +22,7 @@ internal class CreateStoreRequestValidator : AbstractValidator<CreateStoreReques
 
 [RouteGroupMember(typeof(StoresRouteGroup))]
 internal class CreateStore(ServiceDbContext db)
-  : ServiceResultEndpoint<CreateStoreRequest, CreateStoreResponse>
+  : BusinessResultEndpoint<CreateStoreRequest, CreateStoreResponse>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,

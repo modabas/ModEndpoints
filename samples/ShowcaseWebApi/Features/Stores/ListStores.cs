@@ -12,7 +12,7 @@ public record ListStoresResponseItem(Guid Id, string Name);
 
 [RouteGroupMember(typeof(StoresRouteGroup))]
 internal class ListStores(ServiceDbContext db)
-  : ServiceResultEndpointWithEmptyRequest<ListStoresResponse>
+  : BusinessResultEndpointWithEmptyRequest<ListStoresResponse>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,

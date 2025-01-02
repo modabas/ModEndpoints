@@ -19,7 +19,7 @@ internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreReques
 
 [RouteGroupMember(typeof(StoresRouteGroup))]
 internal class DeleteStore(ServiceDbContext db)
-  : ServiceResultEndpoint<DeleteStoreRequest>
+  : BusinessResultEndpoint<DeleteStoreRequest>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,
