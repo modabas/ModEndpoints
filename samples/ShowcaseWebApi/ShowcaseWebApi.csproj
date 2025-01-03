@@ -15,5 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ModEndpoints\ModEndpoints.csproj" />
+    <ProjectReference Include="..\ShowcaseWebApi.FeatureContracts\ShowcaseWebApi.FeatureContracts.csproj" />
   </ItemGroup>
 </Project>

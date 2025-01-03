@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModEndpoints.Core;
+using ModEndpoints.RemoteServices;
+using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints;
 public static class DependencyInjectionExtensions
@@ -15,6 +17,7 @@ public static class DependencyInjectionExtensions
       WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
     services.TryAddScoped<ILocationStore, DefaultLocationStore>();
     services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
+    services.TryAddTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>();
     services.AddHttpContextAccessor();
     return services.AddModEndpointsFromAssemblyCore(assembly);
   }

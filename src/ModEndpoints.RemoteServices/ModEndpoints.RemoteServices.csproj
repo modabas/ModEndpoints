@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Minimal Apis organized in Repr format endpoints and integrated with result pattern out of box.</Description>
+    <Description></Description>
     <NuGetTarget></NuGetTarget>
   </PropertyGroup>
 
@@ -19,15 +19,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="ModResults.FluentValidation" Version="0.2.0" />
-    <PackageReference Include="ModResults.MinimalApis" Version="0.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+    <PackageReference Include="ModResults" Version="0.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModEndpoints.Core\ModEndpoints.Core.csproj" />
-    <ProjectReference Include="..\ModEndpoints.RemoteServices\ModEndpoints.RemoteServices.csproj" />
-  </ItemGroup>
+    <ProjectReference Include="..\ModEndpoints.RemoteServices.Core\ModEndpoints.RemoteServices.Core.csproj" />
+  </ItemGroup>  
 
 </Project>
