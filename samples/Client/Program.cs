@@ -30,7 +30,7 @@ builder.Services.AddRemoteServicesWithNewClient(
   {
     client.BaseAddress = new Uri(baseAddress);
     client.Timeout = TimeSpan.FromSeconds(5);
-  })?.AddTransientHttpErrorPolicy(
+  }).AddTransientHttpErrorPolicy(
     policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
 using IHost host = builder.Build();

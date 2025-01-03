@@ -89,7 +89,7 @@ public static class DependencyInjectionExtensions
     return services;
   }
 
-  public static IHttpClientBuilder? AddRemoteServicesWithNewClient(
+  public static IHttpClientBuilder AddRemoteServicesWithNewClient(
     this IServiceCollection services,
     Assembly fromAssembly,
     string clientName,
@@ -129,6 +129,10 @@ public static class DependencyInjectionExtensions
           requestTypeList[i],
           clientName);
       }
+    }
+    if (clientBuilder is null)
+    {
+      throw new InvalidOperationException($"Cannot create HttpClient with client name {clientName}.");
     }
     return clientBuilder;
   }
