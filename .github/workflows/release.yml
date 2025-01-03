@@ -7,6 +7,8 @@ on:
 env:
   COREPROJECTNAME: "ModEndpoints.Core"
   ENDPOINTSPROJECTNAME: "ModEndpoints"
+  REMOTESERVICESCOREPROJECTNAME: "ModEndpoints.RemoteServices.Core"
+  REMOTESERVICESPROJECTNAME: "ModEndpoints.RemoteServices"
   
 jobs:
   build:
@@ -26,10 +28,22 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
+      run: dotnet build ${{ env.REMOTESERVICESCOREPROJECTNAME }} --configuration Release --no-restore
+      working-directory: src
+    - name: Build
+      run: dotnet build ${{ env.REMOTESERVICESPROJECTNAME }} --configuration Release --no-restore
+      working-directory: src
+    - name: Build
       run: dotnet build ${{ env.COREPROJECTNAME }} --configuration Release --no-restore
       working-directory: src
     - name: Build
       run: dotnet build ${{ env.ENDPOINTSPROJECTNAME }} --configuration Release --no-restore
+      working-directory: src
+    - name: Package nuget remote services core
+      run: dotnet pack ${{ env.REMOTESERVICESCOREPROJECTNAME }} --configuration Release --no-build -o:package
+      working-directory: src
+    - name: Package nuget remote services
+      run: dotnet pack ${{ env.REMOTESERVICESPROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
     - name: Package nuget endpoints core
       run: dotnet pack ${{ env.COREPROJECTNAME }} --configuration Release --no-build -o:package

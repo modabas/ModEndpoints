@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description></Description>
+    <Description>Base abstractions for request models of ServiceEndpoints.</Description>
     <NuGetTarget></NuGetTarget>
   </PropertyGroup>
 

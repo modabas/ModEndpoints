@@ -155,9 +155,9 @@ public static class DependencyInjectionExtensions
 
     foreach (var requestType in requestTypes)
     {
-        services.AddRemoteServiceToExistingClientInternal(
-          requestType,
-          clientName);
+      services.AddRemoteServiceToExistingClientInternal(
+        requestType,
+        clientName);
     }
     return services;
   }

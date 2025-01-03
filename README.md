@@ -336,3 +336,66 @@ A BusinessResultEndpoint implementation, after handling request, encapsulates th
 - BusinessResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - BusinessResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - BusinessResultEndpointWithEmptyRequest: Doesn't have a request model and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+
+
+### ServiceEndpoint
+
+This is a very specialized endpoint suitable for internal services. A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
+
+- ServiceEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- ServiceEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+
+A ServiceEndpoint has following special traits and constraints:
+- A ServiceEndpoint is always registered with HttpMethod.Post method, and its bound pattern is determined accourding to its request type.
+- A ServiceEndpoint's request must implement either IServiceRequest (for ServiceEndpoint&lt;TRequest&gt;) or IServiceRequest&lt;TResultValue&gt; (for ServiceEndpoint&lt;TRequest, TResultValue&gt;)
+- A ServiceEndpoint's request is specific to that endpoint. Each endpoint must have its unique request type.
+- To utilize the advantages of a ServiceEndpoint over other endpoint types, its request and response types has to be shared with clients and therefore has to be in a seperate class library.
+
+These enable clients to call ServiceEndpoints by a specialized message channel resolved from dependency injection, which has to be registered at client application startup with only service base address and service request type information. No other knowledge about service or client implementation is required.
+
+Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoints) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
+
+A client has to register remote services from requests in an assembly during application startup, which utilizes IHttpClientFactory and HttpClient underneath and can be configured similarly...
+```csharp
+var baseAddress = "https://...";
+var clientName = "MyClient";
+builder.Services.AddRemoteServicesWithNewClient(
+  typeof(ListStoresRequest).Assembly,
+  clientName,
+  (sp, client) =>
+  {
+    client.BaseAddress = new Uri(baseAddress);
+    client.Timeout = TimeSpan.FromSeconds(5);
+  })?.AddTransientHttpErrorPolicy(
+    policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+```
+
+or alternatively, register remote services one by one...
+```csharp
+var baseAddress = "https://...";
+var clientName = "MyClient";
+builder.Services.AddRemoteServiceWithNewClient<ListStoresRequest>(clientName,
+  (sp, client) =>
+  {
+    client.BaseAddress = new Uri(baseAddress);
+    client.Timeout = TimeSpan.FromSeconds(5);
+  })
+  .AddTransientHttpErrorPolicy(
+    policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+builder.Services.AddRemoteServiceToExistingClient<GetStoreByIdRequest>(clientName);
+builder.Services.AddRemoteServiceToExistingClient<DeleteStoreRequest>(clientName);
+builder.Services.AddRemoteServiceToExistingClient<CreateStoreRequest>(clientName);
+builder.Services.AddRemoteServiceToExistingClient<UpdateStoreRequest>(clientName);
+```
+
+Then call remote services with IServiceChannel instance resolved from DI...
+```csharp
+  using IServiceScope serviceScope = hostProvider.CreateScope();
+  IServiceProvider provider = serviceScope.ServiceProvider;
+
+  //resolve service channel from DI
+  var channel = provider.GetRequiredService<IServiceChannel>();
+  //send request over channel to remote service
+  var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(new ListStoresRequest(), ct);
+
+```

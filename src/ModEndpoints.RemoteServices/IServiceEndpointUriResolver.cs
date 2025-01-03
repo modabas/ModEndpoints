@@ -1,4 +1,6 @@
-﻿namespace ModEndpoints.RemoteServices.Core;
+﻿using ModEndpoints.RemoteServices.Core;
+
+namespace ModEndpoints.RemoteServices;
 public interface IServiceEndpointUriResolver
 {
   string? Resolve(IServiceRequestMarker req);

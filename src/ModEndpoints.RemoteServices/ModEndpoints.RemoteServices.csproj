@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description></Description>
+    <Description>Contains ServiceEndpoint client implementation along with extensions required for its registration.</Description>
     <NuGetTarget></NuGetTarget>
   </PropertyGroup>
 

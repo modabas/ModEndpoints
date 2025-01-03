@@ -7,7 +7,7 @@ public class ServiceChannelRegistry
 {
   private readonly ConcurrentDictionary<Type, string> _registry;
 
-  private static  Lazy<ServiceChannelRegistry> _instance =
+  private static Lazy<ServiceChannelRegistry> _instance =
     new Lazy<ServiceChannelRegistry>(
       () => new ServiceChannelRegistry(),
       LazyThreadSafetyMode.ExecutionAndPublication);

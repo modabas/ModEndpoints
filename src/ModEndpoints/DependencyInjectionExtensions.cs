@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModEndpoints.Core;
 using ModEndpoints.RemoteServices;
-using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints;
 public static class DependencyInjectionExtensions
