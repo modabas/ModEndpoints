@@ -1,43 +1,32 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
 using ShowcaseWebApi.Data;
-using ShowcaseWebApi.Features.Stores.Configuration;
+using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 using ShowcaseWebApi.Features.Stores.Data;
+using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
-namespace ShowcaseWebApi.Features.Stores;
-public record CreateStoreRequest([FromBody] CreateStoreRequestBody Body);
-public record CreateStoreRequestBody(string Name);
-public record CreateStoreResponse(Guid Id);
-
+namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 internal class CreateStoreRequestValidator : AbstractValidator<CreateStoreRequest>
 {
   public CreateStoreRequestValidator()
   {
-    RuleFor(x => x.Body.Name).NotEmpty();
+    RuleFor(x => x.Name).NotEmpty();
   }
 }
 
-[RouteGroupMember(typeof(StoresRouteGroup))]
+[RouteGroupMember(typeof(StoresWithServiceEndpointRouteGroup))]
 internal class CreateStore(ServiceDbContext db)
-  : BusinessResultEndpoint<CreateStoreRequest, CreateStoreResponse>
+  : ServiceEndpoint<CreateStoreRequest, CreateStoreResponse>
 {
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapPost("/");
-  }
-
   protected override async Task<Result<CreateStoreResponse>> HandleAsync(
     CreateStoreRequest req,
     CancellationToken ct)
   {
     var Store = new StoreEntity()
     {
-      Name = req.Body.Name
+      Name = req.Name
     };
 
     db.Stores.Add(Store);

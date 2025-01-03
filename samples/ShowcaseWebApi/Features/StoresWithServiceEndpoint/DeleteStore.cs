@@ -4,11 +4,10 @@ using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
 using ShowcaseWebApi.Data;
-using ShowcaseWebApi.Features.Stores.Configuration;
+using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
+using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
-namespace ShowcaseWebApi.Features.Stores;
-public record DeleteStoreRequest(Guid Id);
-
+namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreRequest>
 {
   public DeleteStoreRequestValidator()
@@ -17,17 +16,10 @@ internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreReques
   }
 }
 
-[RouteGroupMember(typeof(StoresRouteGroup))]
+[RouteGroupMember(typeof(StoresWithServiceEndpointRouteGroup))]
 internal class DeleteStore(ServiceDbContext db)
-  : BusinessResultEndpoint<DeleteStoreRequest>
+  : ServiceEndpoint<DeleteStoreRequest>
 {
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapDelete("/{Id}");
-  }
-
   protected override async Task<Result> HandleAsync(
     DeleteStoreRequest req,
     CancellationToken ct)

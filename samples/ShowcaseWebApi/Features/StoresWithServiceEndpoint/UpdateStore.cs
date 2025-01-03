@@ -1,39 +1,27 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
 using ShowcaseWebApi.Data;
-using ShowcaseWebApi.Features.Stores.Configuration;
+using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
+using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
-namespace ShowcaseWebApi.Features.Stores;
-public record UpdateStoreRequest(Guid Id, [FromBody] UpdateStoreRequestBody Body);
-
-public record UpdateStoreRequestBody(string Name);
-
-public record UpdateStoreResponse(Guid Id, string Name);
+namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 
 internal class UpdateStoreRequestValidator : AbstractValidator<UpdateStoreRequest>
 {
   public UpdateStoreRequestValidator()
   {
     RuleFor(x => x.Id).NotEmpty();
-    RuleFor(x => x.Body.Name).NotEmpty();
+    RuleFor(x => x.Name).NotEmpty();
   }
 }
 
-[RouteGroupMember(typeof(StoresRouteGroup))]
+[RouteGroupMember(typeof(StoresWithServiceEndpointRouteGroup))]
 internal class UpdateStore(ServiceDbContext db)
-  : BusinessResultEndpoint<UpdateStoreRequest, UpdateStoreResponse>
+  : ServiceEndpoint<UpdateStoreRequest, UpdateStoreResponse>
 {
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapPut("/{Id}");
-  }
-
   protected override async Task<Result<UpdateStoreResponse>> HandleAsync(
     UpdateStoreRequest req,
     CancellationToken ct)
@@ -45,13 +33,13 @@ internal class UpdateStore(ServiceDbContext db)
       return Result<UpdateStoreResponse>.NotFound();
     }
 
-    entity.Name = req.Body.Name;
+    entity.Name = req.Name;
 
     var updated = await db.SaveChangesAsync(ct);
     return updated > 0 ?
       Result.Ok(new UpdateStoreResponse(
         Id: req.Id,
-        Name: req.Body.Name))
+        Name: req.Name))
       : Result<UpdateStoreResponse>.NotFound();
   }
 }

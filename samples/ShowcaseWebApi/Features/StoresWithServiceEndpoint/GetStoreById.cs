@@ -4,12 +4,10 @@ using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
 using ShowcaseWebApi.Data;
-using ShowcaseWebApi.Features.Stores.Configuration;
+using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
+using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
-namespace ShowcaseWebApi.Features.Stores;
-public record GetStoreByIdRequest(Guid Id);
-
-public record GetStoreByIdResponse(Guid Id, string Name);
+namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 
 internal class GetStoreByIdRequestValidator : AbstractValidator<GetStoreByIdRequest>
 {
@@ -19,17 +17,10 @@ internal class GetStoreByIdRequestValidator : AbstractValidator<GetStoreByIdRequ
   }
 }
 
-[RouteGroupMember(typeof(StoresRouteGroup))]
+[RouteGroupMember(typeof(StoresWithServiceEndpointRouteGroup))]
 internal class GetStoreById(ServiceDbContext db)
-  : BusinessResultEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
+  : ServiceEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
 {
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapGet("/{Id}");
-  }
-
   protected override async Task<Result<GetStoreByIdResponse>> HandleAsync(
     GetStoreByIdRequest req,
     CancellationToken ct)

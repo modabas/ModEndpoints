@@ -5,8 +5,8 @@ using ModResults;
 using ModResults.FluentValidation;
 
 namespace ModEndpoints;
-public abstract class ServiceResultEndpoint<TRequest, TResultValue>
-  : BaseServiceResultEndpoint<TRequest, Result<TResultValue>>
+public abstract class BusinessResultEndpoint<TRequest, TResultValue>
+  : BaseBusinessResultEndpoint<TRequest, Result<TResultValue>>
   where TRequest : notnull
   where TResultValue : notnull
 {
@@ -20,8 +20,8 @@ public abstract class ServiceResultEndpoint<TRequest, TResultValue>
   }
 }
 
-public abstract class ServiceResultEndpoint<TRequest>
-  : BaseServiceResultEndpoint<TRequest, Result>
+public abstract class BusinessResultEndpoint<TRequest>
+  : BaseBusinessResultEndpoint<TRequest, Result>
   where TRequest : notnull
 {
   protected override ValueTask<Result> HandleInvalidValidationResultAsync(

@@ -2,11 +2,11 @@
 using System.Text.Json.Serialization;
 using ModResults;
 
-namespace Client;
+namespace ModEndpoints.RemoteServices;
 
 public static class HttpResponseMessageExtensions
 {
-  private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
+  private static readonly JsonSerializerOptions _defaultJsonSerializerOptions = new()
   {
     PropertyNameCaseInsensitive = true,
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -24,7 +24,8 @@ public static class HttpResponseMessageExtensions
 
   public static async Task<Result<T>> DeserializeResultAsync<T>(
     this HttpResponseMessage response,
-    CancellationToken ct)
+    CancellationToken ct,
+    JsonSerializerOptions? jsonSerializerOptions = null)
     where T : notnull
   {
     if (!response.IsSuccessStatusCode)
@@ -36,13 +37,14 @@ public static class HttpResponseMessageExtensions
           response.ReasonPhrase))
         .WithFact($"Instance: {response.RequestMessage?.Method} {response.RequestMessage?.RequestUri}");
     }
-    var resultObject = await response.DeserializeResultInternalAsync<Result<T>>(ct);
+    var resultObject = await response.DeserializeResultInternalAsync<Result<T>>(jsonSerializerOptions, ct);
     return resultObject ?? Result<T>.Error(DeserializationErrorMessage);
   }
 
   public static async Task<Result> DeserializeResultAsync(
     this HttpResponseMessage response,
-    CancellationToken ct)
+    CancellationToken ct,
+    JsonSerializerOptions? jsonSerializerOptions = null)
   {
     if (!response.IsSuccessStatusCode)
     {
@@ -53,12 +55,13 @@ public static class HttpResponseMessageExtensions
           response.ReasonPhrase))
         .WithFact($"Instance: {response.RequestMessage?.Method} {response.RequestMessage?.RequestUri}");
     }
-    var resultObject = await response.DeserializeResultInternalAsync<Result>(ct);
+    var resultObject = await response.DeserializeResultInternalAsync<Result>(jsonSerializerOptions, ct);
     return resultObject ?? Result.Error(DeserializationErrorMessage);
   }
 
   private static async Task<TResult?> DeserializeResultInternalAsync<TResult>(
     this HttpResponseMessage response,
+    JsonSerializerOptions? jsonSerializerOptions,
     CancellationToken ct)
     where TResult : IModResult
   {
@@ -69,7 +72,7 @@ public static class HttpResponseMessageExtensions
       ct.ThrowIfCancellationRequested();
       return await JsonSerializer.DeserializeAsync<TResult>(
         contentStream,
-        _jsonSerializerOptions,
+        jsonSerializerOptions ?? _defaultJsonSerializerOptions,
         ct);
     }
   }

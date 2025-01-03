@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.Core;
 public static class DependencyInjectionExtensions
@@ -36,20 +37,79 @@ public static class DependencyInjectionExtensions
     return services;
   }
 
-  private static IServiceCollection AddEndpointsFromAssemblyCore(
+  public static IServiceCollection AddEndpointsFromAssemblyCore(
     this IServiceCollection services,
     Assembly assembly)
   {
-    var serviceDescriptors = assembly
-        .DefinedTypes
-        .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                       type.IsAssignableTo(typeof(IEndpointConfigurator)))
+    var endpointTypes = assembly
+      .DefinedTypes
+      .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+                     type.IsAssignableTo(typeof(IEndpointConfigurator)));
+
+    CheckServiceEndpointRegistrations(endpointTypes);
+
+    var serviceDescriptors = endpointTypes
         .Select(type => ServiceDescriptor.KeyedTransient(typeof(IEndpointConfigurator), type, type))
         .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
 
     return services;
+  }
+
+  private static void CheckServiceEndpointRegistrations(IEnumerable<TypeInfo> endpointTypes)
+  {
+    var serviceEndpointTypes = endpointTypes.Where(type => IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>))).ToList();
+    foreach (var serviceEndpointType in serviceEndpointTypes)
+    {
+      var requestType = GetGenericArgumentsOfBase(serviceEndpointType, typeof(BaseServiceEndpoint<,>)).Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
+      if (ServiceEndpointRegistry.Instance.IsRegistered(requestType))
+      {
+        throw new InvalidOperationException($"An endpoint for request type {requestType} is already registered.");
+      }
+      if (!ServiceEndpointRegistry.Instance.Register(requestType, serviceEndpointType))
+      {
+        throw new InvalidOperationException($"An endpoint of type {serviceEndpointType} couldn't be registered for request type {requestType}.");
+      }
+    }
+    return;
+  }
+
+  private static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
+  {
+    while (derivedType.BaseType != null)
+    {
+      derivedType = derivedType.BaseType;
+      if (derivedType.IsGenericType && derivedType.GetGenericTypeDefinition() == baseType)
+      {
+        return derivedType.GetGenericArguments();
+      }
+    }
+    throw new InvalidOperationException("Base type was not found");
+  }
+
+  private static bool IsAssignableFrom(Type extendType, Type baseType)
+  {
+    while (!baseType.IsAssignableFrom(extendType))
+    {
+      if (extendType.Equals(typeof(object)))
+      {
+        return false;
+      }
+      if (extendType.IsGenericType && !extendType.IsGenericTypeDefinition)
+      {
+        extendType = extendType.GetGenericTypeDefinition();
+      }
+      else
+      {
+        if (extendType.BaseType is null)
+        {
+          return false;
+        }
+        extendType = extendType.BaseType;
+      }
+    }
+    return true;
   }
 
   //Configuration processing order:

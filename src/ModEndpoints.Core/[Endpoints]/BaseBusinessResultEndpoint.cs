@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
-public abstract class BaseServiceResultEndpoint<TRequest, TResponse>
-  : EndpointConfigurator, IServiceResultEndpoint
+public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
+  : EndpointConfigurator, IBusinessResultEndpoint
   where TRequest : notnull
 {
   protected sealed override Delegate ExecuteDelegate => ExecuteAsync;
@@ -15,7 +15,7 @@ public abstract class BaseServiceResultEndpoint<TRequest, TResponse>
     HttpContext context)
   {
     var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as BaseServiceResultEndpoint<TRequest, TResponse>
+    var handler = baseHandler as BaseBusinessResultEndpoint<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
@@ -59,8 +59,8 @@ public abstract class BaseServiceResultEndpoint<TRequest, TResponse>
     CancellationToken ct);
 }
 
-public abstract class BaseServiceResultEndpoint<TResponse>
-  : EndpointConfigurator, IServiceResultEndpoint
+public abstract class BaseBusinessResultEndpoint<TResponse>
+  : EndpointConfigurator, IBusinessResultEndpoint
 {
   protected sealed override Delegate ExecuteDelegate => ExecuteAsync;
 
@@ -68,7 +68,7 @@ public abstract class BaseServiceResultEndpoint<TResponse>
     HttpContext context)
   {
     var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as BaseServiceResultEndpoint<TResponse>
+    var handler = baseHandler as BaseBusinessResultEndpoint<TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
