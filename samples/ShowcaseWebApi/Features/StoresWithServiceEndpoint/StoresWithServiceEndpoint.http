@@ -3,7 +3,7 @@
 @BaseUrl =https://localhost:7012
 
 ###ListStores
-POST {{BaseUrl}}/ShowcaseWebApi.FeatureContracts.Features.StoresInRpc.ListStoresRequest.Endpoint
+POST {{BaseUrl}}/api/v1/storesWithServiceEndpoint/ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint.ListStoresRequest.Endpoint
 Accept: application/json
 Content-Type: application/json
 Accept-Language: en-US
@@ -12,7 +12,7 @@ Accept-Language: en-US
 }
 
 ###GetStoreById
-POST {{BaseUrl}}/ShowcaseWebApi.FeatureContracts.Features.StoresInRpc.GetStoreByIdRequest.Endpoint
+POST {{BaseUrl}}/api/v1/storesWithServiceEndpoint/ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint.GetStoreByIdRequest.Endpoint
 Accept: application/json
 Content-Type: application/json
 Accept-Language: en-US
@@ -22,7 +22,7 @@ Accept-Language: en-US
 }
 
 ###CreateStore
-POST {{BaseUrl}}/ShowcaseWebApi.FeatureContracts.Features.StoresInRpc.CreateStoreRequest.Endpoint
+POST {{BaseUrl}}/api/v1/storesWithServiceEndpoint/ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint.CreateStoreRequest.Endpoint
 Accept: application/json
 Content-Type: application/json
 Accept-Language: en-US
@@ -32,7 +32,7 @@ Accept-Language: en-US
 }
 
 ###UpdateStore
-POST {{BaseUrl}}/ShowcaseWebApi.FeatureContracts.Features.StoresInRpc.UpdateStoreRequest.Endpoint
+POST {{BaseUrl}}/api/v1/storesWithServiceEndpoint/ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint.UpdateStoreRequest.Endpoint
 Accept: application/json
 Content-Type: application/json
 Accept-Language: en-US
@@ -43,7 +43,7 @@ Accept-Language: en-US
 }
 
 ###DeleteStore
-POST {{BaseUrl}}/ShowcaseWebApi.FeatureContracts.Features.StoresInRpc.DeleteStoreRequest.Endpoint
+POST {{BaseUrl}}/api/v1/storesWithServiceEndpoint/ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint.DeleteStoreRequest.Endpoint
 Accept: application/json
 Content-Type: application/json
 Accept-Language: en-US

@@ -22,16 +22,16 @@ public class ServiceChannel(
   {
     try
     {
-      var requestUri = uriResolver.Resolve(req);
-      if (string.IsNullOrWhiteSpace(requestUri))
+      var requestUriResult = uriResolver.Resolve(req);
+      if (requestUriResult.IsFailed)
       {
-        return Result<TResponse>.CriticalError("Cannot resolve uri for service endpoint.");
+        return Result<TResponse>.Fail(requestUriResult);
       }
       if (!ServiceChannelRegistry.Instance.IsRegistered<TRequest>(out var clientName))
       {
         return Result<TResponse>.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
       }
-      using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUri))
+      using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
       {
         httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
         configureRequestHeaders?.Invoke(httpReq.Headers);
@@ -58,16 +58,16 @@ public class ServiceChannel(
   {
     try
     {
-      var requestUri = uriResolver.Resolve(req);
-      if (string.IsNullOrWhiteSpace(requestUri))
+      var requestUriResult = uriResolver.Resolve(req);
+      if (requestUriResult.IsFailed)
       {
-        return Result.CriticalError("Cannot resolve uri for service endpoint.");
+        return Result.Fail(requestUriResult);
       }
       if (!ServiceChannelRegistry.Instance.IsRegistered<TRequest>(out var clientName))
       {
         return Result.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
       }
-      using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUri))
+      using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
       {
         httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
         configureRequestHeaders?.Invoke(httpReq.Headers);

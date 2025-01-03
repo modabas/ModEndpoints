@@ -1,26 +1,27 @@
 ﻿using ModEndpoints.RemoteServices.Core;
+using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 public class ServiceEndpointUriResolver : IServiceEndpointUriResolver
 {
-  public string? Resolve(IServiceRequestMarker req)
+  public Result<string> Resolve(IServiceRequestMarker req)
   {
     var requestType = req.GetType();
     return ResolveInternal(requestType);
   }
 
-  public string? Resolve<TRequest>() where TRequest : IServiceRequestMarker
+  public Result<string> Resolve<TRequest>() where TRequest : IServiceRequestMarker
   {
     var requestType = typeof(TRequest);
     return ResolveInternal(requestType);
   }
 
-  private string? ResolveInternal(Type requestType)
+  private Result<string> ResolveInternal(Type requestType)
   {
     var requestName = requestType.FullName;
     if (string.IsNullOrWhiteSpace(requestName))
     {
-      return null;
+      return Result<string>.CriticalError("Cannot resolve request uri for service endpoint.");
     }
     return $"{requestName}.Endpoint";
   }

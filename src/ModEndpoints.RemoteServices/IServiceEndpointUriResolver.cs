@@ -1,9 +1,10 @@
 ﻿using ModEndpoints.RemoteServices.Core;
+using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 public interface IServiceEndpointUriResolver
 {
-  string? Resolve(IServiceRequestMarker req);
-  string? Resolve<TRequest>()
+  Result<string> Resolve(IServiceRequestMarker req);
+  Result<string> Resolve<TRequest>()
     where TRequest : IServiceRequestMarker;
 }

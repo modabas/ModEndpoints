@@ -30,10 +30,10 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
     IRouteGroupConfigurator? parentRouteGroup)
   {
     var uriResolver = serviceProvider.GetRequiredService<IServiceEndpointUriResolver>();
-    var pattern = uriResolver.Resolve<TRequest>();
-    if (!string.IsNullOrWhiteSpace(pattern))
+    var patternResult = uriResolver.Resolve<TRequest>();
+    if (patternResult.IsOk)
     {
-      return builder.MapPost(pattern, ExecuteDelegate);
+      return builder.MapPost(patternResult.Value, ExecuteDelegate);
     }
     return null;
   }
@@ -58,10 +58,10 @@ public abstract class ServiceEndpoint<TRequest>
     IRouteGroupConfigurator? parentRouteGroup)
   {
     var uriResolver = serviceProvider.GetRequiredService<IServiceEndpointUriResolver>();
-    var pattern = uriResolver.Resolve<TRequest>();
-    if (!string.IsNullOrWhiteSpace(pattern))
+    var patternResult = uriResolver.Resolve<TRequest>();
+    if (patternResult.IsOk)
     {
-      return builder.MapPost(pattern, ExecuteDelegate);
+      return builder.MapPost(patternResult.Value, ExecuteDelegate);
     }
     return null;
   }
