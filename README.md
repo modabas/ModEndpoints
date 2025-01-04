@@ -355,7 +355,11 @@ These enable clients to call ServiceEndpoints by a specialized message channel r
 
 Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoints) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
 
-A client has to register remote services from requests in an assembly during application startup, which utilizes IHttpClientFactory and HttpClient underneath and can be configured similarly...
+### ServiceEndpoint clients
+
+A client application consuming ServiceEndpoints, has to register message channels for those endpoints (remote services) during application startup. Message channels utilize IHttpClientFactory and HttpClient underneath and is configured similarly.
+
+Registration can be done either for all service requests in an assembly...
 ```csharp
 var baseAddress = "https://...";
 var clientName = "MyClient";
@@ -371,7 +375,7 @@ builder.Services.AddRemoteServicesWithNewClient(
     policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))));
 ```
 
-or alternatively, register remote services one by one...
+or alternatively, remote services can be registered one by one, adding each service request individually...
 ```csharp
 var baseAddress = "https://...";
 var clientName = "MyClient";
