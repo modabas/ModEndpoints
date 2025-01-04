@@ -6,56 +6,27 @@ using ModEndpoints.RemoteServices.Core;
 namespace ModEndpoints.RemoteServices;
 public static class DependencyInjectionExtensions
 {
-  public static IHttpClientBuilder AddRemoteServiceWithNewClient<TRequest>(
+  public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
-    Action<IServiceProvider, HttpClient> configureClient)
+    string baseAddress,
+    TimeSpan timeout = default,
+    Action<IHttpClientBuilder>? configureClientBuilder = null)
     where TRequest : IServiceRequestMarker
   {
     var clientName = DefaultClientName.Resolve<TRequest>();
-    return services.AddRemoteServiceWithNewClient<TRequest>(clientName, configureClient);
+    return services.AddRemoteServiceWithNewClient<TRequest>(
+      clientName,
+      baseAddress,
+      timeout,
+      configureClientBuilder);
   }
 
-  public static IHttpClientBuilder AddRemoteServiceWithNewClient<TRequest>(
-    this IServiceCollection services,
-    string clientName,
-    Action<IServiceProvider, HttpClient> configureClient)
-    where TRequest : IServiceRequestMarker
-  {
-    if (ServiceChannelRegistry.Instance.IsRegistered<TRequest>())
-    {
-      throw new InvalidOperationException($"A channel for request type {typeof(TRequest)} is already registered.");
-    }
-    if (ServiceChannelRegistry.Instance.IsRegistered(clientName))
-    {
-      throw new InvalidOperationException($"A channel with client name {clientName} is already registered.");
-    }
-
-    services.AddRemoteServicesCore();
-
-    if (!ServiceChannelRegistry.Instance.Register<TRequest>(clientName))
-    {
-      throw new InvalidOperationException($"Channel couldn't be registered for request type {typeof(TRequest)} and client name {clientName}.");
-    }
-    var clientBuilder = services.AddHttpClient(clientName);
-    clientBuilder.ConfigureHttpClient(configureClient);
-    return clientBuilder;
-  }
-
-  public static IHttpClientBuilder AddRemoteServiceWithNewClient<TRequest>(
-    this IServiceCollection services,
-    string baseAddress,
-    TimeSpan timeout = default)
-    where TRequest : IServiceRequestMarker
-  {
-    var clientName = DefaultClientName.Resolve<TRequest>();
-    return services.AddRemoteServiceWithNewClient<TRequest>(clientName, baseAddress, timeout);
-  }
-
-  public static IHttpClientBuilder AddRemoteServiceWithNewClient<TRequest>(
+  public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
     string clientName,
     string baseAddress,
-    TimeSpan timeout = default)
+    TimeSpan timeout = default,
+    Action<IHttpClientBuilder>? configureClientBuilder = null)
     where TRequest : IServiceRequestMarker
   {
     Action<IServiceProvider, HttpClient> configureClient = (sp, client) =>
@@ -66,7 +37,42 @@ public static class DependencyInjectionExtensions
         client.Timeout = timeout;
       }
     };
-    return services.AddRemoteServiceWithNewClient<TRequest>(clientName, configureClient);
+    return services.AddRemoteServiceWithNewClient<TRequest>(
+      clientName,
+      configureClient,
+      configureClientBuilder);
+  }
+
+  public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
+    this IServiceCollection services,
+    Action<IServiceProvider, HttpClient> configureClient,
+    Action<IHttpClientBuilder>? configureClientBuilder = null)
+    where TRequest : IServiceRequestMarker
+  {
+    var clientName = DefaultClientName.Resolve<TRequest>();
+    return services.AddRemoteServiceWithNewClient<TRequest>(
+      clientName,
+      configureClient,
+      configureClientBuilder);
+  }
+
+  public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
+    this IServiceCollection services,
+    string clientName,
+    Action<IServiceProvider, HttpClient> configureClient,
+    Action<IHttpClientBuilder>? configureClientBuilder = null)
+    where TRequest : IServiceRequestMarker
+  {
+    if (ServiceChannelRegistry.Instance.DoesClientExist(clientName))
+    {
+      throw new InvalidOperationException($"A client with name {clientName} already exists.");
+    }
+
+    return services.AddRemoteServiceWithNewClientInternal(
+      typeof(TRequest),
+      clientName,
+      configureClient,
+      configureClientBuilder);
   }
 
   public static IServiceCollection AddRemoteServiceToExistingClient<TRequest>(
@@ -74,87 +80,67 @@ public static class DependencyInjectionExtensions
     string clientName)
     where TRequest : IServiceRequestMarker
   {
-    if (ServiceChannelRegistry.Instance.IsRegistered<TRequest>())
+    if (!ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A channel for request type {typeof(TRequest)} is already registered.");
+      throw new InvalidOperationException($"A client with name {clientName} does not exist.");
     }
-    if (!ServiceChannelRegistry.Instance.IsRegistered(clientName))
-    {
-      throw new InvalidOperationException($"A channel with client name {clientName} is not registered.");
-    }
-    if (!ServiceChannelRegistry.Instance.Register<TRequest>(clientName))
-    {
-      throw new InvalidOperationException($"Channel couldn't be registered for request type {typeof(TRequest)} and client name {clientName}.");
-    }
-    return services;
+    return services.AddRemoteServiceToExistingClientInternal(typeof(TRequest), clientName);
   }
 
-  public static IHttpClientBuilder AddRemoteServicesWithNewClient(
+  public static IServiceCollection AddRemoteServicesWithNewClient(
     this IServiceCollection services,
     Assembly fromAssembly,
     string clientName,
     Action<IServiceProvider, HttpClient> configureClient,
-    Func<Type, bool>? filterPredicate = null)
+    Action<IHttpClientBuilder>? configureClientBuilder = null,
+    Func<Type, bool>? requestFilterPredicate = null)
   {
-    if (ServiceChannelRegistry.Instance.IsRegistered(clientName))
+    if (ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A channel with client name {clientName} is already registered.");
+      throw new InvalidOperationException($"A client with name {clientName} already exists.");
     }
     var requestTypes = fromAssembly
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IServiceRequestMarker)));
 
-    if (filterPredicate is not null)
+    if (requestFilterPredicate is not null)
     {
-      requestTypes = requestTypes.Where(type => filterPredicate(type));
+      requestTypes = requestTypes.Where(type => requestFilterPredicate(type));
     }
 
-    IHttpClientBuilder? clientBuilder = null;
-    var requestTypeList = requestTypes.ToList();
-    for (var i = 0; i < requestTypeList.Count; i++)
+    services.AddRemoteServicesCore();
+    services.AddClientInternal(
+      clientName,
+      configureClient,
+      configureClientBuilder);
+    foreach (var requestType in requestTypes)
     {
-      //first element
-      if (i == 0)
-      {
-        clientBuilder = services.AddRemoteServiceWithNewClientInternal(
-          requestTypeList[i],
-          clientName,
-          configureClient);
-      }
-      //rest
-      else
-      {
-        services.AddRemoteServiceToExistingClientInternal(
-          requestTypeList[i],
-          clientName);
-      }
+      services.AddRemoteServiceToExistingClientInternal(
+        requestType,
+        clientName);
     }
-    if (clientBuilder is null)
-    {
-      throw new InvalidOperationException($"Cannot create HttpClient with client name {clientName}.");
-    }
-    return clientBuilder;
+    return services;
   }
 
   public static IServiceCollection AddRemoteServicesToExistingClient(
     this IServiceCollection services,
     Assembly fromAssembly,
     string clientName,
-    Func<Type, bool>? filterPredicate = null)
+    Func<Type, bool>? requestFilterPredicate = null)
   {
-    if (!ServiceChannelRegistry.Instance.IsRegistered(clientName))
+    if (!ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A channel with client name {clientName} is not registered.");
+      throw new InvalidOperationException($"A client with name {clientName} does not exist.");
     }
     var requestTypes = fromAssembly
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IServiceRequestMarker)));
 
-    if (filterPredicate is not null)
+    if (requestFilterPredicate is not null)
     {
-      requestTypes = requestTypes.Where(type => filterPredicate(type));
+      requestTypes = requestTypes.Where(type => requestFilterPredicate(type));
     }
 
     foreach (var requestType in requestTypes)
@@ -166,26 +152,27 @@ public static class DependencyInjectionExtensions
     return services;
   }
 
-  private static IHttpClientBuilder AddRemoteServiceWithNewClientInternal(
+  private static IServiceCollection AddRemoteServiceWithNewClientInternal(
     this IServiceCollection services,
     Type requestType,
     string clientName,
-    Action<IServiceProvider, HttpClient> configureClient)
+    Action<IServiceProvider, HttpClient> configureClient,
+    Action<IHttpClientBuilder>? configureClientBuilder)
   {
-    if (ServiceChannelRegistry.Instance.IsRegistered(requestType))
+    if (ServiceChannelRegistry.Instance.IsRequestRegistered(requestType))
     {
       throw new InvalidOperationException($"A channel for request type {requestType} is already registered.");
     }
-
     services.AddRemoteServicesCore();
-
-    if (!ServiceChannelRegistry.Instance.Register(requestType, clientName))
+    services.AddClientInternal(
+      clientName,
+      configureClient,
+      configureClientBuilder);
+    if (!ServiceChannelRegistry.Instance.RegisterRequest(requestType, clientName))
     {
       throw new InvalidOperationException($"Channel couldn't be registered for request type {requestType} and client name {clientName}.");
     }
-    var clientBuilder = services.AddHttpClient(clientName);
-    clientBuilder.ConfigureHttpClient(configureClient);
-    return clientBuilder;
+    return services;
   }
 
   private static IServiceCollection AddRemoteServiceToExistingClientInternal(
@@ -193,14 +180,27 @@ public static class DependencyInjectionExtensions
     Type requestType,
     string clientName)
   {
-    if (ServiceChannelRegistry.Instance.IsRegistered(requestType))
+    if (ServiceChannelRegistry.Instance.IsRequestRegistered(requestType))
     {
       throw new InvalidOperationException($"A channel for request type {requestType} is already registered.");
     }
-    if (!ServiceChannelRegistry.Instance.Register(requestType, clientName))
+    if (!ServiceChannelRegistry.Instance.RegisterRequest(requestType, clientName))
     {
       throw new InvalidOperationException($"Channel couldn't be registered for request type {requestType} and client name {clientName}.");
     }
+    return services;
+  }
+
+  private static IServiceCollection AddClientInternal(
+    this IServiceCollection services,
+    string clientName,
+    Action<IServiceProvider, HttpClient> configureClient,
+    Action<IHttpClientBuilder>? configureClientBuilder)
+  {
+    var clientBuilder = services.AddHttpClient(clientName);
+    clientBuilder.ConfigureHttpClient(configureClient);
+    configureClientBuilder?.Invoke(clientBuilder);
+    ServiceChannelRegistry.Instance.AddClient(clientName);
     return services;
   }
 

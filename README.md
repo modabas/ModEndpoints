@@ -366,8 +366,9 @@ builder.Services.AddRemoteServicesWithNewClient(
   {
     client.BaseAddress = new Uri(baseAddress);
     client.Timeout = TimeSpan.FromSeconds(5);
-  }).AddTransientHttpErrorPolicy(
-    policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+  },
+  clientBuilder => clientBuilder.AddTransientHttpErrorPolicy(
+    policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))));
 ```
 
 or alternatively, register remote services one by one...
@@ -379,9 +380,9 @@ builder.Services.AddRemoteServiceWithNewClient<ListStoresRequest>(clientName,
   {
     client.BaseAddress = new Uri(baseAddress);
     client.Timeout = TimeSpan.FromSeconds(5);
-  })
-  .AddTransientHttpErrorPolicy(
-    policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+  },
+  clientBuilder => clientBuilder.AddTransientHttpErrorPolicy(
+    policyBuilder => policyBuilder.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30))));
 builder.Services.AddRemoteServiceToExistingClient<GetStoreByIdRequest>(clientName);
 builder.Services.AddRemoteServiceToExistingClient<DeleteStoreRequest>(clientName);
 builder.Services.AddRemoteServiceToExistingClient<CreateStoreRequest>(clientName);

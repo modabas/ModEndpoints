@@ -27,7 +27,7 @@ public class ServiceChannel(
       {
         return Result<TResponse>.Fail(requestUriResult);
       }
-      if (!ServiceChannelRegistry.Instance.IsRegistered<TRequest>(out var clientName))
+      if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
       {
         return Result<TResponse>.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
       }
@@ -63,7 +63,7 @@ public class ServiceChannel(
       {
         return Result.Fail(requestUriResult);
       }
-      if (!ServiceChannelRegistry.Instance.IsRegistered<TRequest>(out var clientName))
+      if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
       {
         return Result.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
       }

@@ -6,6 +6,9 @@ namespace ModEndpoints.RemoteServices;
 public class ServiceChannelRegistry
 {
   private readonly ConcurrentDictionary<Type, string> _registry;
+  
+  //Intended to be used only during application startup DI registrations
+  private readonly List<string> _httpClientList;
 
   private static Lazy<ServiceChannelRegistry> _instance =
     new Lazy<ServiceChannelRegistry>(
@@ -17,38 +20,43 @@ public class ServiceChannelRegistry
   private ServiceChannelRegistry()
   {
     _registry = new();
+    _httpClientList = new();
   }
 
-  public bool IsRegistered<TRequest>()
+  public bool IsRequestRegistered<TRequest>()
     where TRequest : IServiceRequestMarker
   {
-    return _registry.ContainsKey(typeof(TRequest));
+    return IsRequestRegistered(typeof(TRequest));
   }
 
-  public bool IsRegistered(Type requestType)
+  public bool IsRequestRegistered(Type requestType)
   {
     return _registry.ContainsKey(requestType);
   }
 
-  public bool IsRegistered(string clientName)
+  public bool DoesClientExist(string clientName)
   {
-    return _registry.Values.Any(c => c.Equals(clientName, StringComparison.OrdinalIgnoreCase));
+    return _httpClientList.Contains(clientName, StringComparer.Ordinal);
   }
 
-  internal bool Register<TRequest>(string clientName)
-    where TRequest : IServiceRequestMarker
+  internal void AddClient(string clientName)
   {
-    return _registry.TryAdd(typeof(TRequest), clientName);
+    _httpClientList.Add(clientName);
   }
 
-  internal bool Register(Type requestType, string clientName)
+  internal bool RegisterRequest(Type requestType, string clientName)
   {
     return _registry.TryAdd(requestType, clientName);
   }
 
-  public bool IsRegistered<TRequest>([NotNullWhen(true)] out string? clientName)
+  public bool IsRequestRegistered<TRequest>([NotNullWhen(true)] out string? clientName)
     where TRequest : IServiceRequestMarker
   {
-    return _registry.TryGetValue(typeof(TRequest), out clientName);
+    return IsRequestRegistered(typeof(TRequest), out clientName);
+  }
+
+  public bool IsRequestRegistered(Type requestType, [NotNullWhen(true)] out string? clientName)
+  {
+    return _registry.TryGetValue(requestType, out clientName);
   }
 }
