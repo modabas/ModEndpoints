@@ -41,7 +41,6 @@ public abstract class BaseServiceEndpoint<TRequest, TResponse>
   /// Contains endpoint's logic to handle request. Input validation is completed before this method is called.
   /// </summary>
   /// <param name="req"></param>
-  /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns></returns>
   protected abstract Task<TResponse> HandleAsync(

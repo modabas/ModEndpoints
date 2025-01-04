@@ -68,7 +68,6 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
   /// Contains endpoint's logic to handle request. Input validation is completed before this method is called.
   /// </summary>
   /// <param name="req"></param>
-  /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns></returns>
   protected abstract Task<THandlerResult> HandleAsync(
@@ -110,7 +109,6 @@ public abstract class BaseWebResultEndpoint<THandlerResult>
   /// <summary>
   /// Contains endpoint's logic to handle request.
   /// </summary>
-  /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns></returns>
   protected abstract Task<THandlerResult> HandleAsync(

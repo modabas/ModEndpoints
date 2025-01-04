@@ -36,8 +36,8 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
-  /// Runs after ConfiureDefaults method and can be overridden to further customize endpoint on top of default configuration.
-  /// Use <see cref="GetRouteHandlerBuilder"/> within, to get a route handler builder and chain additional configuration on top of it.
+  /// Runs after ConfigureDefaults method and can be overridden to further customize endpoint on top of default configuration.
+  /// Start configuring endpoint by calling <see cref="GetRouteHandlerBuilder"/> method to get a <see cref="RouteHandlerBuilder"/>, and chain additional configuration on top of it.
   /// </summary>
   /// <param name="serviceProvider"></param>
   /// <param name="parentRouteGroup"></param>

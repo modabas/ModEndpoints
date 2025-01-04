@@ -32,6 +32,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
+  /// Start configuring route group by calling the MapGroup method and chain additional configuration on top of returned <see cref="RouteGroupBuilder"/>.
   /// </summary>
   /// <param name="serviceProvider"></param>
   /// <param name="parentRouteGroup">Null if this route group is registered at root.</param>

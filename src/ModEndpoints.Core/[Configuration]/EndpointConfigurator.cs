@@ -33,6 +33,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
+  /// Start configuring endpoint by calling one of the Map[HttpVerb] methods and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
   /// </summary>
   /// <param name="serviceProvider"></param>
   /// <param name="parentRouteGroup"></param>

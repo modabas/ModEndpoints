@@ -40,7 +40,6 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
   /// Contains endpoint's logic to handle request. Input validation is completed before this method is called.
   /// </summary>
   /// <param name="req"></param>
-  /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns></returns>
   protected abstract Task<TResponse> HandleAsync(
@@ -93,7 +92,6 @@ public abstract class MinimalEndpoint<TResponse>
   /// <summary>
   /// Contains endpoint's logic to handle request.
   /// </summary>
-  /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns></returns>
   protected abstract Task<TResponse> HandleAsync(

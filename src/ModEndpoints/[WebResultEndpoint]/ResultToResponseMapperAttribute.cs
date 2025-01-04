@@ -1,5 +1,7 @@
 ﻿namespace ModEndpoints;
 
+using ModEndpoints.Core;
+
 /// <summary>
 /// Sets the result to response mapper name for that <see cref="IWebResultEndpoint"/> implementation.
 /// </summary>
