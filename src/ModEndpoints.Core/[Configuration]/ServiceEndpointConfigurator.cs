@@ -24,18 +24,20 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    _handlerBuilder = MapEndpoint(serviceProvider, builder, parentRouteGroup);
+    _handlerBuilder = ConfigureDefaults(serviceProvider, builder, parentRouteGroup);
     Configure(serviceProvider, parentRouteGroup);
     return _handlerBuilder;
   }
 
-  protected abstract RouteHandlerBuilder? MapEndpoint(
+  protected abstract RouteHandlerBuilder? ConfigureDefaults(
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup);
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
+  /// Runs after ConfiureDefaults method and can be overridden to further customize endpoint on top of default configuration.
+  /// Use <see cref="GetRouteHandlerBuilder"/> within, to get a route handler builder and chain additional configuration on top of it.
   /// </summary>
   /// <param name="serviceProvider"></param>
   /// <param name="parentRouteGroup"></param>
@@ -46,7 +48,12 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
     return;
   }
 
-  protected RouteHandlerBuilder GetBuilder()
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+  /// <exception cref="InvalidOperationException"></exception>
+  protected RouteHandlerBuilder GetRouteHandlerBuilder()
   {
     return _handlerBuilder is null
       ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))

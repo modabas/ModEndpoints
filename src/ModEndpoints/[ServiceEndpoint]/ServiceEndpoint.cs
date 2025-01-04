@@ -24,7 +24,7 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
       validationResult.ToInvalidResult<TResultValue>());
   }
 
-  protected sealed override RouteHandlerBuilder? MapEndpoint(
+  protected sealed override RouteHandlerBuilder? ConfigureDefaults(
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup)
@@ -52,7 +52,7 @@ public abstract class ServiceEndpoint<TRequest>
       validationResult.ToInvalidResult());
   }
 
-  protected sealed override RouteHandlerBuilder? MapEndpoint(
+  protected sealed override RouteHandlerBuilder? ConfigureDefaults(
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup)
