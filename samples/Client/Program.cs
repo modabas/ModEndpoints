@@ -47,7 +47,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
 
   //resolve service channel from DI
   var channel = provider.GetRequiredService<IServiceChannel>();
-  //send request over channel to remote service
+  //send request over channel to remote ServiceResultEndpoint
   var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(new ListStoresRequest(), default);
 
   if (listResult.IsOk)
@@ -56,7 +56,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     var id = listResult.Value.Stores.FirstOrDefault()?.Id;
     if (id is not null)
     {
-      //send request over channel to remote service
+      //send request over channel to remote ServiceResultEndpoint
       var getResult = await channel.SendAsync<GetStoreByIdRequest, GetStoreByIdResponse>(new GetStoreByIdRequest(Id: id.Value), default);
       if (getResult.IsOk)
       {
