@@ -4,13 +4,13 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-WebResultEndpoints and BusinessResultEndpoints organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box.
+[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box.
 
-# ModEndpoints.Core
+There is also [MinimalEndpoints](#minimalendpoint), which is the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Does not come integrated with a result pattern like endpoints in ModEndpoints project and is implemented in [ModEndpoints.Core](https://www.nuget.org/packages/ModEndpoints.Core/) package.
 
-MinimalEndpoints is the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Does not come integrated with a result pattern like endpoints in ModEndpoints project.
+To make consuming a ServiceEndpoint easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in [ModEndpoints.RemoteServices](https://www.nuget.org/packages/ModEndpoints.RemoteServices) package, and interfaces required for ServiceEndpoint request models are in [ModEndpoints.RemoteServices.Core](https://www.nuget.org/packages/ModEndpoints.RemoteServices.Core) package.
 
-Also contains core classes for ModEndpoints project.
+[ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates various kinds of endpoint implementations and configurations. [Client](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) project is a sample ServiceEndpoint consumer.
 
 ## Introduction
 
@@ -280,9 +280,7 @@ See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_
 
 ## Endpoint Types
 
-WebResultEndpoint and BusinessResultEndpoint, the two abstract endpoint bases, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults).
-
-These two endpoint types differ only in converting these business results into HTTP responses before sending response to client.
+WebResultEndpoint, BusinessResultEndpoint and ServiceEndpoint, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults). But they differ in converting these business results into HTTP responses before sending response to client.
 
 MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minimal Api. Its 'HandleAsync' method support the following types of return values:
 
