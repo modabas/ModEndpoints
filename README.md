@@ -4,11 +4,11 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box.
+[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in ModEndpoints package.
 
-There is also [MinimalEndpoints](#minimalendpoint), which is the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Does not come integrated with a result pattern like endpoints in ModEndpoints project and is implemented in [ModEndpoints.Core](https://www.nuget.org/packages/ModEndpoints.Core/) package.
+There is also [MinimalEndpoints](#minimalendpoint), which is the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Does not come integrated with a result pattern like endpoints in ModEndpoints project and is implemented in ModEndpoints.Core package.
 
-To make consuming a ServiceEndpoint easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in [ModEndpoints.RemoteServices](https://www.nuget.org/packages/ModEndpoints.RemoteServices) package, and interfaces required for ServiceEndpoint request models are in [ModEndpoints.RemoteServices.Core](https://www.nuget.org/packages/ModEndpoints.RemoteServices.Core) package.
+To make consuming a ServiceEndpoint easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in ModEndpoints.RemoteServices package, and interfaces required for ServiceEndpoint request models are in ModEndpoints.RemoteServices.Core package.
 
 [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates various kinds of endpoint implementations and configurations. [Client](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) project is a sample ServiceEndpoint consumer.
 
