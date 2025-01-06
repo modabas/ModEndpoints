@@ -6,15 +6,13 @@
 
 [WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in ModEndpoints package.
 
-There is also [MinimalEndpoints](#minimalendpoint), which is the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Does not come integrated with a result pattern like endpoints in ModEndpoints project and is implemented in ModEndpoints.Core package.
+[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. They are not integrated with a result pattern like endpoints in ModEndpoints project and reside in ModEndpoints.Core package.
 
 To make consuming a ServiceEndpoint easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in ModEndpoints.RemoteServices package, and interfaces required for ServiceEndpoint request models are in ModEndpoints.RemoteServices.Core package.
 
 [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates various kinds of endpoint implementations and configurations. [Client](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) project is a sample ServiceEndpoint consumer.
 
-## Introduction
-
-The WebResultEndpoint and BusinessResultEndpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. It extends the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
+All endpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. They extend the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
 
 ## Key Features
 
@@ -31,15 +29,17 @@ The WebResultEndpoint and BusinessResultEndpoint abstractions are a structured a
  
 ## Workflow
 
-An endpoint must implement two virtual methods: Configure and HandleAsync.
+An endpoint must implement two virtual methods: Configure and HandleAsync. A ServiceEndpoint has a default implementation for Configure method, which can be overridden, so only has to implement HandleAsync.
 
 ### Configuration:
 
-The 'Configure' method is called at application startup to define routes and associate them with handler methods (MapGet, MapPost, etc.).
+The 'Configure' method is called at application startup to define routes and associate them with handler methods (MapGet, MapPost, etc.). Minimal Api RouteHandlerBuilders returned from these methods can be used to further customize endpoints. 
+
+ServiceEndpoints are always mapped as Post methods under a pattern determined by resolved services, but have a GetRouteHandlerBuilder method to be used in Configure override to further configure them.
 
 ### Request Handling:
 
-The request is processed in 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults). This business result is handled differently for each endpoint type before being sent to client.
+The request is processed in 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults) or in case of MinimalEndpoints, return a Minimal Apis IResult. This business result is handled differently for each endpoint type before being sent to client.
 
 ## Quickstart
 
