@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.Core;
-using ModEndpoints.RemoteServices;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
 using ModResults.FluentValidation;

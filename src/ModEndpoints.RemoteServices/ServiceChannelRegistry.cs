@@ -6,7 +6,7 @@ namespace ModEndpoints.RemoteServices;
 public class ServiceChannelRegistry
 {
   private readonly ConcurrentDictionary<Type, string> _registry;
-  
+
   //Intended to be used only during application startup DI registrations
   private readonly List<string> _httpClientList;
 
