@@ -3,6 +3,7 @@
 namespace ModEndpoints.RemoteServices;
 internal class DefaultClientName
 {
+  private const string InvalidRequestType = "Request type should not be generic type parameter.";
   public static string Resolve(IServiceRequestMarker request)
   {
     var requestType = request.GetType();
@@ -21,7 +22,7 @@ internal class DefaultClientName
     var requestName = requestType.AssemblyQualifiedName;
     if (string.IsNullOrWhiteSpace(requestName))
     {
-      throw new ArgumentException("Request type should not be generic.", nameof(requestType));
+      throw new ArgumentException(InvalidRequestType, nameof(requestType));
     }
     return $"{requestName}.Client";
   }

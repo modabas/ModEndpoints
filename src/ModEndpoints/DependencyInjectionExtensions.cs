@@ -12,13 +12,17 @@ public static class DependencyInjectionExtensions
     this IServiceCollection services,
     Assembly assembly)
   {
+    //WebResultEndpoint components
     services.TryAddKeyedSingleton<IResultToResponseMapper, DefaultResultToResponseMapper>(
       WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
     services.TryAddScoped<ILocationStore, DefaultLocationStore>();
     services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
-    services.TryAddKeyedTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
+
+    //ServiceEndpoint components
+    services.TryAddKeyedSingleton<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
       ServiceEndpointDefinitions.DefaultUriResolverName);
     services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
+
     services.AddHttpContextAccessor();
     return services.AddModEndpointsFromAssemblyCore(assembly);
   }

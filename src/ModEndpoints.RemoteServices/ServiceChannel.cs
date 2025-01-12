@@ -12,6 +12,8 @@ public class ServiceChannel(
   IServiceProvider serviceProvider)
   : IServiceChannel
 {
+  private const string NoChannelRegistrationFound = "No channel registration found for request type {0}.";
+
   public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
     TRequest req,
     CancellationToken ct,
@@ -35,7 +37,7 @@ public class ServiceChannel(
         }
         if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
         {
-          return Result<TResponse>.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
+          return Result<TResponse>.CriticalError(string.Format(NoChannelRegistrationFound, typeof(TRequest)));
         }
         using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
         {
@@ -77,7 +79,7 @@ public class ServiceChannel(
         }
         if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
         {
-          return Result.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
+          return Result.CriticalError(string.Format(NoChannelRegistrationFound, typeof(TRequest)));
         }
         using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
         {
