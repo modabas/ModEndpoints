@@ -6,6 +6,11 @@ using ModEndpoints.RemoteServices.Core;
 namespace ModEndpoints.RemoteServices;
 public static class DependencyInjectionExtensions
 {
+  private const string ClientAlreadyExists = "A client with name {0} already exists.";
+  private const string ClientDoesNotExist = "A client with name {0} does not exist.";
+  private const string ChannelAlreadyRegistered = "A channel for request type {0} is already registered.";
+  private const string ChannelCannotBeRegistered = "Channel couldn't be registered for request type {0} and client name {1}.";
+
   public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
     string baseAddress,
@@ -65,7 +70,7 @@ public static class DependencyInjectionExtensions
   {
     if (ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A client with name {clientName} already exists.");
+      throw new InvalidOperationException(string.Format(ClientAlreadyExists, clientName));
     }
 
     return services.AddRemoteServiceWithNewClientInternal(
@@ -82,7 +87,7 @@ public static class DependencyInjectionExtensions
   {
     if (!ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A client with name {clientName} does not exist.");
+      throw new InvalidOperationException(string.Format(ClientDoesNotExist, clientName));
     }
     return services.AddRemoteServiceToExistingClientInternal(typeof(TRequest), clientName);
   }
@@ -97,7 +102,7 @@ public static class DependencyInjectionExtensions
   {
     if (ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A client with name {clientName} already exists.");
+      throw new InvalidOperationException(string.Format(ClientAlreadyExists, clientName));
     }
     var requestTypes = fromAssembly
         .DefinedTypes
@@ -131,7 +136,7 @@ public static class DependencyInjectionExtensions
   {
     if (!ServiceChannelRegistry.Instance.DoesClientExist(clientName))
     {
-      throw new InvalidOperationException($"A client with name {clientName} does not exist.");
+      throw new InvalidOperationException(string.Format(ClientDoesNotExist, clientName));
     }
     var requestTypes = fromAssembly
         .DefinedTypes
@@ -161,7 +166,7 @@ public static class DependencyInjectionExtensions
   {
     if (ServiceChannelRegistry.Instance.IsRequestRegistered(requestType))
     {
-      throw new InvalidOperationException($"A channel for request type {requestType} is already registered.");
+      throw new InvalidOperationException(string.Format(ChannelAlreadyRegistered, requestType));
     }
     services.AddRemoteServicesCore();
     services.AddClientInternal(
@@ -170,7 +175,7 @@ public static class DependencyInjectionExtensions
       configureClientBuilder);
     if (!ServiceChannelRegistry.Instance.RegisterRequest(requestType, clientName))
     {
-      throw new InvalidOperationException($"Channel couldn't be registered for request type {requestType} and client name {clientName}.");
+      throw new InvalidOperationException(string.Format(ChannelCannotBeRegistered, requestType, clientName));
     }
     return services;
   }
@@ -182,11 +187,11 @@ public static class DependencyInjectionExtensions
   {
     if (ServiceChannelRegistry.Instance.IsRequestRegistered(requestType))
     {
-      throw new InvalidOperationException($"A channel for request type {requestType} is already registered.");
+      throw new InvalidOperationException(string.Format(ChannelAlreadyRegistered, requestType));
     }
     if (!ServiceChannelRegistry.Instance.RegisterRequest(requestType, clientName))
     {
-      throw new InvalidOperationException($"Channel couldn't be registered for request type {requestType} and client name {clientName}.");
+      throw new InvalidOperationException(string.Format(ChannelCannotBeRegistered, requestType, clientName));
     }
     return services;
   }
@@ -207,7 +212,8 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddRemoteServicesCore(
     this IServiceCollection services)
   {
-    services.TryAddTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>();
+    services.TryAddKeyedSingleton<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
+      ServiceEndpointDefinitions.DefaultUriResolverName);
     services.TryAddTransient<IServiceChannel, ServiceChannel>();
     return services;
   }

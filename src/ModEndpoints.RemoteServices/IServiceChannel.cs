@@ -11,7 +11,8 @@ public interface IServiceChannel
     CancellationToken ct,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
-    Action<HttpRequestHeaders>? configureRequestHeaders = null)
+    Action<HttpRequestHeaders>? configureRequestHeaders = null,
+    string? uriResolverName = null)
     where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull;
   Task<Result> SendAsync<TRequest>(
@@ -19,6 +20,7 @@ public interface IServiceChannel
     CancellationToken ct,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
-    Action<HttpRequestHeaders>? configureRequestHeaders = null)
+    Action<HttpRequestHeaders>? configureRequestHeaders = null,
+    string? uriResolverName = null)
     where TRequest : IServiceRequest;
 }

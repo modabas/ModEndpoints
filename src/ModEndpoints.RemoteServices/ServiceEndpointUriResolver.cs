@@ -4,6 +4,7 @@ using ModResults;
 namespace ModEndpoints.RemoteServices;
 public class ServiceEndpointUriResolver : IServiceEndpointUriResolver
 {
+  private const string CannotResolveServiceEndpointUri = "Cannot resolve request uri for service endpoint.";
   public Result<string> Resolve(IServiceRequestMarker req)
   {
     var requestType = req.GetType();
@@ -21,7 +22,7 @@ public class ServiceEndpointUriResolver : IServiceEndpointUriResolver
     var requestName = requestType.FullName;
     if (string.IsNullOrWhiteSpace(requestName))
     {
-      return Result<string>.CriticalError("Cannot resolve request uri for service endpoint.");
+      return Result<string>.CriticalError(CannotResolveServiceEndpointUri);
     }
     return $"{requestName}.Endpoint";
   }

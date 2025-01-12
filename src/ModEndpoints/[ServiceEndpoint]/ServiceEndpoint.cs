@@ -29,7 +29,8 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    var uriResolver = serviceProvider.GetRequiredService<IServiceEndpointUriResolver>();
+    var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
+    var uriResolver = uriResolverProvider.GetResolver(serviceProvider, this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
     {
@@ -57,7 +58,8 @@ public abstract class ServiceEndpoint<TRequest>
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    var uriResolver = serviceProvider.GetRequiredService<IServiceEndpointUriResolver>();
+    var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
+    var uriResolver = uriResolverProvider.GetResolver(serviceProvider, this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
     {
