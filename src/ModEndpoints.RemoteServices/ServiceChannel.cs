@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
@@ -8,7 +9,7 @@ namespace ModEndpoints.RemoteServices;
 
 public class ServiceChannel(
   IHttpClientFactory clientFactory,
-  IServiceEndpointUriResolver uriResolver)
+  IServiceProvider serviceProvider)
   : IServiceChannel
 {
   public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
@@ -16,29 +17,35 @@ public class ServiceChannel(
     CancellationToken ct,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
-    Action<HttpRequestHeaders>? configureRequestHeaders = null)
+    Action<HttpRequestHeaders>? configureRequestHeaders = null,
+    string? uriResolverName = null)
     where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull
   {
     try
     {
-      var requestUriResult = uriResolver.Resolve(req);
-      if (requestUriResult.IsFailed)
+      using (var scope = serviceProvider.CreateScope())
       {
-        return Result<TResponse>.Fail(requestUriResult);
-      }
-      if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
-      {
-        return Result<TResponse>.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
-      }
-      using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
-      {
-        httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
-        configureRequestHeaders?.Invoke(httpReq.Headers);
-        var client = clientFactory.CreateClient(clientName);
-        using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+        var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
+          uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+        var requestUriResult = uriResolver.Resolve(req);
+        if (requestUriResult.IsFailed)
         {
-          return await httpResponse.DeserializeResultAsync<TResponse>(ct);
+          return Result<TResponse>.Fail(requestUriResult);
+        }
+        if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
+        {
+          return Result<TResponse>.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
+        }
+        using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
+        {
+          httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
+          configureRequestHeaders?.Invoke(httpReq.Headers);
+          var client = clientFactory.CreateClient(clientName);
+          using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+          {
+            return await httpResponse.DeserializeResultAsync<TResponse>(ct);
+          }
         }
       }
     }
@@ -53,28 +60,34 @@ public class ServiceChannel(
     CancellationToken ct,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
-    Action<HttpRequestHeaders>? configureRequestHeaders = null)
+    Action<HttpRequestHeaders>? configureRequestHeaders = null,
+    string? uriResolverName = null)
     where TRequest : IServiceRequest
   {
     try
     {
-      var requestUriResult = uriResolver.Resolve(req);
-      if (requestUriResult.IsFailed)
+      using (var scope = serviceProvider.CreateScope())
       {
-        return Result.Fail(requestUriResult);
-      }
-      if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
-      {
-        return Result.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
-      }
-      using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
-      {
-        httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
-        configureRequestHeaders?.Invoke(httpReq.Headers);
-        var client = clientFactory.CreateClient(clientName);
-        using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+        var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
+          uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+        var requestUriResult = uriResolver.Resolve(req);
+        if (requestUriResult.IsFailed)
         {
-          return await httpResponse.DeserializeResultAsync(ct);
+          return Result.Fail(requestUriResult);
+        }
+        if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
+        {
+          return Result.CriticalError($"No channel registration found for request type {typeof(TRequest)}");
+        }
+        using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
+        {
+          httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
+          configureRequestHeaders?.Invoke(httpReq.Headers);
+          var client = clientFactory.CreateClient(clientName);
+          using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+          {
+            return await httpResponse.DeserializeResultAsync(ct);
+          }
         }
       }
     }

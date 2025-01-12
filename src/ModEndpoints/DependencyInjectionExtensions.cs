@@ -16,7 +16,9 @@ public static class DependencyInjectionExtensions
       WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
     services.TryAddScoped<ILocationStore, DefaultLocationStore>();
     services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
-    services.TryAddTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>();
+    services.TryAddKeyedTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
+      ServiceEndpointDefinitions.DefaultUriResolverName);
+    services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
     services.AddHttpContextAccessor();
     return services.AddModEndpointsFromAssemblyCore(assembly);
   }

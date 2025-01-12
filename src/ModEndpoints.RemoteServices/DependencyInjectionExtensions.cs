@@ -207,7 +207,8 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddRemoteServicesCore(
     this IServiceCollection services)
   {
-    services.TryAddTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>();
+    services.TryAddKeyedTransient<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
+      ServiceEndpointDefinitions.DefaultUriResolverName);
     services.TryAddTransient<IServiceChannel, ServiceChannel>();
     return services;
   }
