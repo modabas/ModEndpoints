@@ -19,7 +19,7 @@ internal class GetStoreByIdRequestValidator : AbstractValidator<GetStoreByIdRequ
   }
 }
 
-[MapToGroup(typeof(StoresRouteGroup))]
+[MapToGroup<StoresRouteGroup>()]
 internal class GetStoreById(ServiceDbContext db)
   : BusinessResultEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
 {

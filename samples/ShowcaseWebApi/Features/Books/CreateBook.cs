@@ -24,7 +24,7 @@ internal class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
   }
 }
 
-[MapToGroup(typeof(BooksV1RouteGroup))]
+[MapToGroup<BooksV1RouteGroup>()]
 internal class CreateBook(ServiceDbContext db, ILocationStore location)
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {

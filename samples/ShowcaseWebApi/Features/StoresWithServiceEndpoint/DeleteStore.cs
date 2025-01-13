@@ -16,7 +16,7 @@ internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreReques
   }
 }
 
-[MapToGroup(typeof(StoresWithServiceEndpointRouteGroup))]
+[MapToGroup<StoresWithServiceEndpointRouteGroup>()]
 internal class DeleteStore(ServiceDbContext db)
   : ServiceEndpoint<DeleteStoreRequest>
 {

@@ -18,7 +18,7 @@ internal class UpdateStoreRequestValidator : AbstractValidator<UpdateStoreReques
   }
 }
 
-[MapToGroup(typeof(StoresWithServiceEndpointRouteGroup))]
+[MapToGroup<StoresWithServiceEndpointRouteGroup>()]
 internal class UpdateStore(ServiceDbContext db)
   : ServiceEndpoint<UpdateStoreRequest, UpdateStoreResponse>
 {

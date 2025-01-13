@@ -20,7 +20,7 @@ internal class UploadBookRequestValidator : AbstractValidator<UploadBookRequest>
   }
 }
 
-[MapToGroup(typeof(BooksV2RouteGroup))]
+[MapToGroup<BooksV2RouteGroup>()]
 internal class UploadBook
   : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
 {

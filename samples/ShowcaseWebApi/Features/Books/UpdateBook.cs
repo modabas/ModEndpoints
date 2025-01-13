@@ -25,7 +25,7 @@ internal class UpdateBookRequestValidator : AbstractValidator<UpdateBookRequest>
   }
 }
 
-[MapToGroup(typeof(BooksV1RouteGroup))]
+[MapToGroup<BooksV1RouteGroup>()]
 internal class UpdateBook(ServiceDbContext db)
   : WebResultEndpoint<UpdateBookRequest, UpdateBookResponse>
 {

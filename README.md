@@ -236,7 +236,7 @@ internal class FeaturesRouteGroup : RouteGroupConfigurator
   }
 }
 
-[MapToGroup(typeof(FeaturesRouteGroup))]
+[MapToGroup<FeaturesRouteGroup>()]
 internal class BooksV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
@@ -249,7 +249,7 @@ internal class BooksV1RouteGroup : RouteGroupConfigurator
   }
 }
 
-[MapToGroup(typeof(BooksV1RouteGroup))]
+[MapToGroup<BooksV1RouteGroup>()]
 internal class CreateBook(ServiceDbContext db, ILocationStore location)
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {

@@ -22,6 +22,9 @@ public static class HttpResponseMessageExtensions
   private const string ResponseNotSuccessfulWithReasonErrorMessage =
     "Http response status code does not indicate success: {0} ({1}).";
 
+  private const string InstanceFactMessage =
+    "Instance: {0} {1}";
+
   public static async Task<Result<T>> DeserializeResultAsync<T>(
     this HttpResponseMessage response,
     CancellationToken ct,
@@ -35,10 +38,18 @@ public static class HttpResponseMessageExtensions
           string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
           (int)response.StatusCode,
           response.ReasonPhrase))
-        .WithFact($"Instance: {response.RequestMessage?.Method} {response.RequestMessage?.RequestUri}");
+        .WithFact(string.Format(
+          InstanceFactMessage,
+          response.RequestMessage?.Method,
+          response.RequestMessage?.RequestUri));
     }
     var resultObject = await response.DeserializeResultInternalAsync<Result<T>>(jsonSerializerOptions, ct);
-    return resultObject ?? Result<T>.Error(DeserializationErrorMessage);
+    return resultObject ?? Result<T>
+      .CriticalError(DeserializationErrorMessage)
+      .WithFact(string.Format(
+        InstanceFactMessage,
+        response.RequestMessage?.Method,
+        response.RequestMessage?.RequestUri));
   }
 
   public static async Task<Result> DeserializeResultAsync(
@@ -53,10 +64,18 @@ public static class HttpResponseMessageExtensions
           string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
           (int)response.StatusCode,
           response.ReasonPhrase))
-        .WithFact($"Instance: {response.RequestMessage?.Method} {response.RequestMessage?.RequestUri}");
+        .WithFact(string.Format(
+          InstanceFactMessage,
+          response.RequestMessage?.Method,
+          response.RequestMessage?.RequestUri));
     }
     var resultObject = await response.DeserializeResultInternalAsync<Result>(jsonSerializerOptions, ct);
-    return resultObject ?? Result.Error(DeserializationErrorMessage);
+    return resultObject ?? Result
+      .CriticalError(DeserializationErrorMessage)
+      .WithFact(string.Format(
+        InstanceFactMessage,
+        response.RequestMessage?.Method,
+        response.RequestMessage?.RequestUri));
   }
 
   private static async Task<TResult?> DeserializeResultInternalAsync<TResult>(
