@@ -10,7 +10,7 @@ namespace ShowcaseWebApi.Features.Stores;
 public record ListStoresResponse(List<ListStoresResponseItem> Stores);
 public record ListStoresResponseItem(Guid Id, string Name);
 
-[RouteGroupMember(typeof(StoresRouteGroup))]
+[MapToGroup(typeof(StoresRouteGroup))]
 internal class ListStores(ServiceDbContext db)
   : BusinessResultEndpointWithEmptyRequest<ListStoresResponse>
 {

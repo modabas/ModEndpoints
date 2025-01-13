@@ -16,7 +16,7 @@ internal class CreateStoreRequestValidator : AbstractValidator<CreateStoreReques
   }
 }
 
-[RouteGroupMember(typeof(StoresWithServiceEndpointRouteGroup))]
+[MapToGroup(typeof(StoresWithServiceEndpointRouteGroup))]
 internal class CreateStore(ServiceDbContext db)
   : ServiceEndpoint<CreateStoreRequest, CreateStoreResponse>
 {

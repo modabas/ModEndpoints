@@ -2,7 +2,7 @@
 
 namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
-[RouteGroupMember(typeof(FeaturesRouteGroup))]
+[MapToGroup(typeof(FeaturesRouteGroup))]
 internal class StoresWithServiceEndpointRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(

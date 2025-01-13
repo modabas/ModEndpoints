@@ -120,4 +120,21 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
       : _builder.MapPatch(pattern, ExecuteDelegate);
     return _handlerBuilder;
   }
+
+  /// <summary>
+  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
+  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches requests with
+  /// specified HTTP methods for the specified pattern.
+  /// </summary>
+  /// <param name="pattern"></param>
+  /// <param name="httpMethods"></param>
+  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
+  /// <exception cref="InvalidOperationException"></exception>
+  protected RouteHandlerBuilder MapMethods(string pattern, IEnumerable<string> httpMethods)
+  {
+    _handlerBuilder = _builder is null
+      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
+      : _builder.MapMethods(pattern, httpMethods, ExecuteDelegate);
+    return _handlerBuilder;
+  }
 }

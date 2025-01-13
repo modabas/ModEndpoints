@@ -8,7 +8,7 @@ using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
 namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 
-[RouteGroupMember(typeof(StoresWithServiceEndpointRouteGroup))]
+[MapToGroup(typeof(StoresWithServiceEndpointRouteGroup))]
 internal class ListStores(ServiceDbContext db)
   : ServiceEndpoint<ListStoresRequest, ListStoresResponse>
 {

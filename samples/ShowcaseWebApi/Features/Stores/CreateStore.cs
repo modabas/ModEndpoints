@@ -20,7 +20,7 @@ internal class CreateStoreRequestValidator : AbstractValidator<CreateStoreReques
   }
 }
 
-[RouteGroupMember(typeof(StoresRouteGroup))]
+[MapToGroup(typeof(StoresRouteGroup))]
 internal class CreateStore(ServiceDbContext db)
   : BusinessResultEndpoint<CreateStoreRequest, CreateStoreResponse>
 {

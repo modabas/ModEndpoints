@@ -10,7 +10,7 @@ namespace ShowcaseWebApi.Features.Books;
 public record ListBooksResponse(List<ListBooksResponseItem> Books);
 public record ListBooksResponseItem(Guid Id, string Title, string Author, decimal Price);
 
-[RouteGroupMember(typeof(BooksV1RouteGroup))]
+[MapToGroup(typeof(BooksV1RouteGroup))]
 internal class ListBooks(ServiceDbContext db)
   : WebResultEndpointWithEmptyRequest<ListBooksResponse>
 {

@@ -29,7 +29,10 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
     IRouteGroupConfigurator? parentRouteGroup)
   {
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
-    var uriResolver = uriResolverProvider.GetResolver(serviceProvider, this);
+    var uriResolver = uriResolverProvider.GetResolver(
+      serviceProvider,
+      parentRouteGroup,
+      this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
     {
@@ -58,7 +61,10 @@ public abstract class ServiceEndpoint<TRequest>
     IRouteGroupConfigurator? parentRouteGroup)
   {
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
-    var uriResolver = uriResolverProvider.GetResolver(serviceProvider, this);
+    var uriResolver = uriResolverProvider.GetResolver(
+      serviceProvider,
+      parentRouteGroup,
+      this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
     {
