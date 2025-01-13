@@ -4,19 +4,12 @@
 /// 
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = false)]
-public class MapToGroupAttribute : Attribute
+public class MapToGroupAttribute<TGroup> : Attribute
+  where TGroup : IRouteGroupConfigurator, new()
 {
   public Type GroupType { get; init; }
-  public MapToGroupAttribute(Type GroupType)
+  public MapToGroupAttribute()
   {
-    if (!GroupType.IsAssignableTo(typeof(IRouteGroupConfigurator)) ||
-      GroupType.IsAbstract ||
-      GroupType.IsInterface)
-    {
-      throw new ArgumentException(
-        Constants.ParentRouteGroupInvalidMessage,
-        nameof(GroupType));
-    }
-    this.GroupType = GroupType;
+    this.GroupType = typeof(TGroup);
   }
 }
