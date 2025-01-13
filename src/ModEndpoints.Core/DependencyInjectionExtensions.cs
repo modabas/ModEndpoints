@@ -130,9 +130,9 @@ public static class DependencyInjectionExtensions
       //Items that don't have a membership to any route group or
       //items that have a membership to root route group (items at root)
       Func<Type, bool> typeIsNotMemberOfAnyRouteGroupPredicate =
-        x => !x.GetCustomAttributes<RouteGroupMemberAttribute>().Any() ||
-              x.GetCustomAttributes<RouteGroupMemberAttribute>().Any(
-                a => a.ParentGroupType == typeof(RootRouteGroup));
+        x => !x.GetCustomAttributes<MapToGroupAttribute>().Any() ||
+              x.GetCustomAttributes<MapToGroupAttribute>().Any(
+                a => a.GroupType == typeof(RootRouteGroup));
 
       _ = MapInternal(
         scope.ServiceProvider,
@@ -227,8 +227,8 @@ public static class DependencyInjectionExtensions
   {
     //Items having membership to this route group
     Func<Type, bool> typeIsMemberOfCurrentGroupPredicate =
-      x => x.GetCustomAttributes<RouteGroupMemberAttribute>().Any(
-        a => a.ParentGroupType == routeGroup.GetType());
+      x => x.GetCustomAttributes<MapToGroupAttribute>().Any(
+        a => a.GroupType == routeGroup.GetType());
 
     //Pass this group as current route group
     _ = MapInternal(

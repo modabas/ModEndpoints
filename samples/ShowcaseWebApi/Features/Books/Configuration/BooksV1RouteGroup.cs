@@ -2,7 +2,7 @@
 
 namespace ShowcaseWebApi.Features.Books.Configuration;
 
-[RouteGroupMember(typeof(FeaturesRouteGroup))]
+[MapToGroup(typeof(FeaturesRouteGroup))]
 internal class BooksV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(

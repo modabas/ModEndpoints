@@ -20,7 +20,7 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
   }
 }
 
-[RouteGroupMember(typeof(BooksV1RouteGroup))]
+[MapToGroup(typeof(BooksV1RouteGroup))]
 internal class GetBookById(ServiceDbContext db)
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {
