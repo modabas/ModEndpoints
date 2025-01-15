@@ -148,7 +148,7 @@ internal class ListBooks(ServiceDbContext db)
 
 ### Parameter binding
 
-Request model defined for an endpoint is bound with [AsParameters] attribute. Any field under request model can be bound from route, query, body, form, etc. with corresponding [From...] attribute (see [Minimal Apis Parameter Binding](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-8.0) for more information).
+Request model defined for an endpoint is bound with [AsParameters] attribute (except for ServiceEndpoints). Any field under request model can be bound from route, query, body, form, etc. with corresponding [From...] attribute (see [Minimal Apis Parameter Binding](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-8.0) for more information).
 
 The following sample demonstrates route and body parameter binding.
 
@@ -383,14 +383,15 @@ This is a very specialized endpoint suitable for internal services. A ServiceEnd
 - ServiceEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 
 A ServiceEndpoint has following special traits and constraints:
-- A ServiceEndpoint is always registered with HttpMethod.Post method, and its bound pattern is determined accourding to its request type.
-- A ServiceEndpoint's request must implement either IServiceRequest (for ServiceEndpoint&lt;TRequest&gt;) or IServiceRequest&lt;TResultValue&gt; (for ServiceEndpoint&lt;TRequest, TResultValue&gt;)
+- A ServiceEndpoint is always registered as a POST method, and its bound pattern is determined accourding to its request type.
+- Request model defined for a ServiceEndpoint is bound with [FromBody] attribute.
+- A ServiceEndpoint's request must implement either IServiceRequest (for endpoints implementing ServiceEndpoint&lt;TRequest&gt;) or IServiceRequest&lt;TResultValue&gt; (for endpoints implementing ServiceEndpoint&lt;TRequest, TResultValue&gt;)
 - A ServiceEndpoint's request is specific to that endpoint. Each endpoint must have its unique request type.
 - To utilize the advantages of a ServiceEndpoint over other endpoint types, its request and response types has to be shared with clients and therefore has to be in a seperate class library.
 
 These enable clients to call ServiceEndpoints by a specialized message channel resolved from dependency injection, which has to be registered at client application startup with only service base address and service request type information. No other knowledge about service or client implementation is required.
 
-Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoints) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
+Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
 
 ### ServiceEndpoint clients
 
