@@ -17,6 +17,7 @@ public class ServiceChannel(
   public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
     TRequest req,
     CancellationToken ct,
+    string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
@@ -39,7 +40,9 @@ public class ServiceChannel(
         {
           return Result<TResponse>.CriticalError(string.Format(NoChannelRegistrationFound, typeof(TRequest)));
         }
-        using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
+        using (HttpRequestMessage httpReq = new(
+          HttpMethod.Post,
+          ServiceChannel.Combine(endpointUriPrefix, requestUriResult.Value)))
         {
           httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
           configureRequestHeaders?.Invoke(httpReq.Headers);
@@ -60,6 +63,7 @@ public class ServiceChannel(
   public async Task<Result> SendAsync<TRequest>(
     TRequest req,
     CancellationToken ct,
+    string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
@@ -81,7 +85,9 @@ public class ServiceChannel(
         {
           return Result.CriticalError(string.Format(NoChannelRegistrationFound, typeof(TRequest)));
         }
-        using (HttpRequestMessage httpReq = new(HttpMethod.Post, requestUriResult.Value))
+        using (HttpRequestMessage httpReq = new(
+          HttpMethod.Post,
+          ServiceChannel.Combine(endpointUriPrefix, requestUriResult.Value)))
         {
           httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
           configureRequestHeaders?.Invoke(httpReq.Headers);
@@ -97,5 +103,17 @@ public class ServiceChannel(
     {
       return ex;
     }
+  }
+
+  private static string Combine(string? endpointUriPrefix, string endpointUri)
+  {
+    if (string.IsNullOrWhiteSpace(endpointUriPrefix))
+    {
+      return endpointUri;
+    }
+    return string.Format(
+      "{0}/{1}",
+      endpointUriPrefix.TrimEnd('/'),
+      endpointUri.TrimStart('/'));
   }
 }

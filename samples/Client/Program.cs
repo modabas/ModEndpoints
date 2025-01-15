@@ -9,7 +9,7 @@ using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-var baseAddress = "https://localhost:7012/api/v1/storesWithServiceEndpoint/";
+var baseAddress = "https://localhost:7012/api/";
 var clientName = "ShowcaseApi.Client";
 //builder.Services.AddRemoteServiceWithNewClient<ListStoresRequest>(clientName,
 //  (sp, client) =>
@@ -48,7 +48,10 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   //resolve service channel from DI
   var channel = provider.GetRequiredService<IServiceChannel>();
   //send request over channel to remote ServiceResultEndpoint
-  var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(new ListStoresRequest(), default);
+  var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(
+    new ListStoresRequest(),
+    default,
+    endpointUriPrefix: "v1/storesWithServiceEndpoint/");
 
   if (listResult.IsOk)
   {
@@ -57,7 +60,10 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     if (id is not null)
     {
       //send request over channel to remote ServiceResultEndpoint
-      var getResult = await channel.SendAsync<GetStoreByIdRequest, GetStoreByIdResponse>(new GetStoreByIdRequest(Id: id.Value), default);
+      var getResult = await channel.SendAsync<GetStoreByIdRequest, GetStoreByIdResponse>(
+        new GetStoreByIdRequest(Id: id.Value),
+        default,
+        endpointUriPrefix: "v1/storesWithServiceEndpoint/");
       if (getResult.IsOk)
       {
         Console.WriteLine(getResult.Value);
