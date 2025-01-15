@@ -9,6 +9,7 @@ public interface IServiceChannel
   Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
     TRequest req,
     CancellationToken ct,
+    string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
@@ -18,6 +19,7 @@ public interface IServiceChannel
   Task<Result> SendAsync<TRequest>(
     TRequest req,
     CancellationToken ct,
+    string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
