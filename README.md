@@ -108,7 +108,7 @@ internal class HelloWorld
 
 ### Integration with result pattern: A GET WebResultEndpoint with empty request
 
-A [WebResultEndpoint](#webresultendpoint) can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, while a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
+A [WebResultEndpoint](#webresultendpoint) can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, but a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
 
 This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal Api IResult based response by WebResultEndpoint before being sent to client.
 
