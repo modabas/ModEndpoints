@@ -4,11 +4,11 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
+[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Their handler methods may return Minimal Api IResult based, string or T (any other type) response. MinimalEnpoints are implemented in ModEndpoints.Core package.
+
 [WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in ModEndpoints package.
 
-[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. They are not integrated with a result pattern like endpoints in ModEndpoints project and reside in ModEndpoints.Core package.
-
-To make consuming a ServiceEndpoint easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in ModEndpoints.RemoteServices package, and interfaces required for ServiceEndpoint request models are in ModEndpoints.RemoteServices.Core package.
+To make consuming a [ServiceEndpoint](#serviceendpoint) easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in ModEndpoints.RemoteServices package, and interfaces required for ServiceEndpoint request models are in ModEndpoints.RemoteServices.Core package.
 
 [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates various kinds of endpoint implementations and configurations. [Client](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) project is a sample ServiceEndpoint consumer.
 
@@ -23,7 +23,6 @@ All endpoint abstractions are a structured approach to defining endpoints in ASP
  - Has built-in validation support with [FluentValidation](https://github.com/FluentValidation/FluentValidation). If a validator is registered for request model, request is automatically validated before being handled.
  - Supports constructor dependency injection in endpoint implementations.
  - Enforces response model type safety in request handlers.
- - Abstracts the logic for converting business results into HTTP responses.
 
  *WebResultEndpoint abstracts the logic for converting business results into HTTP responses.
  
@@ -67,13 +66,53 @@ app.MapModEndpoints();
 app.Run();
 ```
 
-### A basic sample: A GET endpoint with empty request
+### Write a Minimal Api in REPR format
+
+A [MinimalEndpoint](#minimalendpoint) is the most straighforward way to define a Minimal Api in REPR format.
 
 Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint like a regular Minimal Api.
 
-Have a look at [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project for various kinds of endpoint implementations and configurations.
+The request is processed in 'HandleAsync' method. Request is passed to handler method as parameter after validation (if a validator is registered for request model). Handler method returns a response model or a string or a Minimal Api IResult based response.
 
-This sample demonstrates a GET endpoint with basic configuration and without any request model binding.
+``` csharp
+public record HelloWorldRequest(string Name);
+
+internal class HelloWorldRequestValidator : AbstractValidator<HelloWorldRequest>
+{
+  public HelloWorldRequestValidator()
+  {
+    RuleFor(x => x.Name)
+      .NotEmpty()
+      .MinimumLength(3)
+      .MaximumLength(50);
+  }
+}
+
+internal class HelloWorld
+  : MinimalEndpoint<HelloWorldRequest, IResult>
+{
+  protected override void Configure(
+    IServiceProvider serviceProvider,
+    IRouteGroupConfigurator? parentRouteGroup)
+  {
+    MapGet("MinimalEndpoints/HelloWorld/{Name}")
+      .Produces<string>();
+  }
+
+  protected override Task<IResult> HandleAsync(HelloWorldRequest req, CancellationToken ct)
+  {
+    return Task.FromResult(Results.Ok($"Hello, {req.Name}."));
+  }
+}
+```
+
+### Integration with result pattern: A GET WebResultEndpoint with empty request
+
+A [WebResultEndpoint](#webresultendpoint) can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, while a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
+
+This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal Api IResult based response by WebResultEndpoint before being sent to client.
+
+Have a look at [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project for various kinds of endpoint implementations and configurations.
 
 ``` csharp
 public record ListBooksResponse(List<ListBooksResponseItem> Books);
