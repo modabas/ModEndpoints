@@ -11,6 +11,15 @@ public static class DependencyInjectionExtensions
   private const string ChannelAlreadyRegistered = "A channel for request type {0} is already registered.";
   private const string ChannelCannotBeRegistered = "Channel couldn't be registered for request type {0} and client name {1}.";
 
+  /// <summary>
+  /// Adds and configures a new client for specified ServiceEndpoint request.
+  /// </summary>
+  /// <typeparam name="TRequest">ServiceEndpoint request type to be processed.</typeparam>
+  /// <param name="services"></param>
+  /// <param name="baseAddress">Base address of Uri of the Internet resource used when sending requests.</param>
+  /// <param name="timeout">Timespan to wait before the request times out.</param>
+  /// <param name="configureClientBuilder">Delegate to further customize <see cref="IHttpClientBuilder"/> for added <see cref="HttpClient"/>.</param>
+  /// <returns></returns>
   public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
     string baseAddress,
@@ -26,6 +35,16 @@ public static class DependencyInjectionExtensions
       configureClientBuilder);
   }
 
+  /// <summary>
+  /// Adds and configures a new client for specified ServiceEndpoint request.
+  /// </summary>
+  /// <typeparam name="TRequest">ServiceEndpoint request type to be processed.</typeparam>
+  /// <param name="services"></param>
+  /// <param name="clientName">The logical name for the client to configure.</param>
+  /// <param name="baseAddress">Base address of Uri of the Internet resource used when sending requests.</param>
+  /// <param name="timeout">Timespan to wait before the request times out.</param>
+  /// <param name="configureClientBuilder">Delegate to further customize <see cref="IHttpClientBuilder"/> for added <see cref="HttpClient"/>.</param>
+  /// <returns></returns>
   public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
     string clientName,
@@ -48,6 +67,14 @@ public static class DependencyInjectionExtensions
       configureClientBuilder);
   }
 
+  /// <summary>
+  /// Adds and configures a new client for specified ServiceEndpoint request.
+  /// </summary>
+  /// <typeparam name="TRequest">ServiceEndpoint request type to be processed.</typeparam>
+  /// <param name="services"></param>
+  /// <param name="configureClient">Delegate that will be used to configure <see cref="HttpClient"/>.</param>
+  /// <param name="configureClientBuilder">Delegate to further customize <see cref="IHttpClientBuilder"/> for added <see cref="HttpClient"/>.</param>
+  /// <returns></returns>
   public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
     Action<IServiceProvider, HttpClient> configureClient,
@@ -61,6 +88,16 @@ public static class DependencyInjectionExtensions
       configureClientBuilder);
   }
 
+  /// <summary>
+  /// Adds and configures a new client for specified ServiceEndpoint request.
+  /// </summary>
+  /// <typeparam name="TRequest">ServiceEndpoint request type to be processed.</typeparam>
+  /// <param name="services"></param>
+  /// <param name="clientName">The logical name for the client to configure.</param>
+  /// <param name="configureClient">Delegate that will be used to configure <see cref="HttpClient"/>.</param>
+  /// <param name="configureClientBuilder">Delegate to further customize <see cref="IHttpClientBuilder"/> for added <see cref="HttpClient"/>.</param>
+  /// <returns></returns>
+  /// <exception cref="InvalidOperationException"></exception>
   public static IServiceCollection AddRemoteServiceWithNewClient<TRequest>(
     this IServiceCollection services,
     string clientName,
@@ -80,6 +117,14 @@ public static class DependencyInjectionExtensions
       configureClientBuilder);
   }
 
+  /// <summary>
+  /// Adds specified ServiceEndpoint request to an already added and configured client.
+  /// </summary>
+  /// <typeparam name="TRequest">ServiceEndpoint request type to be processed.</typeparam>
+  /// <param name="services"></param>
+  /// <param name="clientName">The logical name for the client to configure.</param>
+  /// <returns></returns>
+  /// <exception cref="InvalidOperationException"></exception>
   public static IServiceCollection AddRemoteServiceToExistingClient<TRequest>(
     this IServiceCollection services,
     string clientName)
@@ -92,6 +137,17 @@ public static class DependencyInjectionExtensions
     return services.AddRemoteServiceToExistingClientInternal(typeof(TRequest), clientName);
   }
 
+  /// <summary>
+  /// Adds and configures a new client for ServiceEndpoint requests in specified assembly.
+  /// </summary>
+  /// <param name="services"></param>
+  /// <param name="fromAssembly">Name of the assembly that will be scanned for ServiceEndpoint requests.</param>
+  /// <param name="clientName">The logical name for the client to configure.</param>
+  /// <param name="configureClient">Delegate that will be used to configure <see cref="HttpClient"/>.</param>
+  /// <param name="configureClientBuilder">Delegate to further customize <see cref="IHttpClientBuilder"/> for added <see cref="HttpClient"/>.</param>
+  /// <param name="requestFilterPredicate">A predicate to filter ServiceEndpoint requests found, before being processed.</param>
+  /// <returns></returns>
+  /// <exception cref="InvalidOperationException"></exception>
   public static IServiceCollection AddRemoteServicesWithNewClient(
     this IServiceCollection services,
     Assembly fromAssembly,
@@ -128,6 +184,15 @@ public static class DependencyInjectionExtensions
     return services;
   }
 
+  /// <summary>
+  /// Adds ServiceEndpoint requests in specified assembly to an already added and configured client.
+  /// </summary>
+  /// <param name="services"></param>
+  /// <param name="fromAssembly">Name of the assembly that will be scanned for ServiceEndpoint requests.</param>
+  /// <param name="clientName">The logical name for the client to configure.</param>
+  /// <param name="requestFilterPredicate">A predicate to filter ServiceEndpoint requests found, before being processed.</param>
+  /// <returns></returns>
+  /// <exception cref="InvalidOperationException"></exception>
   public static IServiceCollection AddRemoteServicesToExistingClient(
     this IServiceCollection services,
     Assembly fromAssembly,
