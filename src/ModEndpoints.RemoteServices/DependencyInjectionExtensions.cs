@@ -279,6 +279,8 @@ public static class DependencyInjectionExtensions
   {
     services.TryAddKeyedSingleton<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
       ServiceEndpointDefinitions.DefaultUriResolverName);
+    services.TryAddKeyedTransient<IServiceChannelSerializer, ServiceChannelSerializer>(
+      ServiceEndpointDefinitions.DefaultSerializerName);
     services.TryAddTransient<IServiceChannel, ServiceChannel>();
     return services;
   }

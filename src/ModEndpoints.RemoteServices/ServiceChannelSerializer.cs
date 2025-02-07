@@ -1,18 +1,10 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using ModResults;
+﻿using ModResults;
+using System.Text.Json;
 
 namespace ModEndpoints.RemoteServices;
 
-public static class HttpResponseMessageExtensions
+public class ServiceChannelSerializer : IServiceChannelSerializer
 {
-  private static readonly JsonSerializerOptions _defaultJsonSerializerOptions = new()
-  {
-    PropertyNameCaseInsensitive = true,
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    NumberHandling = JsonNumberHandling.AllowReadingFromString
-  };
-
   private const string DeserializationErrorMessage =
     "Cannot deserialize Result object from http response message.";
 
@@ -25,8 +17,8 @@ public static class HttpResponseMessageExtensions
   private const string InstanceFactMessage =
     "Instance: {0} {1}";
 
-  public static async Task<Result<T>> DeserializeResultAsync<T>(
-    this HttpResponseMessage response,
+  public async Task<Result<T>> DeserializeResultAsync<T>(
+    HttpResponseMessage response,
     CancellationToken ct,
     JsonSerializerOptions? jsonSerializerOptions = null)
     where T : notnull
@@ -43,7 +35,7 @@ public static class HttpResponseMessageExtensions
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await response.DeserializeResultInternalAsync<Result<T>>(jsonSerializerOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result<T>>(response, jsonSerializerOptions, ct);
     return resultObject ?? Result<T>
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -52,8 +44,8 @@ public static class HttpResponseMessageExtensions
         response.RequestMessage?.RequestUri));
   }
 
-  public static async Task<Result> DeserializeResultAsync(
-    this HttpResponseMessage response,
+  public async Task<Result> DeserializeResultAsync(
+    HttpResponseMessage response,
     CancellationToken ct,
     JsonSerializerOptions? jsonSerializerOptions = null)
   {
@@ -69,7 +61,7 @@ public static class HttpResponseMessageExtensions
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await response.DeserializeResultInternalAsync<Result>(jsonSerializerOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result>(response, jsonSerializerOptions, ct);
     return resultObject ?? Result
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -78,8 +70,8 @@ public static class HttpResponseMessageExtensions
         response.RequestMessage?.RequestUri));
   }
 
-  private static async Task<TResult?> DeserializeResultInternalAsync<TResult>(
-    this HttpResponseMessage response,
+  private async Task<TResult?> DeserializeResultInternalAsync<TResult>(
+    HttpResponseMessage response,
     JsonSerializerOptions? jsonSerializerOptions,
     CancellationToken ct)
     where TResult : IModResult
@@ -91,7 +83,7 @@ public static class HttpResponseMessageExtensions
       ct.ThrowIfCancellationRequested();
       return await JsonSerializer.DeserializeAsync<TResult>(
         contentStream,
-        jsonSerializerOptions ?? _defaultJsonSerializerOptions,
+        jsonSerializerOptions ?? ServiceEndpointDefinitions.DefaultJsonSerializerOptions,
         ct);
     }
   }

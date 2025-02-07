@@ -22,6 +22,7 @@ public interface IServiceChannel
   /// <param name="jsonSerializerOptions">Options to control the behavior during serialization.</param>
   /// <param name="configureRequestHeaders">Delegate to configure HTTP request headers.</param>
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
+  /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
   Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
     TRequest req,
@@ -30,7 +31,8 @@ public interface IServiceChannel
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
-    string? uriResolverName = null)
+    string? uriResolverName = null,
+    string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull;
 
@@ -45,6 +47,7 @@ public interface IServiceChannel
   /// <param name="jsonSerializerOptions">Options to control the behavior during serialization.</param>
   /// <param name="configureRequestHeaders">Delegate to configure HTTP request headers.</param>
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
+  /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
   Task<Result> SendAsync<TRequest>(
     TRequest req,
@@ -53,6 +56,7 @@ public interface IServiceChannel
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
-    string? uriResolverName = null)
+    string? uriResolverName = null,
+    string? serializerName = null)
     where TRequest : IServiceRequest;
 }

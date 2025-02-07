@@ -21,7 +21,8 @@ public class ServiceChannel(
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
-    string? uriResolverName = null)
+    string? uriResolverName = null,
+    string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull
   {
@@ -31,6 +32,8 @@ public class ServiceChannel(
       {
         var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
           uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+        var serializer = scope.ServiceProvider.GetRequiredKeyedService<IServiceChannelSerializer>(
+          serializerName ?? ServiceEndpointDefinitions.DefaultSerializerName);
         var requestUriResult = uriResolver.Resolve(req);
         if (requestUriResult.IsFailed)
         {
@@ -49,7 +52,7 @@ public class ServiceChannel(
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
           {
-            return await httpResponse.DeserializeResultAsync<TResponse>(ct);
+            return await serializer.DeserializeResultAsync<TResponse>(httpResponse, ct);
           }
         }
       }
@@ -67,7 +70,8 @@ public class ServiceChannel(
     MediaTypeHeaderValue? mediaType = null,
     JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
-    string? uriResolverName = null)
+    string? uriResolverName = null,
+    string? serializerName = null)
     where TRequest : IServiceRequest
   {
     try
@@ -76,6 +80,8 @@ public class ServiceChannel(
       {
         var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
           uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+        var serializer = scope.ServiceProvider.GetRequiredKeyedService<IServiceChannelSerializer>(
+          serializerName ?? ServiceEndpointDefinitions.DefaultSerializerName);
         var requestUriResult = uriResolver.Resolve(req);
         if (requestUriResult.IsFailed)
         {
@@ -94,7 +100,7 @@ public class ServiceChannel(
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
           {
-            return await httpResponse.DeserializeResultAsync(ct);
+            return await serializer.DeserializeResultAsync(httpResponse, ct);
           }
         }
       }
