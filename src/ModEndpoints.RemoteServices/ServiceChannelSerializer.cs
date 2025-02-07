@@ -45,7 +45,7 @@ public class ServiceChannelSerializer(
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result<T>>(response, options.DeserializationOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result<T>>(response, ct);
     return resultObject ?? Result<T>
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -70,7 +70,7 @@ public class ServiceChannelSerializer(
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result>(response, options.DeserializationOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result>(response, ct);
     return resultObject ?? Result
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -81,7 +81,6 @@ public class ServiceChannelSerializer(
 
   private async Task<TResult?> DeserializeResultInternalAsync<TResult>(
     HttpResponseMessage response,
-    JsonSerializerOptions? jsonSerializerOptions,
     CancellationToken ct)
     where TResult : IModResult
   {
@@ -92,7 +91,7 @@ public class ServiceChannelSerializer(
       ct.ThrowIfCancellationRequested();
       return await JsonSerializer.DeserializeAsync<TResult>(
         contentStream,
-        jsonSerializerOptions ?? ServiceEndpointDefinitions.DefaultJsonSerializerOptions,
+        options.DeserializationOptions,
         ct);
     }
   }

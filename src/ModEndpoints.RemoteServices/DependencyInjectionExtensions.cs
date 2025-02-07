@@ -286,7 +286,7 @@ public static class DependencyInjectionExtensions
         return new ServiceChannelSerializer(new ServiceChannelSerializerOptions()
         {
           SerializationOptions = null,
-          DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonSerializerOptions
+          DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptions
         });
       });
     services.TryAddTransient<IServiceChannel, ServiceChannel>();

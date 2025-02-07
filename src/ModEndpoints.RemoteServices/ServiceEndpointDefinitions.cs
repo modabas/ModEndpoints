@@ -7,7 +7,7 @@ public static class ServiceEndpointDefinitions
   public const string DefaultUriResolverName = "DefaultServiceEndpointUriResolver";
   public const string DefaultSerializerName = "DefaultServiceChannelSerializer";
 
-  internal static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
+  internal static readonly JsonSerializerOptions DefaultJsonDeserializationOptions = new()
   {
     PropertyNameCaseInsensitive = true,
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
