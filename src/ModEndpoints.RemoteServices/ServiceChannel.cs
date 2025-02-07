@@ -1,6 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
@@ -19,7 +17,6 @@ public class ServiceChannel(
     CancellationToken ct,
     string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
-    JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
     string? uriResolverName = null,
     string? serializerName = null)
@@ -47,7 +44,7 @@ public class ServiceChannel(
           HttpMethod.Post,
           ServiceChannel.Combine(endpointUriPrefix, requestUriResult.Value)))
         {
-          httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
+          httpReq.Content = await serializer.CreateContentAsync(req, mediaType);
           configureRequestHeaders?.Invoke(httpReq.Headers);
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
@@ -68,7 +65,6 @@ public class ServiceChannel(
     CancellationToken ct,
     string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
-    JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
     string? uriResolverName = null,
     string? serializerName = null)
@@ -95,7 +91,7 @@ public class ServiceChannel(
           HttpMethod.Post,
           ServiceChannel.Combine(endpointUriPrefix, requestUriResult.Value)))
         {
-          httpReq.Content = JsonContent.Create(req, mediaType, jsonSerializerOptions);
+          httpReq.Content = await serializer.CreateContentAsync(req, mediaType);
           configureRequestHeaders?.Invoke(httpReq.Headers);
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))

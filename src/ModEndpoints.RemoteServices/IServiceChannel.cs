@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Text.Json;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
@@ -19,7 +18,6 @@ public interface IServiceChannel
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <param name="endpointUriPrefix">Path to append as prefix to resolved enpoint uri. Usually used to add path segments to configured client's base address.</param>
   /// <param name="mediaType">The media type to use for the content.</param>
-  /// <param name="jsonSerializerOptions">Options to control the behavior during serialization.</param>
   /// <param name="configureRequestHeaders">Delegate to configure HTTP request headers.</param>
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
@@ -29,7 +27,6 @@ public interface IServiceChannel
     CancellationToken ct,
     string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
-    JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
     string? uriResolverName = null,
     string? serializerName = null)
@@ -44,7 +41,6 @@ public interface IServiceChannel
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <param name="endpointUriPrefix">Path to append as prefix to resolved enpoint uri. Usually used to add path segments to configured client's base address.</param>
   /// <param name="mediaType">The media type to use for the content.</param>
-  /// <param name="jsonSerializerOptions">Options to control the behavior during serialization.</param>
   /// <param name="configureRequestHeaders">Delegate to configure HTTP request headers.</param>
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
@@ -54,7 +50,6 @@ public interface IServiceChannel
     CancellationToken ct,
     string? endpointUriPrefix = null,
     MediaTypeHeaderValue? mediaType = null,
-    JsonSerializerOptions? jsonSerializerOptions = null,
     Action<HttpRequestHeaders>? configureRequestHeaders = null,
     string? uriResolverName = null,
     string? serializerName = null)

@@ -1,9 +1,14 @@
-﻿using ModResults;
+﻿using ModEndpoints.RemoteServices.Core;
+using ModResults;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace ModEndpoints.RemoteServices;
 
-public class ServiceChannelSerializer : IServiceChannelSerializer
+public class ServiceChannelSerializer(
+  ServiceChannelSerializerOptions options)
+  : IServiceChannelSerializer
 {
   private const string DeserializationErrorMessage =
     "Cannot deserialize Result object from http response message.";
@@ -17,10 +22,15 @@ public class ServiceChannelSerializer : IServiceChannelSerializer
   private const string InstanceFactMessage =
     "Instance: {0} {1}";
 
+  public ValueTask<HttpContent> CreateContentAsync<T>(T request, MediaTypeHeaderValue? mediaType)
+    where T : IServiceRequestMarker
+  {
+    return new ValueTask<HttpContent>(JsonContent.Create(request, mediaType, options.SerializationOptions));
+  }
+
   public async Task<Result<T>> DeserializeResultAsync<T>(
     HttpResponseMessage response,
-    CancellationToken ct,
-    JsonSerializerOptions? jsonSerializerOptions = null)
+    CancellationToken ct)
     where T : notnull
   {
     if (!response.IsSuccessStatusCode)
@@ -35,7 +45,7 @@ public class ServiceChannelSerializer : IServiceChannelSerializer
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result<T>>(response, jsonSerializerOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result<T>>(response, options.DeserializationOptions, ct);
     return resultObject ?? Result<T>
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -46,8 +56,7 @@ public class ServiceChannelSerializer : IServiceChannelSerializer
 
   public async Task<Result> DeserializeResultAsync(
     HttpResponseMessage response,
-    CancellationToken ct,
-    JsonSerializerOptions? jsonSerializerOptions = null)
+    CancellationToken ct)
   {
     if (!response.IsSuccessStatusCode)
     {
@@ -61,7 +70,7 @@ public class ServiceChannelSerializer : IServiceChannelSerializer
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result>(response, jsonSerializerOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result>(response, options.DeserializationOptions, ct);
     return resultObject ?? Result
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(

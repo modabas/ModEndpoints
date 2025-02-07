@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
@@ -6,11 +7,15 @@ public interface IServiceChannelSerializer
 {
   Task<Result> DeserializeResultAsync(
     HttpResponseMessage response,
-    CancellationToken ct,
-    JsonSerializerOptions? jsonSerializerOptions = null);
+    CancellationToken ct);
 
   Task<Result<T>> DeserializeResultAsync<T>(
     HttpResponseMessage response,
-    CancellationToken ct,
-    JsonSerializerOptions? jsonSerializerOptions = null) where T : notnull;
+    CancellationToken ct)
+    where T : notnull;
+
+  ValueTask<HttpContent> CreateContentAsync<T>(
+    T request,
+    MediaTypeHeaderValue? mediaType)
+    where T : IServiceRequestMarker;
 }
