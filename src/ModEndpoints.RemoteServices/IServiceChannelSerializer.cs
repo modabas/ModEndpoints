@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using ModEndpoints.RemoteServices.Core;
+﻿using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;

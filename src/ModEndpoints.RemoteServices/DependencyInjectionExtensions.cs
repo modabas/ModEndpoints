@@ -281,8 +281,8 @@ public static class DependencyInjectionExtensions
       ServiceEndpointDefinitions.DefaultUriResolverName);
     services.AddKeyedTransient<IServiceChannelSerializer, ServiceChannelSerializer>(
       ServiceEndpointDefinitions.DefaultSerializerName,
-      (_, _) => 
-      { 
+      (_, _) =>
+      {
         return new ServiceChannelSerializer(new ServiceChannelSerializerOptions()
         {
           SerializationOptions = null,
