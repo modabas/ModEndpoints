@@ -22,10 +22,10 @@ public class ServiceChannelSerializer(
   private const string InstanceFactMessage =
     "Instance: {0} {1}";
 
-  public ValueTask<HttpContent> CreateContentAsync<T>(T request, MediaTypeHeaderValue? mediaType)
+  public ValueTask<HttpContent> CreateContentAsync<T>(T request)
     where T : IServiceRequestMarker
   {
-    return new ValueTask<HttpContent>(JsonContent.Create(request, mediaType, options.SerializationOptions));
+    return new ValueTask<HttpContent>(JsonContent.Create(request, null, options.SerializationOptions));
   }
 
   public async Task<Result<T>> DeserializeResultAsync<T>(

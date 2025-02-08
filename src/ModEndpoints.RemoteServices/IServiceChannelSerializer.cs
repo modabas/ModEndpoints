@@ -15,7 +15,6 @@ public interface IServiceChannelSerializer
     where T : notnull;
 
   ValueTask<HttpContent> CreateContentAsync<T>(
-    T request,
-    MediaTypeHeaderValue? mediaType)
+    T request)
     where T : IServiceRequestMarker;
 }

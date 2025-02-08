@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
@@ -16,8 +15,7 @@ public class ServiceChannel(
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    MediaTypeHeaderValue? mediaType = null,
-    Action<HttpRequestHeaders>? configureRequestHeaders = null,
+    Action<IServiceProvider, HttpRequestMessage>? customizeHttpRequest = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
@@ -42,10 +40,10 @@ public class ServiceChannel(
         }
         using (HttpRequestMessage httpReq = new(
           HttpMethod.Post,
-          ServiceChannel.Combine(endpointUriPrefix, requestUriResult.Value)))
+          Combine(endpointUriPrefix, requestUriResult.Value)))
         {
-          httpReq.Content = await serializer.CreateContentAsync(req, mediaType);
-          configureRequestHeaders?.Invoke(httpReq.Headers);
+          httpReq.Content = await serializer.CreateContentAsync(req);
+          customizeHttpRequest?.Invoke(scope.ServiceProvider, httpReq);
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
           {
@@ -64,8 +62,7 @@ public class ServiceChannel(
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    MediaTypeHeaderValue? mediaType = null,
-    Action<HttpRequestHeaders>? configureRequestHeaders = null,
+    Action<IServiceProvider, HttpRequestMessage>? customizeHttpRequest = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest
@@ -89,10 +86,10 @@ public class ServiceChannel(
         }
         using (HttpRequestMessage httpReq = new(
           HttpMethod.Post,
-          ServiceChannel.Combine(endpointUriPrefix, requestUriResult.Value)))
+          Combine(endpointUriPrefix, requestUriResult.Value)))
         {
-          httpReq.Content = await serializer.CreateContentAsync(req, mediaType);
-          configureRequestHeaders?.Invoke(httpReq.Headers);
+          httpReq.Content = await serializer.CreateContentAsync(req);
+          customizeHttpRequest?.Invoke(scope.ServiceProvider, httpReq);
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
           {
