@@ -21,20 +21,26 @@ public class ServiceChannelSerializer(
   private const string InstanceFactMessage =
     "Instance: {0} {1}";
 
-  public ValueTask<HttpContent> CreateContentAsync<T>(T request)
-    where T : IServiceRequestMarker
+  public ValueTask<HttpContent> CreateContentAsync<TRequest>(
+    TRequest request,
+    CancellationToken ct)
+    where TRequest : IServiceRequestMarker
   {
-    return new ValueTask<HttpContent>(JsonContent.Create(request, null, options.SerializationOptions));
+    return new ValueTask<HttpContent>(
+      JsonContent.Create(
+        request,
+        null,
+        options.SerializationOptions));
   }
 
-  public async Task<Result<T>> DeserializeResultAsync<T>(
+  public async Task<Result<TResponse>> DeserializeResultAsync<TResponse>(
     HttpResponseMessage response,
     CancellationToken ct)
-    where T : notnull
+    where TResponse : notnull
   {
     if (!response.IsSuccessStatusCode)
     {
-      return Result<T>
+      return Result<TResponse>
         .CriticalError(string.Format(
           string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
           (int)response.StatusCode,
@@ -44,8 +50,8 @@ public class ServiceChannelSerializer(
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result<T>>(response, ct);
-    return resultObject ?? Result<T>
+    var resultObject = await DeserializeResultInternalAsync<Result<TResponse>>(response, ct);
+    return resultObject ?? Result<TResponse>
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
         InstanceFactMessage,

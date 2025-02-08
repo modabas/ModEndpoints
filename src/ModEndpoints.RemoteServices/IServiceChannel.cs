@@ -24,7 +24,7 @@ public interface IServiceChannel
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Action<IServiceProvider, HttpRequestMessage>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
@@ -45,7 +45,7 @@ public interface IServiceChannel
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Action<IServiceProvider, HttpRequestMessage>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest;

@@ -15,7 +15,7 @@ public class ServiceChannel(
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Action<IServiceProvider, HttpRequestMessage>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
@@ -42,8 +42,11 @@ public class ServiceChannel(
           HttpMethod.Post,
           Combine(endpointUriPrefix, requestUriResult.Value)))
         {
-          httpReq.Content = await serializer.CreateContentAsync(req);
-          customizeHttpRequest?.Invoke(scope.ServiceProvider, httpReq);
+          httpReq.Content = await serializer.CreateContentAsync(req, ct);
+          if (customizeHttpRequest is not null)
+          {
+            await customizeHttpRequest(scope.ServiceProvider, httpReq, ct);
+          }
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
           {
@@ -62,7 +65,7 @@ public class ServiceChannel(
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Action<IServiceProvider, HttpRequestMessage>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest
@@ -88,8 +91,11 @@ public class ServiceChannel(
           HttpMethod.Post,
           Combine(endpointUriPrefix, requestUriResult.Value)))
         {
-          httpReq.Content = await serializer.CreateContentAsync(req);
-          customizeHttpRequest?.Invoke(scope.ServiceProvider, httpReq);
+          httpReq.Content = await serializer.CreateContentAsync(req, ct);
+          if (customizeHttpRequest is not null)
+          {
+            await customizeHttpRequest(scope.ServiceProvider, httpReq, ct);
+          }
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
           {

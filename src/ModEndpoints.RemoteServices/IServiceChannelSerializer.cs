@@ -8,12 +8,13 @@ public interface IServiceChannelSerializer
     HttpResponseMessage response,
     CancellationToken ct);
 
-  Task<Result<T>> DeserializeResultAsync<T>(
+  Task<Result<TResponse>> DeserializeResultAsync<TResponse>(
     HttpResponseMessage response,
     CancellationToken ct)
-    where T : notnull;
+    where TResponse : notnull;
 
-  ValueTask<HttpContent> CreateContentAsync<T>(
-    T request)
-    where T : IServiceRequestMarker;
+  ValueTask<HttpContent> CreateContentAsync<TRequest>(
+    TRequest request,
+    CancellationToken ct)
+    where TRequest : IServiceRequestMarker;
 }
