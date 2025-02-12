@@ -27,7 +27,7 @@ public static class DependencyInjectionExtensions
     Action<IHttpClientBuilder>? configureClientBuilder = null)
     where TRequest : IServiceRequestMarker
   {
-    var clientName = DefaultClientName.Resolve<TRequest>();
+    var clientName = ServiceClientNameResolver.GetDefaultName<TRequest>();
     return services.AddRemoteServiceWithNewClient<TRequest>(
       clientName,
       baseAddress,
@@ -81,7 +81,7 @@ public static class DependencyInjectionExtensions
     Action<IHttpClientBuilder>? configureClientBuilder = null)
     where TRequest : IServiceRequestMarker
   {
-    var clientName = DefaultClientName.Resolve<TRequest>();
+    var clientName = ServiceClientNameResolver.GetDefaultName<TRequest>();
     return services.AddRemoteServiceWithNewClient<TRequest>(
       clientName,
       configureClient,
@@ -277,19 +277,19 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddRemoteServicesCore(
     this IServiceCollection services)
   {
-    services.TryAddKeyedSingleton<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
+    services.TryAddKeyedSingleton<IServiceEndpointUriResolver, DefaultServiceEndpointUriResolver>(
       ServiceEndpointDefinitions.DefaultUriResolverName);
-    services.AddKeyedTransient<IServiceChannelSerializer, ServiceChannelSerializer>(
+    services.AddKeyedTransient<IServiceChannelSerializer, DefaultServiceChannelSerializer>(
       ServiceEndpointDefinitions.DefaultSerializerName,
       (_, _) =>
       {
-        return new ServiceChannelSerializer(new ServiceChannelSerializerOptions()
+        return new DefaultServiceChannelSerializer(new ServiceChannelSerializerOptions()
         {
           SerializationOptions = null,
           DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptions
         });
       });
-    services.TryAddTransient<IServiceChannel, ServiceChannel>();
+    services.TryAddTransient<IServiceChannel, DefaultServiceChannel>();
     return services;
   }
 

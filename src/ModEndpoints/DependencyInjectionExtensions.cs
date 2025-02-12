@@ -19,7 +19,7 @@ public static class DependencyInjectionExtensions
     services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
 
     //ServiceEndpoint components
-    services.TryAddKeyedSingleton<IServiceEndpointUriResolver, ServiceEndpointUriResolver>(
+    services.TryAddKeyedSingleton<IServiceEndpointUriResolver, DefaultServiceEndpointUriResolver>(
       ServiceEndpointDefinitions.DefaultUriResolverName);
     services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
 

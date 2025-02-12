@@ -1,23 +1,23 @@
 ﻿using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.RemoteServices;
-internal class DefaultClientName
+internal class ServiceClientNameResolver
 {
   private const string InvalidRequestType = "Request type should not be generic type parameter.";
-  public static string Resolve(IServiceRequestMarker request)
+  public static string GetDefaultName(IServiceRequestMarker request)
   {
     var requestType = request.GetType();
-    return ResolveInternal(requestType);
+    return GetDefaultNameInternal(requestType);
   }
 
-  public static string Resolve<TRequest>()
+  public static string GetDefaultName<TRequest>()
     where TRequest : IServiceRequestMarker
   {
     var requestType = typeof(TRequest);
-    return ResolveInternal(requestType);
+    return GetDefaultNameInternal(requestType);
   }
 
-  private static string ResolveInternal(Type requestType)
+  private static string GetDefaultNameInternal(Type requestType)
   {
     var requestName = requestType.AssemblyQualifiedName;
     if (string.IsNullOrWhiteSpace(requestName))

@@ -16,7 +16,8 @@ public interface IServiceChannel
   /// <param name="req">Request to be sent.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <param name="endpointUriPrefix">Path to append as prefix to resolved enpoint uri. Usually used to add path segments to configured client's base address.</param>
-  /// <param name="customizeHttpRequest">Delegate to further configure created HTTP request message (headers, etc).</param>
+  /// <param name="processHttpRequest">Delegate to further configure created HTTP request message (headers, etc) before sending to ServiceEndpoint.</param>
+  /// <param name="processHttpResponse">Delegate to process received HTTP response message of ServiceEndpoint before deserialization.</param>
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
@@ -24,7 +25,8 @@ public interface IServiceChannel
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? processHttpRequest = null,
+    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? processHttpResponse = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
@@ -37,7 +39,8 @@ public interface IServiceChannel
   /// <param name="req">Request to be sent.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <param name="endpointUriPrefix">Path to append as prefix to resolved enpoint uri. Usually used to add path segments to configured client's base address.</param>
-  /// <param name="customizeHttpRequest">Delegate to further configure created HTTP request message (headers, etc).</param>
+  /// <param name="processHttpRequest">Delegate to further configure created HTTP request message (headers, etc) before sending to ServiceEndpoint.</param>
+  /// <param name="processHttpResponse">Delegate to process received HTTP response message of ServiceEndpoint before deserialization.</param>
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
@@ -45,7 +48,8 @@ public interface IServiceChannel
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? processHttpRequest = null,
+    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? processHttpResponse = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest;

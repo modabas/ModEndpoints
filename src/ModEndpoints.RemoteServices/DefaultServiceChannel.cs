@@ -4,7 +4,7 @@ using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 
-public class ServiceChannel(
+public class DefaultServiceChannel(
   IHttpClientFactory clientFactory,
   IServiceProvider serviceProvider)
   : IServiceChannel
@@ -15,7 +15,8 @@ public class ServiceChannel(
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? processHttpRequest = null,
+    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? processHttpResponse = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
@@ -43,13 +44,17 @@ public class ServiceChannel(
           Combine(endpointUriPrefix, requestUriResult.Value)))
         {
           httpReq.Content = await serializer.CreateContentAsync(req, ct);
-          if (customizeHttpRequest is not null)
+          if (processHttpRequest is not null)
           {
-            await customizeHttpRequest(scope.ServiceProvider, httpReq, ct);
+            await processHttpRequest(scope.ServiceProvider, httpReq, ct);
           }
           var client = clientFactory.CreateClient(clientName);
-          using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+          using (var httpResponse = await client.SendAsync(httpReq, ct))
           {
+            if (processHttpResponse is not null)
+            {
+              await processHttpResponse(scope.ServiceProvider, httpResponse, ct);
+            }
             return await serializer.DeserializeResultAsync<TResponse>(httpResponse, ct);
           }
         }
@@ -65,7 +70,8 @@ public class ServiceChannel(
     TRequest req,
     CancellationToken ct,
     string? endpointUriPrefix = null,
-    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? customizeHttpRequest = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? processHttpRequest = null,
+    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? processHttpResponse = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest
@@ -92,13 +98,17 @@ public class ServiceChannel(
           Combine(endpointUriPrefix, requestUriResult.Value)))
         {
           httpReq.Content = await serializer.CreateContentAsync(req, ct);
-          if (customizeHttpRequest is not null)
+          if (processHttpRequest is not null)
           {
-            await customizeHttpRequest(scope.ServiceProvider, httpReq, ct);
+            await processHttpRequest(scope.ServiceProvider, httpReq, ct);
           }
           var client = clientFactory.CreateClient(clientName);
-          using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+          using (var httpResponse = await client.SendAsync(httpReq, ct))
           {
+            if (processHttpResponse is not null)
+            {
+              await processHttpResponse(scope.ServiceProvider, httpResponse, ct);
+            }
             return await serializer.DeserializeResultAsync(httpResponse, ct);
           }
         }
