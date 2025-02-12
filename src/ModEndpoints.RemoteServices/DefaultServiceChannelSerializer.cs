@@ -1,18 +1,14 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Net.Http.Json;
+using System.Text.Json;
+using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 
-public static class HttpResponseMessageExtensions
+public class DefaultServiceChannelSerializer(
+  ServiceChannelSerializerOptions options)
+  : IServiceChannelSerializer
 {
-  private static readonly JsonSerializerOptions _defaultJsonSerializerOptions = new()
-  {
-    PropertyNameCaseInsensitive = true,
-    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-    NumberHandling = JsonNumberHandling.AllowReadingFromString
-  };
-
   private const string DeserializationErrorMessage =
     "Cannot deserialize Result object from http response message.";
 
@@ -25,15 +21,26 @@ public static class HttpResponseMessageExtensions
   private const string InstanceFactMessage =
     "Instance: {0} {1}";
 
-  public static async Task<Result<T>> DeserializeResultAsync<T>(
-    this HttpResponseMessage response,
-    CancellationToken ct,
-    JsonSerializerOptions? jsonSerializerOptions = null)
-    where T : notnull
+  public ValueTask<HttpContent> CreateContentAsync<TRequest>(
+    TRequest request,
+    CancellationToken ct)
+    where TRequest : IServiceRequestMarker
+  {
+    return new ValueTask<HttpContent>(
+      JsonContent.Create(
+        request,
+        null,
+        options.SerializationOptions));
+  }
+
+  public async Task<Result<TResponse>> DeserializeResultAsync<TResponse>(
+    HttpResponseMessage response,
+    CancellationToken ct)
+    where TResponse : notnull
   {
     if (!response.IsSuccessStatusCode)
     {
-      return Result<T>
+      return Result<TResponse>
         .CriticalError(string.Format(
           string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
           (int)response.StatusCode,
@@ -43,8 +50,8 @@ public static class HttpResponseMessageExtensions
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await response.DeserializeResultInternalAsync<Result<T>>(jsonSerializerOptions, ct);
-    return resultObject ?? Result<T>
+    var resultObject = await DeserializeResultInternalAsync<Result<TResponse>>(response, ct);
+    return resultObject ?? Result<TResponse>
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
         InstanceFactMessage,
@@ -52,10 +59,9 @@ public static class HttpResponseMessageExtensions
         response.RequestMessage?.RequestUri));
   }
 
-  public static async Task<Result> DeserializeResultAsync(
-    this HttpResponseMessage response,
-    CancellationToken ct,
-    JsonSerializerOptions? jsonSerializerOptions = null)
+  public async Task<Result> DeserializeResultAsync(
+    HttpResponseMessage response,
+    CancellationToken ct)
   {
     if (!response.IsSuccessStatusCode)
     {
@@ -69,7 +75,7 @@ public static class HttpResponseMessageExtensions
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await response.DeserializeResultInternalAsync<Result>(jsonSerializerOptions, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result>(response, ct);
     return resultObject ?? Result
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -78,9 +84,8 @@ public static class HttpResponseMessageExtensions
         response.RequestMessage?.RequestUri));
   }
 
-  private static async Task<TResult?> DeserializeResultInternalAsync<TResult>(
-    this HttpResponseMessage response,
-    JsonSerializerOptions? jsonSerializerOptions,
+  private async Task<TResult?> DeserializeResultInternalAsync<TResult>(
+    HttpResponseMessage response,
     CancellationToken ct)
     where TResult : IModResult
   {
@@ -91,7 +96,7 @@ public static class HttpResponseMessageExtensions
       ct.ThrowIfCancellationRequested();
       return await JsonSerializer.DeserializeAsync<TResult>(
         contentStream,
-        jsonSerializerOptions ?? _defaultJsonSerializerOptions,
+        options.DeserializationOptions,
         ct);
     }
   }
