@@ -87,7 +87,7 @@ public class DefaultResultToResponseMapper : IResultToResponseMapper
         return result.ToResponse(SuccessfulResponseType.ResetContent);
       default:
         return result.ToResponse();
-    };
+    }
   }
 
   public async ValueTask<IResult> ToResponseAsync<TValue>(
