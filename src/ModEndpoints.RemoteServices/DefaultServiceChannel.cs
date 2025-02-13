@@ -11,12 +11,19 @@ public class DefaultServiceChannel(
 {
   private const string NoChannelRegistrationFound = "No channel registration found for request type {0}.";
 
+  public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(TRequest req, CancellationToken ct)
+    where TRequest : IServiceRequest<TResponse>
+    where TResponse : notnull
+  {
+    return await SendAsync<TRequest, TResponse>(req, null, ct);
+  }
+
   public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
     TRequest req,
+    string? endpointUriPrefix,
     CancellationToken ct,
-    string? endpointUriPrefix = null,
-    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? processHttpRequest = null,
-    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? processHttpResponse = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? httpRequestInterceptor = null,
+    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? httpResponseInterceptor = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest<TResponse>
@@ -44,16 +51,16 @@ public class DefaultServiceChannel(
           Combine(endpointUriPrefix, requestUriResult.Value)))
         {
           httpReq.Content = await serializer.CreateContentAsync(req, ct);
-          if (processHttpRequest is not null)
+          if (httpRequestInterceptor is not null)
           {
-            await processHttpRequest(scope.ServiceProvider, httpReq, ct);
+            await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct);
           }
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, ct))
           {
-            if (processHttpResponse is not null)
+            if (httpResponseInterceptor is not null)
             {
-              await processHttpResponse(scope.ServiceProvider, httpResponse, ct);
+              await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
             }
             return await serializer.DeserializeResultAsync<TResponse>(httpResponse, ct);
           }
@@ -66,12 +73,17 @@ public class DefaultServiceChannel(
     }
   }
 
+  public async Task<Result> SendAsync<TRequest>(TRequest req, CancellationToken ct) where TRequest : IServiceRequest
+  {
+    return await SendAsync<TRequest>(req, null, ct);
+  }
+
   public async Task<Result> SendAsync<TRequest>(
     TRequest req,
+    string? endpointUriPrefix,
     CancellationToken ct,
-    string? endpointUriPrefix = null,
-    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? processHttpRequest = null,
-    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? processHttpResponse = null,
+    Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? httpRequestInterceptor = null,
+    Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? httpResponseInterceptor = null,
     string? uriResolverName = null,
     string? serializerName = null)
     where TRequest : IServiceRequest
@@ -98,16 +110,16 @@ public class DefaultServiceChannel(
           Combine(endpointUriPrefix, requestUriResult.Value)))
         {
           httpReq.Content = await serializer.CreateContentAsync(req, ct);
-          if (processHttpRequest is not null)
+          if (httpRequestInterceptor is not null)
           {
-            await processHttpRequest(scope.ServiceProvider, httpReq, ct);
+            await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct);
           }
           var client = clientFactory.CreateClient(clientName);
           using (var httpResponse = await client.SendAsync(httpReq, ct))
           {
-            if (processHttpResponse is not null)
+            if (httpResponseInterceptor is not null)
             {
-              await processHttpResponse(scope.ServiceProvider, httpResponse, ct);
+              await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
             }
             return await serializer.DeserializeResultAsync(httpResponse, ct);
           }
