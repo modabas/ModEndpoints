@@ -50,8 +50,8 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   //send request over channel to remote ServiceResultEndpoint
   var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(
     new ListStoresRequest(),
-    default,
-    endpointUriPrefix: "v1/storesWithServiceEndpoint/");
+    "v1/storesWithServiceEndpoint/",
+    default);
 
   if (listResult.IsOk)
   {
@@ -62,8 +62,8 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
       //send request over channel to remote ServiceResultEndpoint
       var getResult = await channel.SendAsync<GetStoreByIdRequest, GetStoreByIdResponse>(
         new GetStoreByIdRequest(Id: id.Value),
-        default,
-        endpointUriPrefix: "v1/storesWithServiceEndpoint/");
+        "v1/storesWithServiceEndpoint/",
+        default);
       if (getResult.IsOk)
       {
         Console.WriteLine(getResult.Value);
