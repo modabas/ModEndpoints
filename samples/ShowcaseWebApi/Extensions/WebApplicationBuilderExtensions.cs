@@ -87,7 +87,7 @@ public static class WebApplicationBuilderExtensions
 
   public static WebApplicationBuilder AddFeatures(this WebApplicationBuilder builder)
   {
-    builder.Services.AddModEndpointsFromAssembly(typeof(WebApplicationBuilderExtensions).Assembly);
+    builder.Services.AddModEndpointsFromAssemblyContaining<GetBookById>();
     builder.Services.AddValidatorsFromAssemblyContaining<GetBookByIdRequestValidator>(includeInternalTypes: true);
 
     return builder;

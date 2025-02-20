@@ -8,9 +8,17 @@ using ModEndpoints.RemoteServices;
 namespace ModEndpoints;
 public static class DependencyInjectionExtensions
 {
+  public static IServiceCollection AddModEndpointsFromAssemblyContaining<T>(
+    this IServiceCollection services,
+    ServiceLifetime lifetime = ServiceLifetime.Transient)
+  {
+    return services.AddModEndpointsFromAssembly(typeof(T).Assembly, lifetime);
+  }
+
   public static IServiceCollection AddModEndpointsFromAssembly(
     this IServiceCollection services,
-    Assembly assembly)
+    Assembly assembly,
+    ServiceLifetime lifetime = ServiceLifetime.Transient)
   {
     //WebResultEndpoint components
     services.TryAddKeyedSingleton<IResultToResponseMapper, DefaultResultToResponseMapper>(
@@ -24,7 +32,7 @@ public static class DependencyInjectionExtensions
     services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
 
     services.AddHttpContextAccessor();
-    return services.AddModEndpointsFromAssemblyCore(assembly);
+    return services.AddModEndpointsCoreFromAssembly(assembly, lifetime);
   }
 
   public static WebApplication MapModEndpoints(

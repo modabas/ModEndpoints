@@ -9,18 +9,28 @@ using ModEndpoints.RemoteServices.Core;
 namespace ModEndpoints.Core;
 public static class DependencyInjectionExtensions
 {
-  public static IServiceCollection AddModEndpointsFromAssemblyCore(
+  public static IServiceCollection AddModEndpointsCoreFromAssemblyContaining<T>(
     this IServiceCollection services,
-    Assembly assembly)
+    Assembly assembly,
+    ServiceLifetime lifetime = ServiceLifetime.Transient)
   {
-    return services
-      .AddRouteGroupsFromAssemblyCore(assembly)
-      .AddEndpointsFromAssemblyCore(assembly);
+    return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, lifetime);
   }
 
-  private static IServiceCollection AddRouteGroupsFromAssemblyCore(
+  public static IServiceCollection AddModEndpointsCoreFromAssembly(
     this IServiceCollection services,
-    Assembly assembly)
+    Assembly assembly,
+    ServiceLifetime lifetime = ServiceLifetime.Transient)
+  {
+    return services
+      .AddRouteGroupsCoreFromAssembly(assembly, lifetime)
+      .AddEndpointsCoreFromAssembly(assembly, lifetime);
+  }
+
+  private static IServiceCollection AddRouteGroupsCoreFromAssembly(
+    this IServiceCollection services,
+    Assembly assembly,
+    ServiceLifetime lifetime)
   {
     //Don't add RootRouteGroup, it's just a marker class to define root
     //Normally its assembly won't be loaded with this method anyway but just in case
@@ -29,7 +39,7 @@ public static class DependencyInjectionExtensions
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
                        type != typeof(RootRouteGroup))
-        .Select(type => ServiceDescriptor.KeyedTransient(typeof(IRouteGroupConfigurator), type, type))
+        .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IRouteGroupConfigurator), type, type, lifetime))
         .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
@@ -37,9 +47,10 @@ public static class DependencyInjectionExtensions
     return services;
   }
 
-  public static IServiceCollection AddEndpointsFromAssemblyCore(
+  public static IServiceCollection AddEndpointsCoreFromAssembly(
     this IServiceCollection services,
-    Assembly assembly)
+    Assembly assembly,
+    ServiceLifetime lifetime)
   {
     var endpointTypes = assembly
       .DefinedTypes
@@ -49,7 +60,7 @@ public static class DependencyInjectionExtensions
     CheckServiceEndpointRegistrations(endpointTypes);
 
     var serviceDescriptors = endpointTypes
-        .Select(type => ServiceDescriptor.KeyedTransient(typeof(IEndpointConfigurator), type, type))
+        .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IEndpointConfigurator), type, type, lifetime))
         .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
