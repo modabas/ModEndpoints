@@ -21,8 +21,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="ModResults.FluentValidation" Version="0.4.2" />
-    <PackageReference Include="ModResults.MinimalApis" Version="0.4.2" />
+    <PackageReference Include="ModResults.FluentValidation" Version="1.0.0" />
+    <PackageReference Include="ModResults.MinimalApis" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
