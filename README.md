@@ -250,13 +250,13 @@ internal class UploadBook
 
 ### Route groups
 
-By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method and to map Minimal Apis under said group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than regular Minimal Apis, but these are still Minimal Api route groups and can be configured by any extension method of RouteGroupConfigurator. Route groups are also subject to auto discovery and registration, similar to endpoints.
+By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method used to map Minimal Apis under a group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than regular Minimal Apis, but these are still Minimal Api route groups and can be configured by any extension method of RouteGroupBuilder. Route groups are also subject to auto discovery and registration, similar to endpoints.
 
 - [Create a route group implementation](./samples/ShowcaseWebApi/Features/FeaturesRouteGroup.cs) by inheriting RouteGroupConfigurator and implementing 'Configure' method,
 - Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like a regular Minimal Api route group.
 - Apply MapToGroup attribute to either other [route group](./samples/ShowcaseWebApi/Features/Books/Configuration/BooksV1RouteGroup.cs) or [endpoint](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) classes that will be mapped under created route group. Use type of the new route group implementation as GroupType parameter to the attribute.
 
-Following sample creates a parent route group (FeaturesRouteGroup), a child route group (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal Apis ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning) .
+Following sample creates a parent route group (FeaturesRouteGroup), a child route group under it (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal Apis ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning).
 
 ```csharp
 internal class FeaturesRouteGroup : RouteGroupConfigurator
@@ -296,7 +296,8 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    //Configure...
+    MapPost("/")
+      .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
   protected override async Task<Result<CreateBookResponse>> HandleAsync(
     CreateBookRequest req,
@@ -395,7 +396,7 @@ Have a look at [sample ServiceEndpoint implementations](https://github.com/modab
 
 ### ServiceEndpoint clients
 
-A client application consuming ServiceEndpoints, has to register message channels for those endpoints (remote services) during application startup. Message channels utilize IHttpClientFactory and HttpClient underneath and is configured similarly.
+A client application consuming ServiceEndpoints, creates service channel registry entries for those endpoints (remote services) during application startup, basically mapping which request message type will be sent by using which HttpClient configuration (base address, timeout, handlers, resilience definitions, etc.). Service channel utilizes IHttpClientFactory and HttpClient underneath and is configured similarly.
 
 Registration can be done either for all service requests in an assembly...
 ```csharp
@@ -431,7 +432,7 @@ builder.Services.AddRemoteServiceToExistingClient<CreateStoreRequest>(clientName
 builder.Services.AddRemoteServiceToExistingClient<UpdateStoreRequest>(clientName);
 ```
 
-Then call remote services with IServiceChannel instance resolved from DI...
+Then remote services are called with IServiceChannel instance resolved from DI...
 ```csharp
   using IServiceScope serviceScope = hostProvider.CreateScope();
   IServiceProvider provider = serviceScope.ServiceProvider;
