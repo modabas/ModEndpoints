@@ -1,5 +1,6 @@
 ﻿using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Data;
+using ShowcaseWebApi.Features.Customers.Data;
 using ShowcaseWebApi.Features.Stores.Data;
 
 namespace ShowcaseWebApi.Extensions;
@@ -40,6 +41,23 @@ public static class WebApplicationExtensions
       db.Stores.Add(new StoreEntity()
       {
         Name = "Middling Evil Store"
+      });
+      db.Customers.Add(new CustomerEntity()
+      {
+        FirstName = "Willie",
+        MiddleName = "Jonathan",
+        LastName = "Normand"
+      });
+      db.Customers.Add(new CustomerEntity()
+      {
+        FirstName = "Leslie",
+        MiddleName = "Lois",
+        LastName = "Coffman"
+      });
+      db.Customers.Add(new CustomerEntity()
+      {
+        FirstName = "Oliver",
+        LastName = "Rogers"
       });
       db.SaveChanges();
     }

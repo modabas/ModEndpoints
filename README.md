@@ -10,7 +10,7 @@
 
 To make consuming a [ServiceEndpoint](#serviceendpoint) easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in ModEndpoints.RemoteServices package, and interfaces required for ServiceEndpoint request models are in ModEndpoints.RemoteServices.Core package.
 
-[ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates various kinds of endpoint implementations and configurations. [Client](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) project is a sample ServiceEndpoint consumer.
+Each of them are demonstrated in [sample projects](#samples).
 
 All endpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. They extend the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
 
@@ -308,6 +308,16 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
 }
 ```
 
+## Samples
+
+[ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates various kinds of endpoint implementations and configurations:
+ - MinimalEnpoints samples are in [Customers](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/Customers) subfolder,
+ - WebResultEndpoints samples are in [Books](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/Books) subfolder,
+ - BusinessResultEndpoints samples are in [Stores](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/Stores) subfolder,
+ - ServiceEndpoints samples are in [StoresWithServiceEndpoint](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) subfolder.
+
+[ServiceEndpointClient](https://github.com/modabas/ModEndpoints/tree/main/samples/ServiceEndpointClient) project demonstrates how to consume ServiceEndpoints.
+
 ## Performance
 
 WebResultEndpoints have a slight overhead (3-4%) over regular Minimal Apis on request/sec metric under load tests with 100 virtual users.
@@ -326,9 +336,9 @@ MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minima
 
 - string
 - T (Any other type)
-- Minimal Api IResult based
+- Minimal Api IResult based (Including TypedResults with Results<TResult1, TResultN> return value)
 
-Other features described previously are common for all of them.
+See (How to create responses in Minimal API apps)[https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/responses?view=aspnetcore-8.0] for detailed information. Other features described previously are common for all of them.
 
 Each type of endpoint has various implementations that accept a request model or not, that has a response model or not.
 
