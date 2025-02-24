@@ -1,6 +1,9 @@
-﻿using FluentValidation;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
@@ -60,6 +63,55 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     HttpContext context,
     CancellationToken ct)
   {
+    var responseType = typeof(TResponse);
+    
+    //Is using TypedResults
+    if (responseType.IsGenericType &&
+      responseType.Name.StartsWith("Results`") &&
+      (responseType.Namespace?.Equals("Microsoft.AspNetCore.Http.HttpResults") ?? false))
+    {
+      if (TryUseImplicitOperatorFor<ValidationProblem>(
+        responseType, 
+        validationResult, 
+        vr => vr.ToTypedValidationProblem(),
+        out var validationProblem))
+      {
+        return new ValueTask<TResponse>(validationProblem);
+      }
+      if (TryUseImplicitOperatorFor<BadRequest<HttpValidationProblemDetails>>(
+        responseType,
+        validationResult,
+        vr => vr.ToTypedBadRequestWithValidationProblem(),
+        out var badRequestWithValidationProblems))
+      {
+        return new ValueTask<TResponse>(badRequestWithValidationProblems);
+      }
+      if (TryUseImplicitOperatorFor<BadRequest<ProblemDetails>>(
+        responseType,
+        validationResult,
+        vr => vr.ToTypedBadRequestWithProblem(),
+        out var badRequestWithProblems))
+      {
+        return new ValueTask<TResponse>(badRequestWithProblems);
+      }
+      if (TryUseImplicitOperatorFor<ProblemHttpResult>(
+        responseType,
+        validationResult,
+        vr => vr.ToTypedProblem(),
+        out var problem))
+      {
+        return new ValueTask<TResponse>(problem);
+      }
+      if (TryUseImplicitOperatorFor<BadRequest>(
+        responseType,
+        validationResult,
+        _ => TypedResults.BadRequest(),
+        out var badRequest))
+      {
+        return new ValueTask<TResponse>(badRequest);
+      }
+    }
+
     if (typeof(TResponse).IsAssignableFrom(typeof(IResult)))
     {
       return new ValueTask<TResponse>((TResponse)validationResult.ToMinimalApiResult());
@@ -68,6 +120,27 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     {
       throw new ValidationException(validationResult.Errors);
     }
+  }
+
+  private static bool TryUseImplicitOperatorFor<T>(
+    Type responseType,
+    ValidationResult validationResult,
+    Func<ValidationResult, T> conversionFunc,
+    [NotNullWhen(true)] out TResponse? response)
+  {
+    var converter = responseType.GetMethod("op_Implicit", new[] { typeof(T) });
+
+    if (converter is not null)
+    {
+      var result = converter.Invoke(null, new[] { (object?)conversionFunc(validationResult) });
+      if (result is not null)
+      {
+        response = (TResponse)result;
+        return true;
+      }
+    }
+    response = default;
+    return false;
   }
 }
 

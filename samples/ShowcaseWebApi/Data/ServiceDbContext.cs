@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShowcaseWebApi.Features.Books.Data;
+using ShowcaseWebApi.Features.Customers.Data;
 using ShowcaseWebApi.Features.Stores.Data;
 
 namespace ShowcaseWebApi.Data;
@@ -23,5 +24,6 @@ internal class ServiceDbContext(DbContextOptions<ServiceDbContext> options)
   #region DbSets
   public DbSet<BookEntity> Books => Set<BookEntity>();
   public DbSet<StoreEntity> Stores => Set<StoreEntity>();
+  public DbSet<CustomerEntity> Customers => Set<CustomerEntity>();
   #endregion
 }
