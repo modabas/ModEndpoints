@@ -64,15 +64,15 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     CancellationToken ct)
   {
     var responseType = typeof(TResponse);
-    
+
     //Is using TypedResults
     if (responseType.IsGenericType &&
       responseType.Name.StartsWith("Results`") &&
       (responseType.Namespace?.Equals("Microsoft.AspNetCore.Http.HttpResults") ?? false))
     {
       if (TryUseImplicitOperatorFor<ValidationProblem>(
-        responseType, 
-        validationResult, 
+        responseType,
+        validationResult,
         vr => vr.ToTypedValidationProblem(),
         out var validationProblem))
       {
