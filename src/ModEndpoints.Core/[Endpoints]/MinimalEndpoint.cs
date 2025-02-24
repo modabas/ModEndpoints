@@ -112,7 +112,7 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
       }
     }
 
-    if (typeof(TResponse).IsAssignableFrom(typeof(IResult)))
+    if (responseType.IsAssignableFrom(typeof(IResult)))
     {
       return new ValueTask<TResponse>((TResponse)validationResult.ToMinimalApiResult());
     }
