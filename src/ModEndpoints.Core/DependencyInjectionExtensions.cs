@@ -38,7 +38,8 @@ public static class DependencyInjectionExtensions
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
-                       type != typeof(RootRouteGroup))
+                       type != typeof(RootRouteGroup) &&
+                       !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any())
         .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IRouteGroupConfigurator), type, type, lifetime))
         .ToArray();
 
@@ -55,7 +56,8 @@ public static class DependencyInjectionExtensions
     var endpointTypes = assembly
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                     type.IsAssignableTo(typeof(IEndpointConfigurator)));
+                     type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
+                     !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any());
 
     CheckServiceEndpointRegistrations(endpointTypes);
 
