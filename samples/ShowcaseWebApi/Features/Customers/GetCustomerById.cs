@@ -21,7 +21,7 @@ internal class GetCustomerByIdRequestValidator : AbstractValidator<GetCustomerBy
 
 [MapToGroup<CustomersV1RouteGroup>()]
 internal class GetCustomerById(ServiceDbContext db)
-  : MinimalEndpoint<GetCustomerByIdRequest, Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem>>
+  : MinimalEndpoint<GetCustomerByIdRequest, Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem, ProblemHttpResult>>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,
@@ -30,7 +30,7 @@ internal class GetCustomerById(ServiceDbContext db)
     MapGet("/{Id}");
   }
 
-  protected override async Task<Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem>> HandleAsync(
+  protected override async Task<Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem, ProblemHttpResult>> HandleAsync(
     GetCustomerByIdRequest req,
     CancellationToken ct)
   {
