@@ -10,6 +10,7 @@ public static class DependencyInjectionExtensions
   private const string ClientDoesNotExist = "A client with name {0} does not exist.";
   private const string ChannelAlreadyRegistered = "A channel for request type {0} is already registered.";
   private const string ChannelCannotBeRegistered = "Channel couldn't be registered for request type {0} and client name {1}.";
+  private const string RequestTypeFlaggedAsDoNotRegister = "Request type {0} is flagged as 'DoNotRegister'.";
 
   /// <summary>
   /// Adds and configures a new client for specified ServiceEndpoint request.
@@ -163,7 +164,8 @@ public static class DependencyInjectionExtensions
     var requestTypes = fromAssembly
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                       type.IsAssignableTo(typeof(IServiceRequestMarker)));
+                       type.IsAssignableTo(typeof(IServiceRequestMarker)) &&
+                       !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any());
 
     if (requestFilterPredicate is not null)
     {
@@ -206,7 +208,8 @@ public static class DependencyInjectionExtensions
     var requestTypes = fromAssembly
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                       type.IsAssignableTo(typeof(IServiceRequestMarker)));
+                       type.IsAssignableTo(typeof(IServiceRequestMarker)) &&
+                       !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any());
 
     if (requestFilterPredicate is not null)
     {
@@ -229,6 +232,10 @@ public static class DependencyInjectionExtensions
     Action<IServiceProvider, HttpClient> configureClient,
     Action<IHttpClientBuilder>? configureClientBuilder)
   {
+    if (requestType.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any())
+    {
+      throw new InvalidOperationException(string.Format(RequestTypeFlaggedAsDoNotRegister, requestType));
+    }
     if (ServiceChannelRegistry.Instance.IsRequestRegistered(requestType))
     {
       throw new InvalidOperationException(string.Format(ChannelAlreadyRegistered, requestType));
@@ -250,6 +257,10 @@ public static class DependencyInjectionExtensions
     Type requestType,
     string clientName)
   {
+    if (requestType.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any())
+    {
+      throw new InvalidOperationException(string.Format(RequestTypeFlaggedAsDoNotRegister, requestType));
+    }
     if (ServiceChannelRegistry.Instance.IsRequestRegistered(requestType))
     {
       throw new InvalidOperationException(string.Format(ChannelAlreadyRegistered, requestType));

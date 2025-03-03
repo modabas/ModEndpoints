@@ -24,7 +24,7 @@ internal class CreateCustomerRequestValidator : AbstractValidator<CreateCustomer
 
 [MapToGroup<CustomersV1RouteGroup>()]
 internal class CreateCustomer(ServiceDbContext db)
-  : MinimalEndpoint<CreateCustomerRequest, Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem>>
+  : MinimalEndpoint<CreateCustomerRequest, Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>>
 {
   protected override void Configure(
     IServiceProvider serviceProvider,
@@ -33,7 +33,7 @@ internal class CreateCustomer(ServiceDbContext db)
     MapPost("/");
   }
 
-  protected override async Task<Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem>> HandleAsync(
+  protected override async Task<Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>> HandleAsync(
     CreateCustomerRequest req,
     CancellationToken ct)
   {

@@ -70,6 +70,14 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
       responseType.Name.StartsWith("Results`") &&
       (responseType.Namespace?.Equals("Microsoft.AspNetCore.Http.HttpResults") ?? false))
     {
+      if (TryUseImplicitOperatorFor<ProblemHttpResult>(
+        responseType,
+        validationResult,
+        vr => vr.ToTypedProblem(),
+        out var problem))
+      {
+        return new ValueTask<TResponse>(problem);
+      }
       if (TryUseImplicitOperatorFor<ValidationProblem>(
         responseType,
         validationResult,
@@ -82,25 +90,17 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
         responseType,
         validationResult,
         vr => vr.ToTypedBadRequestWithValidationProblem(),
-        out var badRequestWithValidationProblems))
+        out var badRequestWithValidationProblem))
       {
-        return new ValueTask<TResponse>(badRequestWithValidationProblems);
+        return new ValueTask<TResponse>(badRequestWithValidationProblem);
       }
       if (TryUseImplicitOperatorFor<BadRequest<ProblemDetails>>(
         responseType,
         validationResult,
         vr => vr.ToTypedBadRequestWithProblem(),
-        out var badRequestWithProblems))
+        out var badRequestWithProblem))
       {
-        return new ValueTask<TResponse>(badRequestWithProblems);
-      }
-      if (TryUseImplicitOperatorFor<ProblemHttpResult>(
-        responseType,
-        validationResult,
-        vr => vr.ToTypedProblem(),
-        out var problem))
-      {
-        return new ValueTask<TResponse>(problem);
+        return new ValueTask<TResponse>(badRequestWithProblem);
       }
       if (TryUseImplicitOperatorFor<BadRequest>(
         responseType,
