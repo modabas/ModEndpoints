@@ -63,9 +63,9 @@ public class MappingAndHandlerTests
   [Fact]
   public async Task Post_Returns_SuccessAsync()
   {
-    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/customers") 
-    { 
-      Content = JsonContent.Create(new CreateCustomerRequestBody("John", "Doe", "Smith")) 
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/customers")
+    {
+      Content = JsonContent.Create(new CreateCustomerRequestBody("John", "Doe", "Smith"))
     };
 
     var httpResponse = await _testClient.SendAsync(httpRequest);

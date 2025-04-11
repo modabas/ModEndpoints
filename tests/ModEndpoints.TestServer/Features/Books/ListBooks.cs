@@ -29,6 +29,6 @@ internal class ListBooks
         new ListBooksResponseItem(Guid.NewGuid(), "Book 1", "Author 1", 19.99m),
         new ListBooksResponseItem(Guid.NewGuid(), "Book 2", "Author 2", 29.99m)
       ]);
-       
+
   }
 }
