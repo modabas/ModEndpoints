@@ -11,7 +11,6 @@ public static class DependencyInjectionExtensions
 {
   public static IServiceCollection AddModEndpointsCoreFromAssemblyContaining<T>(
     this IServiceCollection services,
-    Assembly assembly,
     ServiceLifetime lifetime = ServiceLifetime.Transient)
   {
     return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, lifetime);
@@ -39,7 +38,7 @@ public static class DependencyInjectionExtensions
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
                        type != typeof(RootRouteGroup) &&
-                       !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any())
+                       !type.GetCustomAttributes<DoNotRegisterAttribute>().Any())
         .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IRouteGroupConfigurator), type, type, lifetime))
         .ToArray();
 
@@ -48,7 +47,7 @@ public static class DependencyInjectionExtensions
     return services;
   }
 
-  public static IServiceCollection AddEndpointsCoreFromAssembly(
+  private static IServiceCollection AddEndpointsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
     ServiceLifetime lifetime)
@@ -57,7 +56,7 @@ public static class DependencyInjectionExtensions
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                      type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
-                     !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any());
+                     !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
     CheckServiceEndpointRegistrations(endpointTypes);
 

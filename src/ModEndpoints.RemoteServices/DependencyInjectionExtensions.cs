@@ -165,7 +165,7 @@ public static class DependencyInjectionExtensions
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IServiceRequestMarker)) &&
-                       !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any());
+                       !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
     if (requestFilterPredicate is not null)
     {
@@ -209,7 +209,7 @@ public static class DependencyInjectionExtensions
         .DefinedTypes
         .Where(type => type is { IsAbstract: false, IsInterface: false } &&
                        type.IsAssignableTo(typeof(IServiceRequestMarker)) &&
-                       !type.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any());
+                       !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
     if (requestFilterPredicate is not null)
     {
@@ -232,7 +232,7 @@ public static class DependencyInjectionExtensions
     Action<IServiceProvider, HttpClient> configureClient,
     Action<IHttpClientBuilder>? configureClientBuilder)
   {
-    if (requestType.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any())
+    if (requestType.GetCustomAttributes<DoNotRegisterAttribute>().Any())
     {
       throw new InvalidOperationException(string.Format(RequestTypeFlaggedAsDoNotRegister, requestType));
     }
@@ -257,7 +257,7 @@ public static class DependencyInjectionExtensions
     Type requestType,
     string clientName)
   {
-    if (requestType.GetCustomAttributes(typeof(DoNotRegisterAttribute)).Any())
+    if (requestType.GetCustomAttributes<DoNotRegisterAttribute>().Any())
     {
       throw new InvalidOperationException(string.Format(RequestTypeFlaggedAsDoNotRegister, requestType));
     }
