@@ -9,6 +9,8 @@ env:
   ENDPOINTSPROJECTNAME: "ModEndpoints"
   REMOTESERVICESCOREPROJECTNAME: "ModEndpoints.RemoteServices.Core"
   REMOTESERVICESPROJECTNAME: "ModEndpoints.RemoteServices"
+
+  ENDPOINTSTESTPROJECTNAME: "ModEndpoints.Tests"
   
 jobs:
   build:
@@ -39,6 +41,11 @@ jobs:
     - name: Build
       run: dotnet build ${{ env.ENDPOINTSPROJECTNAME }} --configuration Release --no-restore
       working-directory: src
+
+    - name: Test
+      run: dotnet test ${{ env.ENDPOINTSTESTPROJECTNAME }} --no-restore --verbosity normal
+      working-directory: tests
+
     - name: Package nuget remote services core
       run: dotnet pack ${{ env.REMOTESERVICESCOREPROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
