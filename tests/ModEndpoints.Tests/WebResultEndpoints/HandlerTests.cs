@@ -40,6 +40,9 @@ public class HandlerTests
 
     Assert.NotNull(response);
     Assert.Equal(bookId, response.Id);
+    Assert.Equal("Book 1", response.Title);
+    Assert.Equal("Author 1", response.Author);
+    Assert.Equal(19.99m, response.Price);
   }
 
   [Fact]
@@ -59,6 +62,11 @@ public class HandlerTests
     Assert.NotNull(response);
     Assert.NotNull(response.Books);
     Assert.Equal(2, response.Books.Count);
+    var book2 = response.Books[1];
+    Assert.NotNull(book2);
+    Assert.Equal("Book 2", book2.Title);
+    Assert.Equal("Author 2", book2.Author);
+    Assert.Equal(29.99m, book2.Price);
   }
 
   [Fact]

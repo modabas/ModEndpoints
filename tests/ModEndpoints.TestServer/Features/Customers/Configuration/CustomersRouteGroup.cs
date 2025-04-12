@@ -1,5 +1,4 @@
 ﻿using ModEndpoints.Core;
-using ModEndpoints.TestServer.Features;
 
 namespace ModEndpoints.TestServer.Features.Customers.Configuration;
 

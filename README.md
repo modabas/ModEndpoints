@@ -44,7 +44,7 @@ The request is processed in 'HandleAsync' method which returns a strongly typed 
 
 ### Service Registration
 
-Use AddModEndpointsFromAssembly extension method to register all endpoints defined in an assembly.
+Use AddModEndpointsFromAssembly or AddModEndpointsFromAssemblyContaining<T> extension method to register all endpoints defined in an assembly.
 
 Optional: Use FluentValidation.DependencyInjectionExtensions package to add FluentValidation validators to dependency injection for request validation.
 
@@ -55,7 +55,7 @@ These methods register and map services required for all endpoint types.
  ``` csharp
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddModEndpointsFromAssembly(typeof(MyEndpoint).Assembly);
+builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>();
 //Validation
 builder.Services.AddValidatorsFromAssemblyContaining<MyValidator>(includeInternalTypes: true);
 
@@ -353,7 +353,7 @@ MinimalEndpoints perform about same as regular Minimal Apis.
 
 The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
-See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
+See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/0.6.5/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ## Endpoint Types
 

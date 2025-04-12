@@ -27,7 +27,7 @@ internal class PartialUpdateCustomer
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    MapMethods("/{Id}", ["PATCH"])
+    MapPatch("/{Id}")
       .Produces<PartialUpdateCustomerResponse>();
   }
 

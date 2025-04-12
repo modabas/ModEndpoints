@@ -17,7 +17,15 @@ export const options = {
 
 // Simulated user behavior
 export default function () {
-  let res = http.get("http://localhost:5102/RegularEndpoints/BasicTest/");
+  const params = {
+  headers: {
+    'accept':'application/json',
+    'Content-Type':'application/json'
+  },
+  timeout: 2000,
+  };
+  let data = { name: 'Elizabeth' };
+  let res = http.post("http://localhost:5102/MinimalApis/InProcessTest/2f81c55e-22e7-4410-96de-8a8559cec357", JSON.stringify(data), params);
   // Validate response status
   check(res, { "status was 200": (r) => r.status == 200 });
 }

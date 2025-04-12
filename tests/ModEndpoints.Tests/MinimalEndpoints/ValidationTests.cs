@@ -27,9 +27,9 @@ public class ValidationTests
   [Fact]
   public async Task InvalidBodyParameter_ForTypedResultEndpoint_Returns_InvalidAsync()
   {
-    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/customers") 
-    { 
-      Content = JsonContent.Create(new CreateCustomerRequestBody("", null, "")) 
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/customers")
+    {
+      Content = JsonContent.Create(new CreateCustomerRequestBody("", null, ""))
     };
 
     var httpResponse = await _testClient.SendAsync(httpRequest);

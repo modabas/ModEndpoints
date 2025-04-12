@@ -26,7 +26,7 @@ internal static class InProcessTest
 {
   public static RouteHandlerBuilder MapMinimalApiForInProcessTest(this IEndpointRouteBuilder builder)
   {
-    return builder.MapPost("RegularEndpoints/InProcessTest/{Id}",
+    return builder.MapPost("/MinimalApis/InProcessTest/{Id}",
       async Task<IResult> (
         [AsParameters] InProcessTestRequest req,
         [FromServices] IValidator<InProcessTestRequest> validator,

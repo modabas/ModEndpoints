@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
-using ModEndpoints.TestServer.Features.Books;
 using ModEndpoints.TestServer.Features.Stores;
 using ModResults;
 
@@ -35,7 +34,7 @@ public class HandlerTests
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var responseContent = await httpResponse.Content.ReadAsStringAsync();
-    var response = await JsonSerializer.DeserializeAsync<Result<GetBookByIdResponse>>(
+    var response = await JsonSerializer.DeserializeAsync<Result<GetStoreByIdResponse>>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
 
@@ -44,6 +43,7 @@ public class HandlerTests
     Assert.False(response.IsFailed);
     Assert.NotNull(response.Value);
     Assert.Equal(bookId, response.Value.Id);
+    Assert.Equal("Name 1", response.Value.Name);
   }
 
   [Fact]
@@ -66,6 +66,9 @@ public class HandlerTests
     Assert.NotNull(response.Value);
     Assert.NotNull(response.Value.Stores);
     Assert.Equal(2, response.Value.Stores.Count);
+    var store2 = response.Value.Stores[1];
+    Assert.NotNull(store2);
+    Assert.Equal("Name 2", store2.Name);
   }
 
   [Fact]

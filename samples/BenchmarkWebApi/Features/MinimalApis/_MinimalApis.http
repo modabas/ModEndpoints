@@ -3,11 +3,11 @@
 @BaseUrl =http://localhost:5102
 
 ###Regular endpoint simple test
-GET {{BaseUrl}}/RegularEndpoints/BasicTest
+GET {{BaseUrl}}/MinimalApis/BasicTest
 Accept: application/json
 
 ###Regular endpoint in-process test
-POST {{BaseUrl}}/RegularEndpoints/InProcessTest/383dd966-67f2-4563-aea6-50d0b87f7f43
+POST {{BaseUrl}}/MinimalApis/InProcessTest/383dd966-67f2-4563-aea6-50d0b87f7f43
 Accept: application/json
 Content-Type: application/json
 

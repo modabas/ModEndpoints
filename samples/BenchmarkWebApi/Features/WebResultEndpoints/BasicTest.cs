@@ -11,7 +11,7 @@ internal class BasicTest
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    MapGet("WebResultEndpoints/BasicTest")
+    MapGet("/WebResultEndpoints/BasicTest")
       .Produces<string>();
   }
 
