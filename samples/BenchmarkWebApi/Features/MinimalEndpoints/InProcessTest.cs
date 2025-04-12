@@ -29,7 +29,7 @@ internal class InProcessTest(IGetMeAStringService svc)
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    MapPost("MinimalEndpoints/InProcessTest/{Id}")
+    MapPost("/MinimalEndpoints/InProcessTest/{Id}")
       .Produces<InProcessTestResponse>();
   }
 

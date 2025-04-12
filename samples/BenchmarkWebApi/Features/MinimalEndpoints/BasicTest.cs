@@ -9,7 +9,7 @@ internal class BasicTest
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    MapGet("MinimalEndpoints/BasicTest")
+    MapGet("/MinimalEndpoints/BasicTest")
       .Produces<string>();
   }
 

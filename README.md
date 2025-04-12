@@ -353,7 +353,7 @@ MinimalEndpoints perform about same as regular Minimal Apis.
 
 The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
-See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
+See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/0.6.5/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ## Endpoint Types
 
