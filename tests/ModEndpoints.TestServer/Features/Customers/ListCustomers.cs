@@ -18,7 +18,7 @@ internal class ListCustomers
     IServiceProvider serviceProvider,
     IRouteGroupConfigurator? parentRouteGroup)
   {
-    MapGet("/");
+    MapMethods("/", [HttpMethod.Get.Method]);
   }
 
   protected override async Task<ListCustomersResponse> HandleAsync(

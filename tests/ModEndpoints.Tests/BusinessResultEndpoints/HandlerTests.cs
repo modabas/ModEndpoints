@@ -43,6 +43,7 @@ public class HandlerTests
     Assert.False(response.IsFailed);
     Assert.NotNull(response.Value);
     Assert.Equal(bookId, response.Value.Id);
+    Assert.Equal("Name 1", response.Value.Name);
   }
 
   [Fact]
@@ -65,6 +66,9 @@ public class HandlerTests
     Assert.NotNull(response.Value);
     Assert.NotNull(response.Value.Stores);
     Assert.Equal(2, response.Value.Stores.Count);
+    var store2 = response.Value.Stores[1];
+    Assert.NotNull(store2);
+    Assert.Equal("Name 2", store2.Name);
   }
 
   [Fact]

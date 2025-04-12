@@ -47,6 +47,7 @@ public class HandlerTests
     Assert.False(response.IsFailed);
     Assert.NotNull(response.Value);
     Assert.Equal(storeId, response.Value.Id);
+    Assert.Equal("Name 1", response.Value.Name);
   }
 
   [Fact]

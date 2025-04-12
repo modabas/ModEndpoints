@@ -39,6 +39,9 @@ public class MappingAndHandlerTests
 
     Assert.NotNull(response);
     Assert.Equal(customerId, response.Id);
+    Assert.Equal("FirstName", response.FirstName);
+    Assert.Equal("MiddleName", response.MiddleName);
+    Assert.Equal("LastName", response.LastName);
   }
 
   [Fact]
@@ -58,6 +61,11 @@ public class MappingAndHandlerTests
     Assert.NotNull(response);
     Assert.NotNull(response.Customers);
     Assert.Equal(2, response.Customers.Count);
+    var customer2 = response.Customers[1];
+    Assert.NotNull(customer2);
+    Assert.Equal("Jane", customer2.FirstName);
+    Assert.Null(customer2.MiddleName);
+    Assert.Equal("Doe", customer2.LastName);
   }
 
   [Fact]
