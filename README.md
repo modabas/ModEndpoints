@@ -70,7 +70,7 @@ app.Run();
 
 A [MinimalEndpoint](#minimalendpoint) is the most straighforward way to define a Minimal Api in REPR format.
 
-Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint like a regular Minimal Api.
+Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint similar to a Minimal Api.
 
 The request is processed in 'HandleAsync' method. Request is passed to handler method as parameter after validation (if a validator is registered for request model). Handler method returns a response model or a string or a Minimal Api IResult based response.
 
@@ -250,10 +250,10 @@ internal class UploadBook
 
 ### Route groups
 
-By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method used to map Minimal Apis under a group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than regular Minimal Apis, but these are still Minimal Api route groups and can be configured by any extension method of RouteGroupBuilder. Route groups are also subject to auto discovery and registration, similar to endpoints.
+By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method used to map Minimal Apis under a group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than configuring a Minimal Api. But route group configuration still utilize Minimal Api route groups and can be decorated by any extension method of RouteGroupBuilder. Route groups are also subject to auto discovery and registration, similar to endpoints.
 
 - [Create a route group implementation](./samples/ShowcaseWebApi/Features/FeaturesRouteGroup.cs) by inheriting RouteGroupConfigurator and implementing 'Configure' method,
-- Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like a regular Minimal Api route group.
+- Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like any Minimal Api route group.
 - Apply MapToGroup attribute to either other [route group](./samples/ShowcaseWebApi/Features/Books/Configuration/BooksV1RouteGroup.cs) or [endpoint](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) classes that will be mapped under created route group. Use type of the new route group implementation as GroupType parameter to the attribute.
 
 Following sample creates a parent route group (FeaturesRouteGroup), a child route group under it (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal Apis ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning).
@@ -347,13 +347,13 @@ internal class DisabledCustomerFeature
 
 ## Performance
 
-WebResultEndpoints have a slight overhead (3-4%) over regular Minimal Apis on request/sec metric under load tests with 100 virtual users.
-
-MinimalEndpoints perform about same as regular Minimal Apis.
+Under load tests with 100 virtual users:  
+- MinimalEndpoints perform nearly the same (~1%) as Minimal Apis,
+- WebResultEndpoints introduce a slight overhead (~2%) compared to Minimal Apis in terms of requests per second.
 
 The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
-See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/0.6.5/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
+See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/0.6.6/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ## Endpoint Types
 
