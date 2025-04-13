@@ -11,24 +11,6 @@ namespace ModEndpoints;
 /// </summary>
 public class DefaultResultToResponseMapper : IResultToResponseMapper
 {
-  private static readonly int[] _successStatusCodePriorityListForResult =
-  [
-    StatusCodes.Status204NoContent,
-    StatusCodes.Status200OK,
-    StatusCodes.Status201Created,
-    StatusCodes.Status202Accepted,
-    StatusCodes.Status205ResetContent
-  ];
-
-  private static readonly int[] _successStatusCodePriorityListForResultOfT =
-  [
-    StatusCodes.Status200OK,
-    StatusCodes.Status201Created,
-    StatusCodes.Status202Accepted,
-    StatusCodes.Status204NoContent,
-    StatusCodes.Status205ResetContent
-  ];
-
   public async ValueTask<IResult> ToResponseAsync(
     Result result,
     HttpContext context,
@@ -39,25 +21,13 @@ public class DefaultResultToResponseMapper : IResultToResponseMapper
       return result.ToErrorResponse();
     }
 
-    var producesList = context
-      .GetEndpoint()?
-      .Metadata
-      .GetOrderedMetadata<IProducesResponseTypeMetadata>();
+    var preferredSuccessStatusCodeCache = context.RequestServices
+      .GetRequiredKeyedService<IPreferredSuccessStatusCodeCache>(
+      WebResultEndpointDefinitions.PreferredSuccessStatusCodeCacheNameForResult);
+    var preferredCode = preferredSuccessStatusCodeCache
+      .GetStatusCode(context);
 
-    if (producesList is null || producesList.Count == 0)
-    {
-      return result.ToResponse();
-    }
-
-    var producesCode = _successStatusCodePriorityListForResult
-      .Join(
-        producesList,
-        outer => outer,
-        inner => inner.StatusCode,
-        (outer, inner) => outer)
-      .FirstOrDefault();
-
-    switch (producesCode)
+    switch (preferredCode)
     {
       case StatusCodes.Status204NoContent:
         return result.ToResponse();
@@ -101,25 +71,13 @@ public class DefaultResultToResponseMapper : IResultToResponseMapper
       return result.ToErrorResponse();
     }
 
-    var producesList = context
-      .GetEndpoint()?
-      .Metadata
-      .GetOrderedMetadata<IProducesResponseTypeMetadata>();
+    var preferredSuccessStatusCodeCache = context.RequestServices
+      .GetRequiredKeyedService<IPreferredSuccessStatusCodeCache>(
+      WebResultEndpointDefinitions.PreferredSuccessStatusCodeCacheNameForResultOfT);
+    var preferredCode = preferredSuccessStatusCodeCache
+      .GetStatusCode(context);
 
-    if (producesList is null || producesList.Count == 0)
-    {
-      return result.ToResponse();
-    }
-
-    var producesCode = _successStatusCodePriorityListForResultOfT
-      .Join(
-        producesList,
-        outer => outer,
-        inner => inner.StatusCode,
-        (outer, inner) => outer)
-      .FirstOrDefault();
-
-    switch (producesCode)
+    switch (preferredCode)
     {
       case StatusCodes.Status200OK:
         return result.ToResponse();
