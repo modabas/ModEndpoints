@@ -2,7 +2,7 @@
 
 namespace ModEndpoints;
 
-internal interface IPreferredSuccessStatusCodeCache
+public interface IPreferredSuccessStatusCodeCache
 {
   int? GetStatusCode(HttpContext context);
 }

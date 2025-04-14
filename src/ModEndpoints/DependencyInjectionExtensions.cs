@@ -23,10 +23,10 @@ public static class DependencyInjectionExtensions
     //WebResultEndpoint components
     services.TryAddKeyedSingleton<IResultToResponseMapper, DefaultResultToResponseMapper>(
       WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
-    services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, PreferredSuccessStatusCodeCacheForResult>(
-      WebResultEndpointDefinitions.PreferredSuccessStatusCodeCacheNameForResult);
-    services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, PreferredSuccessStatusCodeCacheForResultOfT>(
-      WebResultEndpointDefinitions.PreferredSuccessStatusCodeCacheNameForResultOfT);
+    services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResult>(
+      WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResult);
+    services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResultOfT>(
+      WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResultOfT);
     services.TryAddScoped<ILocationStore, DefaultLocationStore>();
     services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http.Metadata;
 
 namespace ModEndpoints;
 
-internal class PreferredSuccessStatusCodeCacheForResultOfT : IPreferredSuccessStatusCodeCache
+public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSuccessStatusCodeCache
 {
   private readonly int?[] _successStatusCodePriorityList =
   [

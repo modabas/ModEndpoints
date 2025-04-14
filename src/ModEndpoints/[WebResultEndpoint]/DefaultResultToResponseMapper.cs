@@ -23,11 +23,11 @@ public class DefaultResultToResponseMapper : IResultToResponseMapper
 
     var preferredSuccessStatusCodeCache = context.RequestServices
       .GetRequiredKeyedService<IPreferredSuccessStatusCodeCache>(
-      WebResultEndpointDefinitions.PreferredSuccessStatusCodeCacheNameForResult);
-    var preferredCode = preferredSuccessStatusCodeCache
+      WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResult);
+    var preferredSuccessCode = preferredSuccessStatusCodeCache
       .GetStatusCode(context);
 
-    switch (preferredCode)
+    switch (preferredSuccessCode)
     {
       case StatusCodes.Status204NoContent:
         return result.ToResponse();
@@ -73,11 +73,11 @@ public class DefaultResultToResponseMapper : IResultToResponseMapper
 
     var preferredSuccessStatusCodeCache = context.RequestServices
       .GetRequiredKeyedService<IPreferredSuccessStatusCodeCache>(
-      WebResultEndpointDefinitions.PreferredSuccessStatusCodeCacheNameForResultOfT);
-    var preferredCode = preferredSuccessStatusCodeCache
+      WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResultOfT);
+    var preferredSuccessCode = preferredSuccessStatusCodeCache
       .GetStatusCode(context);
 
-    switch (preferredCode)
+    switch (preferredSuccessCode)
     {
       case StatusCodes.Status200OK:
         return result.ToResponse();
