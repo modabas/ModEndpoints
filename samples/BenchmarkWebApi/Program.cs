@@ -1,5 +1,5 @@
 ﻿using BenchmarkWebApi.Extensions;
-using BenchmarkWebApi.Features.RegularEndpoints;
+using BenchmarkWebApi.Features.MinimalApis;
 using ModEndpoints;
 
 var builder = WebApplication.CreateBuilder(args);

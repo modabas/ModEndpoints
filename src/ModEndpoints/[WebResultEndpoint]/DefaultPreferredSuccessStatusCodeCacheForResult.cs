@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Http.Metadata;
 
 namespace ModEndpoints;
 
-internal class PreferredSuccessStatusCodeCacheForResult : IPreferredSuccessStatusCodeCache
+/// <summary>
+/// Used to store and retrieve preferred success status codes for Web Result Endpoints without a response model.
+/// </summary>
+public class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferredSuccessStatusCodeCache
 {
   private readonly int?[] _successStatusCodePriorityList =
   [

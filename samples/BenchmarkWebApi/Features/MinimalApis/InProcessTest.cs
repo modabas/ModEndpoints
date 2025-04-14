@@ -5,7 +5,7 @@ using ModEndpoints.Core;
 using ModResults;
 using ModResults.MinimalApis;
 
-namespace BenchmarkWebApi.Features.RegularEndpoints;
+namespace BenchmarkWebApi.Features.MinimalApis;
 
 public record InProcessTestRequest(Guid Id, [FromBody] InProcessTestRequestBody Body);
 

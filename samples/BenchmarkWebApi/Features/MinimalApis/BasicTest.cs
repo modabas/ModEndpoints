@@ -1,4 +1,4 @@
-﻿namespace BenchmarkWebApi.Features.RegularEndpoints;
+﻿namespace BenchmarkWebApi.Features.MinimalApis;
 
 internal static class BasicTest
 {
