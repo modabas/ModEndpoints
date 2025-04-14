@@ -46,6 +46,40 @@ public class HandlerTests
   }
 
   [Fact]
+  public async Task FailureEndpointWithEmptyRequestOfTResponse_Returns_ErrorAsync()
+  {
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/books/failure/withResponseModel");
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.False(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status404NotFound, (int)httpResponse.StatusCode);
+  }
+
+  [Fact]
+  public async Task FailureEndpointWithEmptyRequest_Returns_ErrorAsync()
+  {
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/books/failure/withoutResponseModel");
+
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+    Assert.False(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status404NotFound, (int)httpResponse.StatusCode);
+  }
+
+  [Fact]
+  public async Task EndpointOfTRequest_Returns_SuccessAsync()
+  {
+    var bookId = Guid.NewGuid();
+    var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/api/books/{bookId}")
+    {
+      Content = JsonContent.Create(new UpdateBookRequestBody("Title 1", "Author 1", 19.99m))
+    };
+
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status204NoContent, (int)httpResponse.StatusCode);
+  }
+
+  [Fact]
   public async Task EndpointWithEmptyRequestOfTResponse_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/books");
@@ -73,20 +107,6 @@ public class HandlerTests
   public async Task EndpointWithEmptyRequest_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "/api/books");
-
-    var httpResponse = await _testClient.SendAsync(httpRequest);
-    Assert.True(httpResponse.IsSuccessStatusCode);
-    Assert.Equal(StatusCodes.Status204NoContent, (int)httpResponse.StatusCode);
-  }
-
-  [Fact]
-  public async Task EndpointOfTRequest_Returns_SuccessAsync()
-  {
-    var bookId = Guid.NewGuid();
-    var httpRequest = new HttpRequestMessage(HttpMethod.Put, $"/api/books/{bookId}")
-    {
-      Content = JsonContent.Create(new UpdateBookRequestBody("Title 1", "Author 1", 19.99m))
-    };
 
     var httpResponse = await _testClient.SendAsync(httpRequest);
     Assert.True(httpResponse.IsSuccessStatusCode);
