@@ -4,13 +4,13 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Their handler methods may return Minimal Api IResult based, string or T (any other type) response. MinimalEnpoints are implemented in ModEndpoints.Core package.
+[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Their handler methods may return Minimal Api IResult based, string or T (any other type) response. MinimalEnpoints are implemented in <u>ModEndpoints.Core</u> package.
 
-[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in ModEndpoints package.
+[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in <u>ModEndpoints</u> package.
 
-To make consuming a [ServiceEndpoint](#serviceendpoint) easier, which is a very specialized endpoint more suitable for internal services, a specific [client implementation](#serviceendpoint-clients) along with extensions required for client registration is implemented in ModEndpoints.RemoteServices package, and interfaces required for ServiceEndpoint request models are in ModEndpoints.RemoteServices.Core package.
+[ServiceEndpoint](#serviceendpoint) is a highly specialized endpoint designed for internal services. <u>ModEndpoints.RemoteServices</u> package provides a dedicated [client implementation for ServiceEndpoints](#serviceendpoint-clients) to abstract away HTTP plumbing and enable remote service consumption with the knowledge of strongly typed request and response models shared between server and client projects. Additionally, <u>ModEndpoints.RemoteServices.Core</u> package contains the interfaces required for ServiceEndpoint request models.
 
-Each of them are demonstrated in [sample projects](#samples).
+Each endpoint type along with service endpoint client are demonstrated in [sample projects](#samples).
 
 All endpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. They extend the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
 
@@ -415,7 +415,9 @@ A BusinessResultEndpoint implementation, after handling request, encapsulates th
 
 ### ServiceEndpoint
 
-This is a very specialized endpoint suitable for internal services. A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
+This is a very specialized endpoint suitable for internal services. Together with its client implementation, ServiceEndpoints abstract away all HTTP client and request setup, consumption and response handling. By doing so, it enables developers to easily consume remote services with a strongly typed request and response model only by sharing said models between the service and client projects.
+
+A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
 
 - ServiceEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - ServiceEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
@@ -425,9 +427,9 @@ A ServiceEndpoint has following special traits and constraints:
 - Request model defined for a ServiceEndpoint is bound with [FromBody] attribute.
 - A ServiceEndpoint's request must implement either IServiceRequest (for endpoints implementing ServiceEndpoint&lt;TRequest&gt;) or IServiceRequest&lt;TResultValue&gt; (for endpoints implementing ServiceEndpoint&lt;TRequest, TResultValue&gt;)
 - A ServiceEndpoint's request is specific to that endpoint. Each endpoint must have its unique request type.
-- To utilize the advantages of a ServiceEndpoint over other endpoint types, its request and response types has to be shared with clients and therefore has to be in a seperate class library.
+- To utilize the advantages of a ServiceEndpoint over other endpoint types, its request and response models have to be shared with clients and therefore has to be in a seperate class library.
 
-These enable clients to call ServiceEndpoints by a specialized message channel resolved from dependency injection, which has to be registered at client application startup with only service base address and service request type information. No other knowledge about service or client implementation is required.
+These restrictions enable clients to call ServiceEndpoints by a specialized message channel resolved from dependency injection, with only service base address and endpoint's request/response model information. No other client implementation or knowledge about service is required.
 
 Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
 
