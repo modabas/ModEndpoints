@@ -8,7 +8,7 @@
 
 [WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in <ins>ModEndpoints</ins> package.
 
-[ServiceEndpoint](#serviceendpoint) is a highly specialized endpoint designed for internal services. <ins>ModEndpoints.RemoteServices</ins> package provides a dedicated [client implementation for ServiceEndpoints](#serviceendpoint-clients) to abstract away HTTP plumbing and enable remote service consumption with the knowledge of strongly typed request and response models shared between server and client projects. Additionally, <ins>ModEndpoints.RemoteServices.Core</ins> package contains the interfaces required for ServiceEndpoint request models.
+[ServiceEndpoint](#serviceendpoint) is a highly specialized endpoint intended to be used in conjunction with its dedicated [client implementation](#serviceendpoint-clients) in <ins>ModEndpoints.RemoteServices</ins> package. Aim is to abstract away HTTP plumbing on client side and enable remote service consumption with the knowledge of strongly typed request and response models shared between server and client projects. Additionally, <ins>ModEndpoints.RemoteServices.Core</ins> package contains the interfaces required for ServiceEndpoint request models.
 
 Each endpoint type along with service endpoint client are demonstrated in [sample projects](#samples).
 
@@ -405,7 +405,7 @@ It is also possible to implement a custom response mapping behaviour for a WebRe
 
 ### BusinessResultEndpoint
 
-A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for internal services, where clients are aware of Result or Result&lt;TValue&gt; implementations.
+A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for cases where clients are aware of Result or Result&lt;TValue&gt; implementations.
 
 - BusinessResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - BusinessResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
@@ -415,7 +415,7 @@ A BusinessResultEndpoint implementation, after handling request, encapsulates th
 
 ### ServiceEndpoint
 
-This is a very specialized endpoint suitable for internal services. Together with its client implementation, ServiceEndpoints abstract away all HTTP client and request setup, consumption and response handling. By doing so, it enables developers to easily consume remote services with a strongly typed request and response model only by sharing said models between the service and client projects.
+This is a very specialized endpoint which is intended to abstract away all HTTP client and request setup, consumption and response handling when used together with its client implementation. Aim is to enable developers to easily consume remote services with a strongly typed request and response model only by sharing said models between the service and client projects.
 
 A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
 
@@ -429,7 +429,7 @@ A ServiceEndpoint has following special traits and constraints:
 - A ServiceEndpoint's request is specific to that endpoint. Each endpoint must have its unique request type.
 - To utilize the advantages of a ServiceEndpoint over other endpoint types, its request and response models have to be shared with clients and therefore has to be in a seperate class library.
 
-These restrictions enable clients to call ServiceEndpoints by a specialized message channel resolved from dependency injection, with only service base address and endpoint's request/response model information. No other client implementation or knowledge about service is required.
+These restrictions enable clients to call ServiceEndpoints by utilizing a specialized message channel resolved from dependency injection, with only service base address and endpoint's request/response model information. No other client implementation or knowledge about service is required.
 
 Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
 
