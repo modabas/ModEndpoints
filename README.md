@@ -4,11 +4,11 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Their handler methods may return Minimal Api IResult based, string or T (any other type) response. MinimalEnpoints are implemented in <u>ModEndpoints.Core</u> package.
+[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Their handler methods may return Minimal Api IResult based, string or T (any other type) response. MinimalEnpoints are implemented in <ins>ModEndpoints.Core</ins> package.
 
-[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in <u>ModEndpoints</u> package.
+[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in <ins>ModEndpoints</ins> package.
 
-[ServiceEndpoint](#serviceendpoint) is a highly specialized endpoint designed for internal services. <u>ModEndpoints.RemoteServices</u> package provides a dedicated [client implementation for ServiceEndpoints](#serviceendpoint-clients) to abstract away HTTP plumbing and enable remote service consumption with the knowledge of strongly typed request and response models shared between server and client projects. Additionally, <u>ModEndpoints.RemoteServices.Core</u> package contains the interfaces required for ServiceEndpoint request models.
+[ServiceEndpoint](#serviceendpoint) is a highly specialized endpoint designed for internal services. <ins>ModEndpoints.RemoteServices</ins> package provides a dedicated [client implementation for ServiceEndpoints](#serviceendpoint-clients) to abstract away HTTP plumbing and enable remote service consumption with the knowledge of strongly typed request and response models shared between server and client projects. Additionally, <ins>ModEndpoints.RemoteServices.Core</ins> package contains the interfaces required for ServiceEndpoint request models.
 
 Each endpoint type along with service endpoint client are demonstrated in [sample projects](#samples).
 
