@@ -11,22 +11,20 @@ public class DefaultServiceChannel(
 {
   private const string NoChannelRegistrationFound = "No channel registration found for request type {0}.";
 
-  public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(TRequest req, CancellationToken ct)
-    where TRequest : IServiceRequest<TResponse>
+  public async Task<Result<TResponse>> SendAsync<TResponse>(IServiceRequest<TResponse> req, CancellationToken ct)
     where TResponse : notnull
   {
-    return await SendAsync<TRequest, TResponse>(req, null, ct);
+    return await SendAsync(req, null, ct);
   }
 
-  public async Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
-    TRequest req,
+  public async Task<Result<TResponse>> SendAsync<TResponse>(
+    IServiceRequest<TResponse> req,
     string? endpointUriPrefix,
     CancellationToken ct,
     Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? httpRequestInterceptor = null,
     Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? httpResponseInterceptor = null,
     string? uriResolverName = null,
     string? serializerName = null)
-    where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull
   {
     try
@@ -42,9 +40,10 @@ public class DefaultServiceChannel(
         {
           return Result<TResponse>.Fail(requestUriResult);
         }
-        if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
+        var requestType = req.GetType();
+        if (!ServiceChannelRegistry.Instance.IsRequestRegistered(requestType, out var clientName))
         {
-          return Result<TResponse>.CriticalError(string.Format(NoChannelRegistrationFound, typeof(TRequest)));
+          return Result<TResponse>.CriticalError(string.Format(NoChannelRegistrationFound, requestType));
         }
         using (HttpRequestMessage httpReq = new(
           HttpMethod.Post,
@@ -73,20 +72,19 @@ public class DefaultServiceChannel(
     }
   }
 
-  public async Task<Result> SendAsync<TRequest>(TRequest req, CancellationToken ct) where TRequest : IServiceRequest
+  public async Task<Result> SendAsync(IServiceRequest req, CancellationToken ct)
   {
-    return await SendAsync<TRequest>(req, null, ct);
+    return await SendAsync(req, null, ct);
   }
 
-  public async Task<Result> SendAsync<TRequest>(
-    TRequest req,
+  public async Task<Result> SendAsync(
+    IServiceRequest req,
     string? endpointUriPrefix,
     CancellationToken ct,
     Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? httpRequestInterceptor = null,
     Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? httpResponseInterceptor = null,
     string? uriResolverName = null,
     string? serializerName = null)
-    where TRequest : IServiceRequest
   {
     try
     {
@@ -101,9 +99,10 @@ public class DefaultServiceChannel(
         {
           return Result.Fail(requestUriResult);
         }
-        if (!ServiceChannelRegistry.Instance.IsRequestRegistered<TRequest>(out var clientName))
+        var requestType = req.GetType();
+        if (!ServiceChannelRegistry.Instance.IsRequestRegistered(requestType, out var clientName))
         {
-          return Result.CriticalError(string.Format(NoChannelRegistrationFound, typeof(TRequest)));
+          return Result.CriticalError(string.Format(NoChannelRegistrationFound, requestType));
         }
         using (HttpRequestMessage httpReq = new(
           HttpMethod.Post,

@@ -11,21 +11,18 @@ public interface IServiceChannel
   /// <summary>
   /// Sends request to remote service endpoint.
   /// </summary>
-  /// <typeparam name="TRequest">Type of ServiceEndpoint request that will be sent.</typeparam>
   /// <typeparam name="TResponse">ServiceEndpoint response type.</typeparam>
   /// <param name="req">Request to be sent.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
-  Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
-    TRequest req,
+  Task<Result<TResponse>> SendAsync<TResponse>(
+    IServiceRequest<TResponse> req,
     CancellationToken ct)
-    where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull;
 
   /// <summary>
   /// Sends request to remote service endpoint.
   /// </summary>
-  /// <typeparam name="TRequest">Type of ServiceEndpoint request that will be sent.</typeparam>
   /// <typeparam name="TResponse">ServiceEndpoint response type.</typeparam>
   /// <param name="req">Request to be sent.</param>
   /// <param name="endpointUriPrefix">Path to append as prefix to resolved enpoint uri. Usually used to add path segments to configured client's base address.</param>
@@ -35,33 +32,29 @@ public interface IServiceChannel
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
-  Task<Result<TResponse>> SendAsync<TRequest, TResponse>(
-    TRequest req,
+  Task<Result<TResponse>> SendAsync<TResponse>(
+    IServiceRequest<TResponse> req,
     string? endpointUriPrefix,
     CancellationToken ct,
     Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? httpRequestInterceptor = null,
     Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? httpResponseInterceptor = null,
     string? uriResolverName = null,
     string? serializerName = null)
-    where TRequest : IServiceRequest<TResponse>
     where TResponse : notnull;
 
   /// <summary>
   /// Sends request to remote service endpoint.
   /// </summary>
-  /// <typeparam name="TRequest">Type of ServiceEndpoint request that will be sent.</typeparam>
   /// <param name="req">Request to be sent.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
-  Task<Result> SendAsync<TRequest>(
-    TRequest req,
-    CancellationToken ct)
-    where TRequest : IServiceRequest;
+  Task<Result> SendAsync(
+    IServiceRequest req,
+    CancellationToken ct);
 
   /// <summary>
   /// Sends request to remote service endpoint.
   /// </summary>
-  /// <typeparam name="TRequest">Type of ServiceEndpoint request that will be sent.</typeparam>
   /// <param name="req">Request to be sent.</param>
   /// <param name="endpointUriPrefix">Path to append as prefix to resolved enpoint uri. Usually used to add path segments to configured client's base address.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
@@ -70,13 +63,12 @@ public interface IServiceChannel
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response of remote service endpoint or failure result.</returns>
-  Task<Result> SendAsync<TRequest>(
-    TRequest req,
+  Task<Result> SendAsync(
+    IServiceRequest req,
     string? endpointUriPrefix,
     CancellationToken ct,
     Func<IServiceProvider, HttpRequestMessage, CancellationToken, Task>? httpRequestInterceptor = null,
     Func<IServiceProvider, HttpResponseMessage, CancellationToken, Task>? httpResponseInterceptor = null,
     string? uriResolverName = null,
-    string? serializerName = null)
-    where TRequest : IServiceRequest;
+    string? serializerName = null);
 }

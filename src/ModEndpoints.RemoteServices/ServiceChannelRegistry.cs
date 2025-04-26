@@ -23,12 +23,6 @@ public class ServiceChannelRegistry
     _httpClientList = new();
   }
 
-  public bool IsRequestRegistered<TRequest>()
-    where TRequest : IServiceRequestMarker
-  {
-    return IsRequestRegistered(typeof(TRequest));
-  }
-
   public bool IsRequestRegistered(Type requestType)
   {
     return _registry.ContainsKey(requestType);
@@ -47,12 +41,6 @@ public class ServiceChannelRegistry
   internal bool RegisterRequest(Type requestType, string clientName)
   {
     return _registry.TryAdd(requestType, clientName);
-  }
-
-  public bool IsRequestRegistered<TRequest>([NotNullWhen(true)] out string? clientName)
-    where TRequest : IServiceRequestMarker
-  {
-    return IsRequestRegistered(typeof(TRequest), out clientName);
   }
 
   public bool IsRequestRegistered(Type requestType, [NotNullWhen(true)] out string? clientName)

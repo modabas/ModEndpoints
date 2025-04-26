@@ -479,6 +479,6 @@ Then remote services are called with IServiceChannel instance resolved from DI..
   //resolve service channel from DI
   var channel = provider.GetRequiredService<IServiceChannel>();
   //send request over channel to remote service
-  var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(new ListStoresRequest(), ct);
+  var listResult = await channel.SendAsync(new ListStoresRequest(), ct);
 
 ```
