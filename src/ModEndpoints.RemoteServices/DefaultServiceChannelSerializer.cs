@@ -28,7 +28,7 @@ public class DefaultServiceChannelSerializer(
   {
     return new ValueTask<HttpContent>(
       JsonContent.Create(
-        request,
+        (object)request,
         null,
         options.SerializationOptions));
   }

@@ -48,22 +48,26 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   //resolve service channel from DI
   var channel = provider.GetRequiredService<IServiceChannel>();
   //send request over channel to remote ServiceResultEndpoint
-  var listResult = await channel.SendAsync<ListStoresRequest, ListStoresResponse>(
+  var listResult = await channel.SendAsync(
     new ListStoresRequest(),
     "v1/storesWithServiceEndpoint/",
     default);
 
   if (listResult.IsOk)
   {
+    Console.WriteLine("***********************");
     Console.WriteLine($"ListStores complete. Total count: {listResult.Value.Stores.Count}");
+    Console.WriteLine("***********************");
     var id = listResult.Value.Stores.FirstOrDefault()?.Id;
     if (id is not null)
     {
       //send request over channel to remote ServiceResultEndpoint
-      var getResult = await channel.SendAsync<GetStoreByIdRequest, GetStoreByIdResponse>(
+      var getResult = await channel.SendAsync(
         new GetStoreByIdRequest(Id: id.Value),
         "v1/storesWithServiceEndpoint/",
         default);
+      Console.WriteLine("***********************");
+      Console.WriteLine("GetStoreById response BEFORE delete:");
       if (getResult.IsOk)
       {
         Console.WriteLine(getResult.Value);
@@ -72,6 +76,34 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
       {
         Console.WriteLine(getResult.DumpMessages());
       }
+      Console.WriteLine("***********************");
+
+      //send request over channel to remote ServiceResultEndpoint
+      var deleteResult = await channel.SendAsync(
+        new DeleteStoreRequest(Id: id.Value),
+        "v1/storesWithServiceEndpoint/",
+        default);
+      Console.WriteLine("***********************");
+      Console.WriteLine("DeleteStore response:");
+      Console.WriteLine(deleteResult.DumpMessages());
+      Console.WriteLine("***********************");
+
+      //send request over channel to remote ServiceResultEndpoint
+      getResult = await channel.SendAsync(
+        new GetStoreByIdRequest(Id: id.Value),
+        "v1/storesWithServiceEndpoint/",
+        default);
+      Console.WriteLine("***********************");
+      Console.WriteLine("GetStoreById response AFTER delete:");
+      if (getResult.IsOk)
+      {
+        Console.WriteLine(getResult.Value);
+      }
+      else
+      {
+        Console.WriteLine(getResult.DumpMessages());
+      }
+      Console.WriteLine("***********************");
     }
   }
   else
