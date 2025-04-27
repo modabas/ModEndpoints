@@ -4,21 +4,21 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. Their handler methods may return Minimal Api IResult based, string or T (any other type) response. MinimalEnpoints are implemented in <ins>ModEndpoints.Core</ins> package.
+[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal APIs in REPR format endpoints. Their handler methods may return Minimal API IResult based, string or T (any other type) response. MinimalEnpoints are implemented in <ins>ModEndpoints.Core</ins> package.
 
-[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint) and [ServiceEndpoints](#serviceendpoint) organize ASP.NET Core Minimal Apis in REPR format endpoints and are integrated with [result](https://github.com/modabas/ModResults) pattern out of box. They are implemented in <ins>ModEndpoints</ins> package.
+[WebResultEndpoints](#webresultendpoint), [BusinessResultEndpoints](#businessresultendpoint), and [ServiceEndpoints](#serviceendpoint) structure ASP.NET Core Minimal APIs into REPR format endpoints and seamlessly integrate with the [result](https://github.com/modabas/ModResults) pattern. WebResultEndpoints transform the business result returned by the handler method into a Minimal API IResult for client responses, while BusinessResultEndpoints and ServiceEndpoints directly return the raw business result. These are provided within the <ins>ModEndpoints</ins> package.
+
+All endpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. They extend the Minimal API pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
 
 [ServiceEndpoint](#serviceendpoint) is a highly specialized endpoint intended to be used in conjunction with its dedicated [client implementation](#serviceendpoint-clients) in <ins>ModEndpoints.RemoteServices</ins> package. Aim is to abstract away HTTP plumbing on client side and enable remote service consumption with the knowledge of strongly typed request and response models shared between server and client projects. Additionally, <ins>ModEndpoints.RemoteServices.Core</ins> package contains the interfaces required for ServiceEndpoint request models.
 
 Each endpoint type along with service endpoint client are demonstrated in [sample projects](#samples).
 
-All endpoint abstractions are a structured approach to defining endpoints in ASP.NET Core applications. They extend the Minimal Api pattern with reusable, testable, and consistent components for request handling, validation, and response mapping.
-
 ## Key Features
 
- - Organizes ASP.NET Core Minimal Apis in REPR pattern endpoints
+ - Organizes ASP.NET Core Minimal APIs in REPR pattern endpoints
  - Encapsulates endpoint behaviors like request validation, request handling, and response mapping*.
- - Supports anything that Minimal Apis does. Configuration, parameter binding, authentication, Open Api tooling, filters, etc. are all Minimal Apis under the hood.
+ - Supports anything that Minimal APIs does. Configuration, parameter binding, authentication, Open Api tooling, filters, etc. are all Minimal APIs under the hood.
  - Supports auto discovery and registration.
  - Has built-in validation support with [FluentValidation](https://github.com/FluentValidation/FluentValidation). If a validator is registered for request model, request is automatically validated before being handled.
  - Supports constructor dependency injection in endpoint implementations.
@@ -32,13 +32,13 @@ An endpoint must implement two virtual methods: Configure and HandleAsync. A Ser
 
 ### Configuration:
 
-The 'Configure' method is called at application startup to define routes and associate them with handler methods (MapGet, MapPost, etc.). Minimal Api RouteHandlerBuilders returned from these methods can be used to further customize endpoints. 
+The 'Configure' method is called at application startup to define routes and associate them with handler methods (MapGet, MapPost, etc.). Minimal API RouteHandlerBuilders returned from these methods can be used to further customize endpoints. 
 
 ServiceEndpoints are always mapped as Post methods under a pattern determined by resolved services, but have a GetRouteHandlerBuilder method to be used in Configure override to further configure them.
 
 ### Request Handling:
 
-The request is processed in 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults) or in case of MinimalEndpoints, return a Minimal Apis IResult. This business result is handled differently for each endpoint type before being sent to client.
+The request is processed in 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults) or in case of MinimalEndpoints, return a Minimal API IResult. This business result is handled differently for each endpoint type before being sent to client.
 
 ## Quickstart
 
@@ -66,13 +66,13 @@ app.MapModEndpoints();
 app.Run();
 ```
 
-### Write a Minimal Api in REPR format
+### Write a Minimal API in REPR format
 
-A [MinimalEndpoint](#minimalendpoint) is the most straighforward way to define a Minimal Api in REPR format.
+A [MinimalEndpoint](#minimalendpoint) is the most straighforward way to define a Minimal API in REPR format.
 
-Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint similar to a Minimal Api.
+Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint similar to a Minimal API.
 
-The request is processed in 'HandleAsync' method. Request is passed to handler method as parameter after validation (if a validator is registered for request model). Handler method returns a response model or a string or a Minimal Api IResult based response.
+The request is processed in 'HandleAsync' method. Request is passed to handler method as parameter after validation (if a validator is registered for request model). Handler method returns a response model or a string or a Minimal API IResult based response.
 
 ``` csharp
 public record HelloWorldRequest(string Name);
@@ -110,7 +110,7 @@ internal class HelloWorld
 
 A [WebResultEndpoint](#webresultendpoint) can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, but a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
 
-This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal Api IResult based response by WebResultEndpoint before being sent to client.
+This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal API IResult based response by WebResultEndpoint before being sent to client.
 
 Have a look at [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project for various kinds of endpoint implementations and configurations.
 
@@ -148,7 +148,7 @@ internal class ListBooks(ServiceDbContext db)
 
 ### Parameter binding
 
-Request model defined for an endpoint is bound with [AsParameters] attribute (except for ServiceEndpoints). Any field under request model can be bound from route, query, body, form, etc. with corresponding [From...] attribute (see [Minimal Apis Parameter Binding](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-8.0) for more information).
+Request model defined for an endpoint is bound with [AsParameters] attribute (except for ServiceEndpoints). Any field under request model can be bound from route, query, body, form, etc. with corresponding [From...] attribute (see [Minimal APIs Parameter Binding](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-8.0) for more information).
 
 The following sample demonstrates route and body parameter binding.
 
@@ -250,13 +250,13 @@ internal class UploadBook
 
 ### Route groups
 
-By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method used to map Minimal Apis under a group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than configuring a Minimal Api. But route group configuration still utilize Minimal Api route groups and can be decorated by any extension method of RouteGroupBuilder. Route groups are also subject to auto discovery and registration, similar to endpoints.
+By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method used to map Minimal APIs under a group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than configuring a Minimal API. But route group configuration still utilize Minimal API route groups and can be decorated by any extension method of RouteGroupBuilder. Route groups are also subject to auto discovery and registration, similar to endpoints.
 
 - [Create a route group implementation](./samples/ShowcaseWebApi/Features/FeaturesRouteGroup.cs) by inheriting RouteGroupConfigurator and implementing 'Configure' method,
-- Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like any Minimal Api route group.
+- Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like any Minimal API route group.
 - Apply MapToGroup attribute to either other [route group](./samples/ShowcaseWebApi/Features/Books/Configuration/BooksV1RouteGroup.cs) or [endpoint](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) classes that will be mapped under created route group. Use type of the new route group implementation as GroupType parameter to the attribute.
 
-Following sample creates a parent route group (FeaturesRouteGroup), a child route group under it (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal Apis ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning).
+Following sample creates a parent route group (FeaturesRouteGroup), a child route group under it (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal APIs ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning).
 
 ```csharp
 internal class FeaturesRouteGroup : RouteGroupConfigurator
@@ -348,8 +348,8 @@ internal class DisabledCustomerFeature
 ## Performance
 
 Under load tests with 100 virtual users:  
-- MinimalEndpoints perform nearly the same (~1%) as Minimal Apis,
-- WebResultEndpoints introduce a slight overhead (~2%) compared to Minimal Apis in terms of requests per second.
+- MinimalEndpoints perform nearly the same (~1%) as Minimal APIs,
+- WebResultEndpoints introduce a slight overhead (~2%) compared to Minimal APIs in terms of requests per second.
 
 The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
@@ -359,11 +359,11 @@ See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/0.6.6/inproc
 
 WebResultEndpoint, BusinessResultEndpoint and ServiceEndpoint, have a 'HandleAsync' method which returns a strongly typed [business result](https://github.com/modabas/ModResults). But they differ in converting these business results into HTTP responses before sending response to client.
 
-MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minimal Api. Its 'HandleAsync' method support the following types of return values:
+MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minimal API. Its 'HandleAsync' method support the following types of return values:
 
 - string
 - T (Any other type)
-- Minimal Api IResult based (Including TypedResults with Results<TResult1, TResultN> return value)
+- Minimal API IResult based (Including TypedResults with Results<TResult1, TResultN> return value)
 
 See (How to create responses in Minimal API apps)[https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/responses?view=aspnetcore-8.0] for detailed information. Other features described previously are common for all of them.
 
@@ -378,12 +378,12 @@ A MinimalEndpoint implementation, after handling request, returns the response m
 
 ### WebResultEndpoint
 
-A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to a Minimal Api IResult depending on the business result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
+A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to a Minimal API IResult depending on the business result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
 
-- WebResultEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model as body of Minimal Api IResult if successful.
-- WebResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation, doesn't have a response model to return within Minimal Api IResult.
-- WebResultEndpointWithEmptyRequest&lt;TResponse&gt;: Doesn't have a request model and returns a response model as body of Minimal Api IResult if successful.
-- WebResultEndpointWithEmptyRequest: Doesn't have a request model, doesn't have a response model to return within Minimal Api IResult.
+- WebResultEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model as body of Minimal API IResult if successful.
+- WebResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation, doesn't have a response model to return within Minimal API IResult.
+- WebResultEndpointWithEmptyRequest&lt;TResponse&gt;: Doesn't have a request model and returns a response model as body of Minimal API IResult if successful.
+- WebResultEndpointWithEmptyRequest: Doesn't have a request model, doesn't have a response model to return within Minimal API IResult.
 
 When result returned from handler method is in Ok state, default WebResultEndpoint response mapping behaviour is:
 - For an [endpoint without a response model](./samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
@@ -396,7 +396,7 @@ Response HTTP success status code can be configured by [calling 'Produces' exten
 - StatusCodes.Status204NoContent,
 - StatusCodes.Status205ResetContent
 
-When result returned from handler method is in Failed state, default WebResultEndpoint response mapping will create a Minimal Api IResult with a 4XX or 5XX HTTP Status Code depending on the FailureType of [business result](https://github.com/modabas/ModResults).
+When result returned from handler method is in Failed state, default WebResultEndpoint response mapping will create a Minimal API IResult with a 4XX or 5XX HTTP Status Code depending on the FailureType of [business result](https://github.com/modabas/ModResults).
 
 It is also possible to implement a custom response mapping behaviour for a WebResultEndpoint. To do so:
 - Create an IResultToResponseMapper implementation,
@@ -405,7 +405,7 @@ It is also possible to implement a custom response mapping behaviour for a WebRe
 
 ### BusinessResultEndpoint
 
-A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for cases where clients are aware of Result or Result&lt;TValue&gt; implementations.
+A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal API IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for cases where clients are aware of Result or Result&lt;TValue&gt; implementations.
 
 - BusinessResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - BusinessResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
@@ -417,7 +417,7 @@ A BusinessResultEndpoint implementation, after handling request, encapsulates th
 
 This is a very specialized endpoint which is intended to abstract away all HTTP client and request setup, consumption and response handling when used together with its client implementation. Aim is to enable developers to easily consume remote services with a strongly typed request and response model only by sharing said models between the service and client projects.
 
-A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal Api IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
+A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal API IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
 
 - ServiceEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - ServiceEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.

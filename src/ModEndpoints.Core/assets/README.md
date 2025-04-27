@@ -1,6 +1,6 @@
 # ModEndpoints.Core
 
-[MinimalEndpoints](#minimalendpoint) are the barebone implementation for organizing ASP.NET Core Minimal Apis in REPR format endpoints. They have built-in input validation and their handler methods may return Minimal Api IResult based, string or T (any other type) response.
+MinimalEndpoints are the barebone implementation for organizing ASP.NET Core Minimal APIs in REPR format endpoints. Their handler methods may return Minimal API IResult based, string or T (any other type) response.
 
 Also contains core classes for ModEndpoints project.
 
