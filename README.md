@@ -348,12 +348,12 @@ internal class DisabledCustomerFeature
 ## Performance
 
 Under load tests with 100 virtual users:  
-- MinimalEndpoints perform nearly the same (~1%) as Minimal APIs,
-- WebResultEndpoints introduce a slight overhead (~2%) compared to Minimal APIs in terms of requests per second.
+- MinimalEndpoints perform nearly the same (~1-2%) as Minimal APIs,
+- WebResultEndpoints introduce a slight overhead (~2-3%) compared to Minimal APIs in terms of requests per second.
 
 The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
-See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/0.6.6/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
+See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/1.0.0/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ## Endpoint Types
 
