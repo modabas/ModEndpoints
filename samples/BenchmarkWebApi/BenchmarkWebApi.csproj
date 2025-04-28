@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Folder Include="BenchmarkFiles\Results\0.6.5\" />
+    <Folder Include="BenchmarkFiles\Results\1.0.0\" />
     <Folder Include="BenchmarkFiles\Tests\" />
   </ItemGroup>
 </Project>
