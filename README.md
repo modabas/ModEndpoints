@@ -106,6 +106,58 @@ internal class HelloWorld
 }
 ```
 
+The GetWeatherForecast example from the .NET Core Web API project template can be rewritten using MinimalEndpoints in the REPR format as shown below:
+``` csharp
+using ModEndpoints.Core;
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
+
+internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
+{
+  private static readonly string[] _summaries =
+  [
+    "Freezing",
+    "Bracing",
+    "Chilly",
+    "Cool",
+    "Mild",
+    "Warm",
+    "Balmy",
+    "Hot",
+    "Sweltering",
+    "Scorching"
+  ];
+
+  protected override void Configure(
+    IServiceProvider serviceProvider,
+    IRouteGroupConfigurator? parentRouteGroup)
+  {
+    MapGet("/weatherforecast")
+      .WithName("GetWeatherForecast")
+      .WithTags("WeatherForecastWebApi");
+  }
+
+  protected override async Task<WeatherForecast[]> HandleAsync(CancellationToken cancellationToken)
+  {
+    await Task.CompletedTask; // Simulate async work
+
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+      new WeatherForecast
+      (
+          DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+          Random.Shared.Next(-20, 55),
+          _summaries[Random.Shared.Next(_summaries.Length)]
+      ))
+      .ToArray();
+
+    return forecast;
+  }
+}
+```
+
 ### Integration with result pattern: A GET WebResultEndpoint with empty request
 
 A [WebResultEndpoint](#webresultendpoint) can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, but a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
