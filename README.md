@@ -108,8 +108,6 @@ internal class HelloWorld
 
 The GetWeatherForecast example from the .NET Core Web API project template can be rewritten using MinimalEndpoints in the REPR format as shown below:
 ``` csharp
-using ModEndpoints.Core;
-
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
   public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);

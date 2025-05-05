@@ -1,5 +1,6 @@
 ﻿using ModEndpoints.Core;
 using Scalar.AspNetCore;
+using WeatherForecastWebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
