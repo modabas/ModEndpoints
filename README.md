@@ -140,10 +140,8 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
       .WithTags("WeatherForecastWebApi");
   }
 
-  protected override async Task<WeatherForecast[]> HandleAsync(CancellationToken cancellationToken)
+  protected override Task<WeatherForecast[]> HandleAsync(CancellationToken ct)
   {
-    await Task.CompletedTask; // Simulate async work
-
     var forecast = Enumerable.Range(1, 5).Select(index =>
       new WeatherForecast
       (
@@ -153,7 +151,7 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
       ))
       .ToArray();
 
-    return forecast;
+    return Task.FromResult(forecast);
   }
 }
 ```
