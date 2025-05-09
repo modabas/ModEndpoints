@@ -29,10 +29,10 @@ A WebResultEndpoint implementation, after handling request, maps the [business r
 - WebResultEndpointWithEmptyRequest: Doesn't have a request model, doesn't have a response model to return within Minimal API IResult.
 
 When result returned from handler method is in Ok state, default WebResultEndpoint response mapping behaviour is:
-- For an [endpoint without a response model](./samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
+- For an [endpoint without a response model](../samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
 - For an endpoint with a response model, return HTTP 200 OK with response model as body.
 
-Response HTTP success status code can be configured by [calling 'Produces' extension method during configuration](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) of endpoint with one of the following status codes:
+Response HTTP success status code can be configured by [calling 'Produces' extension method during configuration](../samples/ShowcaseWebApi/Features/Books/CreateBook.cs) of endpoint with one of the following status codes:
 - StatusCodes.Status200OK,
 - StatusCodes.Status201Created,
 - StatusCodes.Status202Accepted,
@@ -74,7 +74,7 @@ A ServiceEndpoint has following special traits and constraints:
 
 These restrictions enable clients to call ServiceEndpoints by utilizing a specialized message channel resolved from dependency injection, with only service base address and endpoint's request/response model information. No other client implementation or knowledge about service is required.
 
-Have a look at [sample ServiceEndpoint implementations](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) along with [sample client implementation](https://github.com/modabas/ModEndpoints/tree/main/samples/Client) and [request/response model shared library](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi.FeatureContracts).
+Have a look at [sample ServiceEndpoint implementations](../samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) along with [sample client implementation](../samples/Client) and [request/response model shared library](../samples/ShowcaseWebApi.FeatureContracts).
 
 ## ServiceEndpoint clients
 
