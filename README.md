@@ -21,24 +21,24 @@
 
 ## 🧩 Endpoint Types
 
-### MinimalEndpoint
+### MinimalEndpoint  
 
-- **Purpose**: The barebone implementation for organizing ASP.NET Core Minimal APIs in REPR format endpoints.
-- **Usage**: Ideal for straightforward Minimal API implementations without additional processing.
+- **Purpose**: Structures ASP.NET Core Minimal APIs into the REPR pattern endpoints.  
+- **Usage**: Best suited for implementing simple and straightforward Minimal API endpoints with clear separation of concerns.
 
 ### WebResultEndpoint
 
-- **Purpose**: Transforms business results into HTTP responses.
-- **Usage**: Ideal for endpoints that need to return `IResult` types to the client.
+- **Purpose**: Converts business results into standardized HTTP responses, ensuring consistent and type-safe API behavior.
+- **Usage**: Perfect for centralizing and abstracting the logic of converting business results into HTTP responses.
 
-### BusinessResultEndpoint
+### BusinessResultEndpoint  
 
-- **Purpose**: Returns raw business results without HTTP transformation.
-- **Usage**: Suitable for internal API layers where HTTP response formatting is unnecessary.
+- **Purpose**: Returns raw business results directly within an HTTP 200 OK response without additional formatting.  
+- **Usage**: Ideal for internal API layers or scenarios where the raw business result is sufficient for the client.
 
 ### ServiceEndpoint
 
-- **Purpose**: Designed for remote service consumption with strongly typed request and response models.
+- **Purpose**: Designed for simplifying remote service consumption with strongly typed request and response models.
 - **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package to abstract HTTP plumbing on the client side.
 
 > **Note**: For detailed information on each endpoint type, refer to the [Endpoint Types](./docs/EndpointTypes.md) documentation.
