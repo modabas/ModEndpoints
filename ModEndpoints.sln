@@ -48,10 +48,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherForecastWebApi", "sa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{9FD33E1B-163D-48A1-A047-647E879973B6}"
 	ProjectSection(SolutionItems) = preProject
-		DisablingComponents.md = DisablingComponents.md
-		EndpointTypes.md = EndpointTypes.md
-		ParameterBinding.md = ParameterBinding.md
-		RouteGroups.md = RouteGroups.md
+		docs\DisablingComponents.md = docs\DisablingComponents.md
+		docs\EndpointTypes.md = docs\EndpointTypes.md
+		docs\ParameterBinding.md = docs\ParameterBinding.md
+		docs\RouteGroups.md = docs\RouteGroups.md
 	EndProjectSection
 EndProject
 Global
