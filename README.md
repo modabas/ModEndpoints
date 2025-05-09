@@ -41,7 +41,7 @@
 - **Purpose**: Designed for remote service consumption with strongly typed request and response models.
 - **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package to abstract HTTP plumbing on the client side.
 
-> **Note**: For detailed information on each endpoint type, refer to the [Endpoint Types](https://github.com/modabas/ModEndpoints/tree/main/docs/EndpointTypes.md) documentation.
+> **Note**: For detailed information on each endpoint type, refer to the [Endpoint Types](./docs/EndpointTypes.md) documentation.
 
 ---
 
@@ -68,7 +68,7 @@ Each endpoint must implement two virtual methods:
 
 ## 🛠️ Getting Started
 
-### **Install the NuGet Package**:
+### Install the NuGet Package:
 
 ```bash
 dotnet add package ModEndpoints
@@ -76,7 +76,7 @@ dotnet add package ModEndpoints
 
 > **Note**: To use only MinimalEndpoints, you can install the `ModEndpoints.Core` package.
 
-### **Register Endpoints**:
+### Register Endpoints:
 
 In your `Program.cs`:
 
@@ -98,7 +98,7 @@ app.Run();
 
 ### Define a Minimal API in REPR format
 
-A [MinimalEndpoint](#minimalendpoint) is the most straighforward way to define a Minimal API in REPR format.
+A `MinimalEndpoint` is the most straighforward way to define a Minimal API in REPR format.
 
 Configuration of each endpoint implementation starts with calling one of the MapGet, MapPost, MapPut, MapDelete and MapPatch methods with a route pattern string. The return from any of these methods, a RouteHandlerBuilder instance, can be used to further customize the endpoint similar to a Minimal API.
 
@@ -186,11 +186,9 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
 
 ### Integration with result pattern: A GET WebResultEndpoint with empty request
 
-A [WebResultEndpoint](#webresultendpoint) can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, but a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
+A `WebResultEndpoint` can be utilized to abstract the logic for converting business results into HTTP responses of endpoints. Configuration and request handling is similar to MinimalEndpoint, but a WebResultEndpoint handler method also has the benefit of having a strongly typed return while having potential to return different HTTP response codes according to business result state.
 
 This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal API IResult based response by WebResultEndpoint before being sent to client.
-
-Have a look at [ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project for various kinds of endpoint implementations and configurations.
 
 ``` csharp
 public record ListBooksResponse(List<ListBooksResponseItem> Books);
@@ -224,206 +222,25 @@ internal class ListBooks(ServiceDbContext db)
 }
 ```
 
-### Parameter binding
+### Advanced Topics  
 
-Request model defined for an endpoint is bound with [AsParameters] attribute (except for ServiceEndpoints). Any field under request model can be bound from route, query, body, form, etc. with corresponding [From...] attribute (see [Minimal APIs Parameter Binding](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/parameter-binding?view=aspnetcore-8.0) for more information).
+For more advanced examples, refer to the following:  
 
-The following sample demonstrates route and body parameter binding.
-
-``` csharp
-public record UpdateBookRequest(Guid Id, [FromBody] UpdateBookRequestBody Body);
-
-public record UpdateBookRequestBody(string Title, string Author, decimal Price);
-
-public record UpdateBookResponse(Guid Id, string Title, string Author, decimal Price);
-
-internal class UpdateBookRequestValidator : AbstractValidator<UpdateBookRequest>
-{
-  public UpdateBookRequestValidator()
-  {
-    RuleFor(x => x.Id).NotEmpty();
-    RuleFor(x => x.Body.Title).NotEmpty();
-    RuleFor(x => x.Body.Author).NotEmpty();
-    RuleFor(x => x.Body.Price).GreaterThan(0);
-  }
-}
-
-internal class UpdateBook(ServiceDbContext db)
-  : WebResultEndpoint<UpdateBookRequest, UpdateBookResponse>
-{
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapPut("/books/{Id}")
-      .Produces<UpdateBookResponse>();
-  }
-
-  protected override async Task<Result<UpdateBookResponse>> HandleAsync(
-    UpdateBookRequest req,
-    CancellationToken ct)
-  {
-    var entity = await db.Books.FirstOrDefaultAsync(b => b.Id == req.Id, ct);
-
-    if (entity is null)
-    {
-      return Result<UpdateBookResponse>.NotFound();
-    }
-
-    entity.Title = req.Body.Title;
-    entity.Author = req.Body.Author;
-    entity.Price = req.Body.Price;
-
-    var updated = await db.SaveChangesAsync(ct);
-    return updated > 0 ?
-      Result.Ok(new UpdateBookResponse(
-      Id: req.Id,
-      Title: req.Body.Title,
-      Author: req.Body.Author,
-      Price: req.Body.Price))
-      : Result<UpdateBookResponse>.NotFound();
-  }
-}
-```
-
-The following sample demonstrates route and form parameter binding.
-
-```csharp
-public record UploadBookRequest(string Title, [FromForm] string Author, IFormFile BookFile);
-
-public record UploadBookResponse(string FileName, long FileSize);
-
-internal class UploadBookRequestValidator : AbstractValidator<UploadBookRequest>
-{
-  public UploadBookRequestValidator()
-  {
-    RuleFor(x => x.Title).NotEmpty();
-    RuleFor(x => x.Author).NotEmpty();
-    RuleFor(x => x.BookFile).NotEmpty();
-  }
-}
-
-internal class UploadBook
-  : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
-{
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapPost("/books/upload/{Title}")
-      .DisableAntiforgery()
-      .Produces<UploadBookResponse>();
-  }
-
-  protected override Task<Result<UploadBookResponse>> HandleAsync(
-    UploadBookRequest req,
-    CancellationToken ct)
-  {
-    return Task.FromResult(Result.Ok(new UploadBookResponse(
-      req.BookFile.FileName,
-      req.BookFile.Length)));
-  }
-}
-```
-
-### Route groups
-
-By default, all endpoints are mapped under root route group. It is possible to define route groups similar to using 'MapGroup' extension method used to map Minimal APIs under a group. Since endpoints are configured by endpoint basis in the 'Configure' method of each endpoint, the approach is a little different than configuring a Minimal API. But route group configuration still utilize Minimal API route groups and can be decorated by any extension method of RouteGroupBuilder. Route groups are also subject to auto discovery and registration, similar to endpoints.
-
-- [Create a route group implementation](./samples/ShowcaseWebApi/Features/FeaturesRouteGroup.cs) by inheriting RouteGroupConfigurator and implementing 'Configure' method,
-- Configuration of each route group implementation starts with calling MapGroup method with a route pattern prefix. The return of 'MapGroup' method, a RouteGroupBuilder instance, can be used to further customize the route group like any Minimal API route group.
-- Apply MapToGroup attribute to either other [route group](./samples/ShowcaseWebApi/Features/Books/Configuration/BooksV1RouteGroup.cs) or [endpoint](./samples/ShowcaseWebApi/Features/Books/CreateBook.cs) classes that will be mapped under created route group. Use type of the new route group implementation as GroupType parameter to the attribute.
-
-Following sample creates a parent route group (FeaturesRouteGroup), a child route group under it (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal APIs ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning).
-
-```csharp
-internal class FeaturesRouteGroup : RouteGroupConfigurator
-{
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    var builder = MapGroup("/api/v{version:apiVersion}");
-    var apiVersionSet = builder.NewApiVersionSet()
-      .HasApiVersion(new ApiVersion(1))
-      .HasApiVersion(new ApiVersion(2))
-      .ReportApiVersions()
-      .Build();
-    builder.WithApiVersionSet(apiVersionSet);
-  }
-}
-
-[MapToGroup<FeaturesRouteGroup>()]
-internal class BooksV1RouteGroup : RouteGroupConfigurator
-{
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapGroup("/books")
-      .MapToApiVersion(1)
-      .WithTags("/BooksV1");
-  }
-}
-
-[MapToGroup<BooksV1RouteGroup>()]
-internal class CreateBook(ServiceDbContext db, ILocationStore location)
-  : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
-{
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapPost("/")
-      .Produces<CreateBookResponse>(StatusCodes.Status201Created);
-  }
-  protected override async Task<Result<CreateBookResponse>> HandleAsync(
-    CreateBookRequest req,
-    CancellationToken ct)
-  {
-    //Handle...
-  }
-}
-```
-
-### Disabling components
-
-DoNotRegister attribute can be used to prevent targeted route group (including its children) or endpoint to be registered during server application startup.
-
-Also prevents targeted service endpoint request to be registered during service endpoint client application startup.
-
-```csharp
-[MapToGroup<CustomersV1RouteGroup>()]
-[DoNotRegister]
-internal class DisabledCustomerFeature
-  : MinimalEndpoint<IResult>
-{
-  protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
-  {
-    MapGet("/disabled/");
-  }
-
-  protected override Task<IResult> HandleAsync(
-    CancellationToken ct)
-  {
-    throw new NotImplementedException();
-  }
-}
-```
+- [Parameter Binding](./docs/ParameterBinding.md)  
+- [Route Groups](./docs/RouteGroups.md)
+- [Disabling Components](./docs/DisablingComponents.md)
 
 ---
 
 ## 📚 Samples
 
-[ShowcaseWebApi](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi) project demonstrates all endpoint types in action:
- - `MinimalEnpoint` samples are in [Customers](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/Customers) subfolder,
- - `WebResultEndpoint` samples are in [Books](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/Books) subfolder,
- - `BusinessResultEndpoint` samples are in [Stores](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/Stores) subfolder,
- - `ServiceEndpoint` samples are in [StoresWithServiceEndpoint](https://github.com/modabas/ModEndpoints/tree/main/samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) subfolder.
+[ShowcaseWebApi](./samples/ShowcaseWebApi) project demonstrates all endpoint types in action:
+ - `MinimalEnpoint` samples are in [Customers](./samples/ShowcaseWebApi/Features/Customers) subfolder,
+ - `WebResultEndpoint` samples are in [Books](./samples/ShowcaseWebApi/Features/Books) subfolder,
+ - `BusinessResultEndpoint` samples are in [Stores](./samples/ShowcaseWebApi/Features/Stores) subfolder,
+ - `ServiceEndpoint` samples are in [StoresWithServiceEndpoint](./samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) subfolder.
 
-[ServiceEndpointClient](https://github.com/modabas/ModEndpoints/tree/main/samples/ServiceEndpointClient) project demonstrates how to consume ServiceEndpoints.
+[ServiceEndpointClient](./samples/ServiceEndpointClient) project demonstrates how to consume ServiceEndpoints.
 
 ---
 
@@ -438,4 +255,3 @@ The web apis called for tests, perform only in-process operations like resolving
 See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/1.0.0/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
 ---
-
