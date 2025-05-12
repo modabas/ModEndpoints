@@ -222,12 +222,14 @@ internal class ListBooks(ServiceDbContext db)
 }
 ```
 
-### Advanced Topics  
+### Further Reading  
 
-For more advanced examples, refer to the following:  
+For more examples, refer to the following:  
 
 - [Parameter Binding](./docs/ParameterBinding.md)  
 - [Route Groups](./docs/RouteGroups.md)
+- [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
+- [Handling Files](./docs/HandlingFiles.md)
 - [Disabling Components](./docs/DisablingComponents.md)
 
 ---

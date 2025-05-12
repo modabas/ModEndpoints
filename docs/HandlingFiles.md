@@ -1,0 +1,99 @@
+# Handling Files
+
+## File Uploads
+`IFormFile` or `IFormFileCollection` in ASP.NET Core are used to handle file uploads with form parameter binding. The IFormFile interface represents a file sent with the HttpRequest, and IFormFileCollection is a collection of IFormFile objects.
+
+``` csharp
+public record UploadBookRequest(string Title, [FromForm] string Author, IFormFile BookFile);
+
+public record UploadBookResponse(string FileName, long FileSize);
+
+internal class UploadBookRequestValidator : AbstractValidator<UploadBookRequest>
+{
+  public UploadBookRequestValidator()
+  {
+    RuleFor(x => x.Title).NotEmpty();
+    RuleFor(x => x.Author).NotEmpty();
+    RuleFor(x => x.BookFile).NotEmpty();
+  }
+}
+
+[MapToGroup<BooksV2RouteGroup>()]
+internal class UploadBook
+  : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
+{
+  protected override void Configure(
+    IServiceProvider serviceProvider,
+    IRouteGroupConfigurator? parentRouteGroup)
+  {
+    MapPost("/upload/{Title}")
+      .DisableAntiforgery()
+      .Produces<UploadBookResponse>();
+  }
+
+  protected override Task<Result<UploadBookResponse>> HandleAsync(
+    UploadBookRequest req,
+    CancellationToken ct)
+  {
+    // Process file upload
+    // ...
+    //
+
+    return Task.FromResult(Result.Ok(new UploadBookResponse(
+      req.BookFile.FileName,
+      req.BookFile.Length)));
+  }
+}
+```
+In this example, the `UploadBookRequest` record includes a file upload parameter `IFormFile BookFile`. The `UploadBook` endpoint handles the file upload and returns a response with the file name and size.
+
+>**Note**: The `DisableAntiforgery` method is used to disable CSRF protection for this endpoint. This is necessary for file uploads, as the default behavior of ASP.NET Core is to require an antiforgery token for all POST requests. However, you should be cautious when disabling CSRF protection and ensure that your application is secure against CSRF attacks.
+
+## File Downloads
+Returning `Results.File()` or `Results.Stream()` from a `MinimalEndpoint` can be used to return files from an endpoint. The file can be a physical file on disk or a stream of data.
+
+``` csharp
+public record DownloadCustomersRequest(string FileName);
+
+internal class DownloadCustomersRequestValidator : AbstractValidator<DownloadCustomersRequest>
+{
+  public DownloadCustomersRequestValidator()
+  {
+    RuleFor(x => x.FileName)
+      .NotEmpty()
+      .Must(x => Path.GetExtension(x).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+      .WithMessage("{PropertyName} must have .txt extension.");
+  }
+}
+
+[MapToGroup<CustomersV1RouteGroup>()]
+internal class DownloadCustomers(ServiceDbContext db)
+  : MinimalEndpoint<DownloadCustomersRequest, IResult>
+{
+  protected override void Configure(
+    IServiceProvider serviceProvider,
+    IRouteGroupConfigurator? parentRouteGroup)
+  {
+    MapPost("/download/{FileName}");
+  }
+
+  protected override async Task<IResult> HandleAsync(
+    DownloadCustomersRequest req,
+    CancellationToken ct)
+  {
+    await Task.CompletedTask; // Simulate some async work
+    var customers = db.Customers.AsAsyncEnumerable();
+    return Results.Stream(async stream =>
+    {
+      await foreach (var customer in customers.WithCancellation(ct))
+      {
+        var line = $"{customer.Id},{customer.FirstName},{customer.MiddleName},{customer.LastName}\n";
+        var lineBytes = System.Text.Encoding.UTF8.GetBytes(line);
+        await stream.WriteAsync(lineBytes, ct);
+      }
+    },
+    fileDownloadName: Path.GetFileName(req.FileName));
+  }
+}
+```
+In this example, the `DownloadCustomers` endpoint returns a stream of customer data as a text file. The `Results.Stream()` method is used to write the data to the response stream, and the `fileDownloadName` parameter specifies the name of the file to be downloaded.
