@@ -32,7 +32,6 @@ public class MappingAndHandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<GetCustomerByIdResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
@@ -53,7 +52,6 @@ public class MappingAndHandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<ListCustomersResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
@@ -62,6 +60,28 @@ public class MappingAndHandlerTests
     Assert.NotNull(response.Customers);
     Assert.Equal(2, response.Customers.Count);
     var customer2 = response.Customers[1];
+    Assert.NotNull(customer2);
+    Assert.Equal("Jane", customer2.FirstName);
+    Assert.Null(customer2.MiddleName);
+    Assert.Equal("Doe", customer2.LastName);
+  }
+
+  [Fact]
+  public async Task GetStreamingResponseWithEmptyRequest_Returns_SuccessAsync()
+  {
+    var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/customers/stream-list");
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
+
+    var response = await JsonSerializer.DeserializeAsync<List<StreamCustomerListResponse>>(
+      await httpResponse.Content.ReadAsStreamAsync(),
+      _defaultJsonDeserializationOptions);
+
+    Assert.NotNull(response);
+    Assert.Equal(2, response.Count);
+    var customer2 = response[1];
     Assert.NotNull(customer2);
     Assert.Equal("Jane", customer2.FirstName);
     Assert.Null(customer2.MiddleName);
@@ -84,13 +104,37 @@ public class MappingAndHandlerTests
     Assert.NotNull(locationHeader);
     Assert.NotEmpty(locationHeader.ToString());
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<CreateCustomerResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
 
     Assert.NotNull(response);
     Assert.NotEqual(Guid.Empty, response.Id);
+  }
+
+  [Fact]
+  public async Task PostStreamingResponse_Returns_SuccessAsync()
+  {
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/customers/filter-and-stream-list")
+    {
+      Content = JsonContent.Create(new FilterAndStreamCustomerListRequestBody("Jane"))
+    };
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
+
+    var response = await JsonSerializer.DeserializeAsync<List<FilterAndStreamCustomerListResponse>>(
+      await httpResponse.Content.ReadAsStreamAsync(),
+      _defaultJsonDeserializationOptions);
+
+    Assert.NotNull(response);
+    Assert.Single(response);
+    var customer = response[0];
+    Assert.NotNull(customer);
+    Assert.Equal("Jane", customer.FirstName);
+    Assert.Null(customer.MiddleName);
+    Assert.Equal("Doe", customer.LastName);
   }
 
   [Fact]
@@ -106,7 +150,6 @@ public class MappingAndHandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<UpdateCustomerResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
@@ -131,7 +174,6 @@ public class MappingAndHandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<PartialUpdateCustomerResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);

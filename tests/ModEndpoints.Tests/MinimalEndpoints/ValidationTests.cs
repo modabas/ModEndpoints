@@ -64,4 +64,18 @@ public class ValidationTests
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status500InternalServerError, (int)httpResponse.StatusCode);
   }
+
+  [Fact]
+  public async Task InvalidParameters_ForStreamingResponseEndpoint_ThrowsAsync()
+  {
+    var customerId = Guid.Empty;
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/customers/filter-and-stream-list")
+    {
+      Content = JsonContent.Create(new FilterAndStreamCustomerListRequestBody(""))
+    };
+
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+    Assert.False(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status500InternalServerError, (int)httpResponse.StatusCode);
+  }
 }

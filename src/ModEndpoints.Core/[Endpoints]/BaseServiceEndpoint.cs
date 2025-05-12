@@ -33,8 +33,7 @@ public abstract class BaseServiceEndpoint<TRequest, TResponse>
     }
 
     //Handler
-    var result = await handler.HandleAsync(req, ct);
-    return result;
+    return await handler.HandleAsync(req, ct);
   }
 
   /// <summary>

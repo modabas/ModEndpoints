@@ -222,25 +222,29 @@ internal class ListBooks(ServiceDbContext db)
 }
 ```
 
-### Advanced Topics  
+### Further Reading  
 
-For more advanced examples, refer to the following:  
+For more examples, refer to the following:  
 
 - [Parameter Binding](./docs/ParameterBinding.md)  
 - [Route Groups](./docs/RouteGroups.md)
+- [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
+- [Handling Files](./docs/HandlingFiles.md)
 - [Disabling Components](./docs/DisablingComponents.md)
 
 ---
 
 ## 📚 Samples
 
-[ShowcaseWebApi](./samples/ShowcaseWebApi) project demonstrates all endpoint types in action:
+[ShowcaseWebApi](./samples/ShowcaseWebApi) project demonstrates all endpoint types in action and also API documentation with Swagger and Swashbuckle:
  - `MinimalEnpoint` samples are in [Customers](./samples/ShowcaseWebApi/Features/Customers) subfolder,
  - `WebResultEndpoint` samples are in [Books](./samples/ShowcaseWebApi/Features/Books) subfolder,
  - `BusinessResultEndpoint` samples are in [Stores](./samples/ShowcaseWebApi/Features/Stores) subfolder,
  - `ServiceEndpoint` samples are in [StoresWithServiceEndpoint](./samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) subfolder.
 
 [ServiceEndpointClient](./samples/ServiceEndpointClient) project demonstrates how to consume ServiceEndpoints.
+
+[WeatherForecastWebApi](./samples/WeatherForecastWebApi) project demonstrates how GetWeatherForecast Minimal API in ASP.NET Core Web API project template can be written using MinimalEndpoints. Also demostrates API documentation with Scalar and OpenAPI.
 
 ---
 

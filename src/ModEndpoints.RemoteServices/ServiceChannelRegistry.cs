@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.RemoteServices;
 public class ServiceChannelRegistry

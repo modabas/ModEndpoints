@@ -35,8 +35,7 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     }
 
     //Handler
-    var result = await handler.HandleAsync(req, ct);
-    return result;
+    return await handler.HandleAsync(req, ct);
   }
 
   /// <summary>
@@ -158,8 +157,7 @@ public abstract class MinimalEndpoint<TResponse>
     var ct = context.RequestAborted;
 
     //Handler
-    var result = await handler.HandleAsync(ct);
-    return result;
+    return await handler.HandleAsync(ct);
   }
 
   /// <summary>

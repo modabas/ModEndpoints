@@ -33,7 +33,6 @@ public class HandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<GetBookByIdResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
@@ -88,7 +87,6 @@ public class HandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<ListBooksResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);

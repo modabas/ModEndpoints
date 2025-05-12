@@ -4,18 +4,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
-public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
-  : EndpointConfigurator, IBusinessResultEndpoint
+
+public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
+  : EndpointConfigurator, IMinimalEndpoint
   where TRequest : notnull
 {
   protected sealed override Delegate ExecuteDelegate => ExecuteAsync;
 
-  private async Task<TResponse> ExecuteAsync(
+  private async IAsyncEnumerable<TResponse> ExecuteAsync(
     [AsParameters] TRequest req,
     HttpContext context)
   {
     var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as BaseBusinessResultEndpoint<TRequest, TResponse>
+    var handler = baseHandler as MinimalEndpointWithStreamingResponse<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
@@ -26,12 +27,16 @@ public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
       var validationResult = await validator.ValidateAsync(req, ct);
       if (!validationResult.IsValid)
       {
-        return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+        yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+        yield break;
       }
     }
 
     //Handler
-    return await handler.HandleAsync(req, ct);
+    await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
+    {
+      yield return item;
+    }
   }
 
   /// <summary>
@@ -40,38 +45,46 @@ public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
   /// <param name="req"></param>
   /// <param name="ct"></param>
   /// <returns></returns>
-  protected abstract Task<TResponse> HandleAsync(
+  protected abstract IAsyncEnumerable<TResponse> HandleAsync(
     TRequest req,
     CancellationToken ct);
 
   /// <summary>
-  /// This method is called if request validation fails, and is responsible for mapping <see cref="ValidationResult"/> to <typeparamref name="TResponse"/>.
+  /// This method is called if request validation fails, and is responsible for handling failed <see cref="ValidationResult"/>.
+  /// Throws <see cref="ValidationException"/> otherwise.
   /// </summary>
   /// <param name="validationResult"></param>
   /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns>Endpoint's <typeparamref name="TResponse"/> type validation failed response to caller.</returns>
-  protected abstract ValueTask<TResponse> HandleInvalidValidationResultAsync(
+  /// <exception cref="ValidationException"></exception>
+  protected virtual ValueTask<TResponse> HandleInvalidValidationResultAsync(
     ValidationResult validationResult,
     HttpContext context,
-    CancellationToken ct);
+    CancellationToken ct)
+  {
+    throw new ValidationException(validationResult.Errors);
+  }
 }
 
-public abstract class BaseBusinessResultEndpoint<TResponse>
-  : EndpointConfigurator, IBusinessResultEndpoint
+public abstract class MinimalEndpointWithStreamingResponse<TResponse>
+  : EndpointConfigurator, IMinimalEndpoint
 {
   protected sealed override Delegate ExecuteDelegate => ExecuteAsync;
 
-  private async Task<TResponse> ExecuteAsync(
+  private async IAsyncEnumerable<TResponse> ExecuteAsync(
     HttpContext context)
   {
     var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as BaseBusinessResultEndpoint<TResponse>
+    var handler = baseHandler as MinimalEndpointWithStreamingResponse<TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Handler
-    return await handler.HandleAsync(ct);
+    await foreach (var item in handler.HandleAsync(ct).WithCancellation(ct))
+    {
+      yield return item;
+    }
   }
 
   /// <summary>
@@ -79,6 +92,6 @@ public abstract class BaseBusinessResultEndpoint<TResponse>
   /// </summary>
   /// <param name="ct"></param>
   /// <returns></returns>
-  protected abstract Task<TResponse> HandleAsync(
+  protected abstract IAsyncEnumerable<TResponse> HandleAsync(
     CancellationToken ct);
 }
