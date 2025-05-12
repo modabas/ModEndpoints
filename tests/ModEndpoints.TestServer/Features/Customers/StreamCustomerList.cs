@@ -22,9 +22,9 @@ internal class StreamCustomerList
   }
 
   protected override async IAsyncEnumerable<StreamCustomerListResponse> HandleAsync(
-    [EnumeratorCancellation]CancellationToken ct)
+    [EnumeratorCancellation] CancellationToken ct)
   {
-    List<StreamCustomerListResponse> customers = 
+    List<StreamCustomerListResponse> customers =
       [
         new StreamCustomerListResponse(
             Id: Guid.NewGuid(),

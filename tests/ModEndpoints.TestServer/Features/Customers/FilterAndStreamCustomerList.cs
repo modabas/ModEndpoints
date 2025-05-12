@@ -37,9 +37,9 @@ internal class FilterAndStreamCustomerList
 
   protected override async IAsyncEnumerable<FilterAndStreamCustomerListResponse> HandleAsync(
     FilterAndStreamCustomerListRequest req,
-    [EnumeratorCancellation]CancellationToken ct)
+    [EnumeratorCancellation] CancellationToken ct)
   {
-    List<FilterAndStreamCustomerListResponse> customers = 
+    List<FilterAndStreamCustomerListResponse> customers =
       [
         new FilterAndStreamCustomerListResponse(
             Id: Guid.NewGuid(),
