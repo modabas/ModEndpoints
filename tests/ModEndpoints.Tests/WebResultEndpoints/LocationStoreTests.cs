@@ -38,7 +38,6 @@ public class LocationStoreTests
     Assert.NotNull(locationHeader);
     Assert.NotEmpty(locationHeader.ToString());
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<CreateBookResponse>(
       await httpResponse.Content.ReadAsStreamAsync(),
       _defaultJsonDeserializationOptions);
