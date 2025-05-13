@@ -99,3 +99,5 @@ internal class UploadBook
   }
 }
 ```
+>**Note**: The `DisableAntiforgery` method is used to disable CSRF protection for this endpoint. The default behavior of ASP.NET Core is to require an antiforgery token for Minimal API endpoints that bind a parameter from the form via `IFormFile` or `IFormFileCollection` and an exception is thrown at startup if the anti-forgery middleware isn't registered for an API that defines these input types. You should be cautious when disabling CSRF protection and ensure that your application is secure against CSRF attacks.
+
