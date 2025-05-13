@@ -235,7 +235,7 @@ For more examples, refer to the following:
 - [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
 - [Handling Files](./docs/HandlingFiles.md)
 - [Disabling Components](./docs/DisablingComponents.md)
-- [Result Pattern Integration](./docs/ResultPatternIntegration.md)]
+- [Result Pattern Integration](./docs/ResultPatternIntegration.md)
 - [Endpoint Types](./docs/EndpointTypes.md)
 
 ---
