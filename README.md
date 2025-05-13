@@ -23,8 +23,8 @@
 
 ### MinimalEndpoint  
 
-- **Purpose**: Structures ASP.NET Core Minimal APIs into the REPR pattern endpoints.  
-- **Usage**: Best suited for implementing simple and straightforward Minimal API endpoints with clear separation of concerns.
+- **Purpose**: Enables full flexibility and capability of Minimal APIs within a structured approach.  
+- **Usage**: Suitable for implementing any Minimal API endpoint, from simple to complex scenarios, while benefiting from clear separation of concerns and all features available to Minimal APIs.
 - **Package**: `ModEndpoints.Core`
 
 ### WebResultEndpoint
@@ -230,12 +230,13 @@ internal class ListBooks(ServiceDbContext db)
 
 For more examples, refer to the following:  
 
-- [Endpoint Types](./docs/EndpointTypes.md)
 - [Parameter Binding](./docs/ParameterBinding.md)  
 - [Route Groups](./docs/RouteGroups.md)
 - [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
 - [Handling Files](./docs/HandlingFiles.md)
 - [Disabling Components](./docs/DisablingComponents.md)
+- [Result Pattern Integration](./docs/ResultPatternIntegration.md)]
+- [Endpoint Types](./docs/EndpointTypes.md)
 
 ---
 
