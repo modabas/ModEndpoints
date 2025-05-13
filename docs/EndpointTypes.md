@@ -8,7 +8,7 @@ MinimalEndpoint within ModEndpoints.Core package, is closest to barebones Minima
 - T (Any other type)
 - Minimal API IResult based (Including TypedResults with Results<TResult1, TResultN> return value)
 
-See (How to create responses in Minimal API apps)[https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/responses?view=aspnetcore-8.0] for detailed information. Other features described previously are common for all of them.
+See [How to create responses in Minimal API apps](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/responses?view=aspnetcore-8.0) for detailed information. Other features described previously are common for all of them.
 
 Each type of endpoint has various implementations that accept a request model or not, that has a response model or not.
 
@@ -16,17 +16,19 @@ Each type of endpoint has various implementations that accept a request model or
 
 A MinimalEndpoint implementation, after handling request, returns the response model.
 
-- MinimalEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model.
-- MinimalEndpoint&lt;TResponse&gt;: Doesn't have a request model and returns a response model.
+- **MinimalEndpoint&lt;TRequest, TResponse&gt;**: Has a request model, supports request validation and returns a response model.
+- **MinimalEndpoint&lt;TResponse&gt;**: Doesn't have a request model and returns a response model.
+- **MinimalEndpointWithStreamingResponse&lt;TRequest, TResponse&gt;**: Has a request model, supports request validation and returns `IAsyncEnumerable<TResponse>`.
+- **MinimalEndpointWithStreamingResponse&lt;TResponse&gt;**: Doesn't have a request model and returns `IAsyncEnumerable<TResponse>`.
 
 ## WebResultEndpoint
 
 A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to a Minimal API IResult depending on the business result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
 
-- WebResultEndpoint&lt;TRequest, TResponse&gt;: Has a request model, supports request validation and returns a response model as body of Minimal API IResult if successful.
-- WebResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation, doesn't have a response model to return within Minimal API IResult.
-- WebResultEndpointWithEmptyRequest&lt;TResponse&gt;: Doesn't have a request model and returns a response model as body of Minimal API IResult if successful.
-- WebResultEndpointWithEmptyRequest: Doesn't have a request model, doesn't have a response model to return within Minimal API IResult.
+- **WebResultEndpoint&lt;TRequest, TResponse&gt;**: Has a request model, supports request validation and returns a response model as body of Minimal API IResult if successful.
+- **WebResultEndpoint&lt;TRequest&gt;**: Has a request model, supports request validation, doesn't have a response model to return within Minimal API IResult.
+- **WebResultEndpointWithEmptyRequest&lt;TResponse&gt;**: Doesn't have a request model and returns a response model as body of Minimal API IResult if successful.
+- **WebResultEndpointWithEmptyRequest**: Doesn't have a request model, doesn't have a response model to return within Minimal API IResult.
 
 When result returned from handler method is in Ok state, default WebResultEndpoint response mapping behaviour is:
 - For an [endpoint without a response model](../samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
@@ -50,10 +52,10 @@ It is also possible to implement a custom response mapping behaviour for a WebRe
 
 A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal API IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for cases where clients are aware of Result or Result&lt;TValue&gt; implementations.
 
-- BusinessResultEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- BusinessResultEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- BusinessResultEndpointWithEmptyRequest&lt;TResultValue&gt;: Doesn't have a request model and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- BusinessResultEndpointWithEmptyRequest: Doesn't have a request model and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **BusinessResultEndpoint&lt;TRequest, TResultValue&gt;**: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **BusinessResultEndpoint&lt;TRequest&gt;**: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **BusinessResultEndpointWithEmptyRequest&lt;TResultValue&gt;**: Doesn't have a request model and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **BusinessResultEndpointWithEmptyRequest**: Doesn't have a request model and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 
 
 ## ServiceEndpoint
@@ -62,8 +64,8 @@ This is a very specialized endpoint which is intended to abstract away all HTTP 
 
 A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulates the response [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal API IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state.
 
-- ServiceEndpoint&lt;TRequest, TResultValue&gt;: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
-- ServiceEndpoint&lt;TRequest&gt;: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **ServiceEndpoint&lt;TRequest, TResultValue&gt;**: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **ServiceEndpoint&lt;TRequest&gt;**: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 
 A ServiceEndpoint has following special traits and constraints:
 - A ServiceEndpoint is always registered as a POST method, and its bound pattern is determined accourding to its request type.
