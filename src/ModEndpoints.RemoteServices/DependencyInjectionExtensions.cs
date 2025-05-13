@@ -297,10 +297,21 @@ public static class DependencyInjectionExtensions
         return new DefaultServiceChannelSerializer(new ServiceChannelSerializerOptions()
         {
           SerializationOptions = null,
-          DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptions
+          DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptions,
+        });
+      });
+    services.AddKeyedTransient<IServiceChannelSerializerForStreamingResponse, DefaultServiceChannelSerializerForStreamingResponse>(
+      ServiceEndpointDefinitions.DefaultSerializerForStreamingResponseName,
+      (_, _) =>
+      {
+        return new DefaultServiceChannelSerializerForStreamingResponse(new ServiceChannelSerializerOptions()
+        {
+          SerializationOptions = null,
+          DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptionsForStreamingResponse
         });
       });
     services.TryAddTransient<IServiceChannel, DefaultServiceChannel>();
+    services.TryAddTransient<IServiceChannelForStreamingResponse, DefaultServiceChannelForStreamingResponse>();
     return services;
   }
 

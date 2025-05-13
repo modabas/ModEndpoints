@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
 using ModResults;
@@ -10,18 +11,22 @@ namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 
 [MapToGroup<StoresWithServiceEndpointRouteGroup>()]
 internal class ListStores(ServiceDbContext db)
-  : ServiceEndpoint<ListStoresRequest, ListStoresResponse>
+  : ServiceEndpointWithStreamingResponse<ListStoresRequest, ListStoresResponse>
 {
-  protected override async Task<Result<ListStoresResponse>> HandleAsync(
+  protected override async IAsyncEnumerable<Result<ListStoresResponse>> HandleAsync(
     ListStoresRequest req,
-    CancellationToken ct)
+    [EnumeratorCancellation] CancellationToken ct)
   {
-    var stores = await db.Stores
-      .Select(b => new ListStoresResponseItem(
+    var stores = db.Stores
+      .Select(b => new ListStoresResponse(
         b.Id,
         b.Name))
-      .ToListAsync(ct);
+      .AsAsyncEnumerable();
 
-    return new ListStoresResponse(Stores: stores);
+    await foreach (var store in stores.WithCancellation(ct))
+    {
+      ct.ThrowIfCancellationRequested();
+      yield return store;
+    }
   }
 }
