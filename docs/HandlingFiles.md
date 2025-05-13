@@ -18,7 +18,6 @@ internal class UploadBookRequestValidator : AbstractValidator<UploadBookRequest>
   }
 }
 
-[MapToGroup<BooksV2RouteGroup>()]
 internal class UploadBook
   : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
 {
@@ -47,7 +46,7 @@ internal class UploadBook
 ```
 In this example, the `UploadBookRequest` record includes a file upload parameter `IFormFile BookFile`. The `UploadBook` endpoint handles the file upload and returns a response with the file name and size.
 
->**Note**: The `DisableAntiforgery` method is used to disable CSRF protection for this endpoint. This is necessary for file uploads, as the default behavior of ASP.NET Core is to require an antiforgery token for all POST requests. However, you should be cautious when disabling CSRF protection and ensure that your application is secure against CSRF attacks.
+>**Note**: The `DisableAntiforgery` method is used to disable CSRF protection for this endpoint. The default behavior of ASP.NET Core is to require an antiforgery token for Minimal API endpoints that bind a parameter from the form via `IFormFile` or `IFormFileCollection` and an exception is thrown at startup if the anti-forgery middleware isn't registered for an API that defines these input types. You should be cautious when disabling CSRF protection and ensure that your application is secure against CSRF attacks.
 
 ## File Downloads
 Returning `Results.File()` or `Results.Stream()` from a `MinimalEndpoint` can be used to return files from an endpoint. The file can be a physical file on disk or a stream of data.
@@ -66,7 +65,6 @@ internal class DownloadCustomersRequestValidator : AbstractValidator<DownloadCus
   }
 }
 
-[MapToGroup<CustomersV1RouteGroup>()]
 internal class DownloadCustomers(ServiceDbContext db)
   : MinimalEndpoint<DownloadCustomersRequest, IResult>
 {

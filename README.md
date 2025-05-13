@@ -25,21 +25,25 @@
 
 - **Purpose**: Structures ASP.NET Core Minimal APIs into the REPR pattern endpoints.  
 - **Usage**: Best suited for implementing simple and straightforward Minimal API endpoints with clear separation of concerns.
+- **Package**: `ModEndpoints.Core`
 
 ### WebResultEndpoint
 
 - **Purpose**: Converts business results into standardized HTTP status codes and response formats, ensuring consistent and type-safe API behavior.
 - **Usage**: Perfect for centralizing and abstracting the logic of converting business results into HTTP responses.
+- **Package**: `ModEndpoints`
 
 ### BusinessResultEndpoint  
 
 - **Purpose**: Returns raw business results directly within an HTTP 200 OK response without additional formatting.  
 - **Usage**: Ideal for internal API layers or scenarios where the raw business result is sufficient for the client.
+- **Package**: `ModEndpoints`
 
 ### ServiceEndpoint
 
 - **Purpose**: Designed for simplifying remote service consumption with strongly typed request and response models.
 - **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package to abstract HTTP plumbing on the client side.
+- **Package**: `ModEndpoints`
 
 > **Note**: For detailed information on each endpoint type, refer to the [Endpoint Types](./docs/EndpointTypes.md) documentation.
 
@@ -226,6 +230,7 @@ internal class ListBooks(ServiceDbContext db)
 
 For more examples, refer to the following:  
 
+- [Endpoint Types](./docs/EndpointTypes.md)
 - [Parameter Binding](./docs/ParameterBinding.md)  
 - [Route Groups](./docs/RouteGroups.md)
 - [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
