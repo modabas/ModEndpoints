@@ -23,8 +23,8 @@
 
 ### MinimalEndpoint  
 
-- **Purpose**: Structures ASP.NET Core Minimal APIs into the REPR pattern endpoints.  
-- **Usage**: Best suited for implementing simple and straightforward Minimal API endpoints with clear separation of concerns.
+- **Purpose**: Enables full flexibility and capability of Minimal APIs within a structured approach.  
+- **Usage**: Suitable for implementing any Minimal API endpoint, from simple to complex scenarios, while benefiting from clear separation of concerns and all features available to Minimal APIs.
 - **Package**: `ModEndpoints.Core`
 
 ### WebResultEndpoint
