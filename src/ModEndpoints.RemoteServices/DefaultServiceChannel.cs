@@ -121,7 +121,7 @@ public class DefaultServiceChannel(
     }
   }
 
-  public async IAsyncEnumerable<Result<TResponse>> SendAsync<TResponse>(
+  public async IAsyncEnumerable<StreamingResponseItem<TResponse>> SendAsync<TResponse>(
     IServiceRequestWithStreamingResponse<TResponse> req,
     string? endpointUriPrefix,
     [EnumeratorCancellation] CancellationToken ct,
@@ -175,7 +175,7 @@ public class DefaultServiceChannel(
     }
   }
 
-  public async IAsyncEnumerable<Result> SendAsync(
+  public async IAsyncEnumerable<StreamingResponseItem> SendAsync(
     IServiceRequestWithStreamingResponse req,
     string? endpointUriPrefix,
     [EnumeratorCancellation] CancellationToken ct,

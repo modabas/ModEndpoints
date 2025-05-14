@@ -4,23 +4,25 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.Core;
+using ModEndpoints.RemoteServices;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
 using ModResults.FluentValidation;
 
 namespace ModEndpoints;
 public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValue>
-  : BaseServiceEndpointWithStreamingResponse<TRequest, Result<TResultValue>>
+  : BaseServiceEndpointWithStreamingResponse<TRequest, StreamingResponseItem<TResultValue>>
   where TRequest : IServiceRequestWithStreamingResponse<TResultValue>
   where TResultValue : notnull
 {
-  protected override ValueTask<Result<TResultValue>> HandleInvalidValidationResultAsync(
+  protected override ValueTask<StreamingResponseItem<TResultValue>> HandleInvalidValidationResultAsync(
     ValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
-    return new ValueTask<Result<TResultValue>>(
-      validationResult.ToInvalidResult<TResultValue>());
+    return new ValueTask<StreamingResponseItem<TResultValue>>(
+      new StreamingResponseItem<TResultValue>(
+        validationResult.ToInvalidResult<TResultValue>()));
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
@@ -43,16 +45,17 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValu
 }
 
 public abstract class ServiceEndpointWithStreamingResponse<TRequest>
-  : BaseServiceEndpointWithStreamingResponse<TRequest, Result>
+  : BaseServiceEndpointWithStreamingResponse<TRequest, StreamingResponseItem>
   where TRequest : IServiceRequestWithStreamingResponse
 {
-  protected override ValueTask<Result> HandleInvalidValidationResultAsync(
+  protected override ValueTask<StreamingResponseItem> HandleInvalidValidationResultAsync(
     ValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
-    return new ValueTask<Result>(
-      validationResult.ToInvalidResult());
+    return new ValueTask<StreamingResponseItem>(
+      new StreamingResponseItem(
+        validationResult.ToInvalidResult()));
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(

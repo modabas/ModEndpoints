@@ -102,7 +102,7 @@ public class DefaultServiceChannelSerializer(
     }
   }
 
-  public async IAsyncEnumerable<Result<TResponse>> DeserializeStreamingResultAsync<TResponse>(
+  public async IAsyncEnumerable<StreamingResponseItem<TResponse>> DeserializeStreamingResultAsync<TResponse>(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
     where TResponse : notnull
@@ -120,7 +120,7 @@ public class DefaultServiceChannelSerializer(
           response.RequestMessage?.RequestUri));
       yield break;
     }
-    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<Result<TResponse>>(response, ct))
+    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<StreamingResponseItem<TResponse>>(response, ct))
     {
       ct.ThrowIfCancellationRequested();
       yield return resultObject ?? Result<TResponse>
@@ -132,7 +132,7 @@ public class DefaultServiceChannelSerializer(
     }
   }
 
-  public async IAsyncEnumerable<Result> DeserializeStreamingResultAsync(
+  public async IAsyncEnumerable<StreamingResponseItem> DeserializeStreamingResultAsync(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
   {
@@ -149,7 +149,7 @@ public class DefaultServiceChannelSerializer(
           response.RequestMessage?.RequestUri));
       yield break;
     }
-    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<Result>(response, ct))
+    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<StreamingResponseItem>(response, ct))
     {
       ct.ThrowIfCancellationRequested();
       yield return resultObject ?? Result
@@ -164,7 +164,6 @@ public class DefaultServiceChannelSerializer(
   private async IAsyncEnumerable<TResult?> DeserializeStreamingResultInternalAsync<TResult>(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
-    where TResult : IModResult
   {
     using (var contentStream = await response.Content.ReadAsStreamAsync(ct))
     //close contentStream forcefully if timeout token is cancelled

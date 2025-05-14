@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
-using ModResults;
+using ModEndpoints.RemoteServices;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
@@ -13,7 +13,7 @@ namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 internal class ListStores(ServiceDbContext db)
   : ServiceEndpointWithStreamingResponse<ListStoresRequest, ListStoresResponse>
 {
-  protected override async IAsyncEnumerable<Result<ListStoresResponse>> HandleAsync(
+  protected override async IAsyncEnumerable<StreamingResponseItem<ListStoresResponse>> HandleAsync(
     ListStoresRequest req,
     [EnumeratorCancellation] CancellationToken ct)
   {
@@ -26,7 +26,7 @@ internal class ListStores(ServiceDbContext db)
     await foreach (var store in stores.WithCancellation(ct))
     {
       ct.ThrowIfCancellationRequested();
-      yield return store;
+      yield return new StreamingResponseItem<ListStoresResponse>(store, "stores");
       await Task.Delay(200, ct);
     }
   }

@@ -85,7 +85,7 @@ public interface IServiceChannel
   /// <param name="req">Request to be sent.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <returns>Response stream of remote service endpoint or failure result as AsyncEnumerable.</returns>
-  IAsyncEnumerable<Result<TResponse>> SendAsync<TResponse>(
+  IAsyncEnumerable<StreamingResponseItem<TResponse>> SendAsync<TResponse>(
     IServiceRequestWithStreamingResponse<TResponse> req,
     CancellationToken ct)
     where TResponse : notnull
@@ -105,7 +105,7 @@ public interface IServiceChannel
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response stream of remote service endpoint or failure result as IAsyncEnumerable.</returns>
-  IAsyncEnumerable<Result<TResponse>> SendAsync<TResponse>(
+  IAsyncEnumerable<StreamingResponseItem<TResponse>> SendAsync<TResponse>(
     IServiceRequestWithStreamingResponse<TResponse> req,
     string? endpointUriPrefix,
     CancellationToken ct,
@@ -121,7 +121,7 @@ public interface IServiceChannel
   /// <param name="req">Request to be sent.</param>
   /// <param name="ct">The <see cref="CancellationToken"/> to cancel operation.</param>
   /// <returns>Response stream of remote service endpoint or failure result as IAsyncEnumerable.</returns>
-  IAsyncEnumerable<Result> SendAsync(
+  IAsyncEnumerable<StreamingResponseItem> SendAsync(
     IServiceRequestWithStreamingResponse req,
     CancellationToken ct)
   {
@@ -140,7 +140,7 @@ public interface IServiceChannel
   /// <param name="uriResolverName"><see cref="IServiceEndpointUriResolver"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <param name="serializerName"><see cref="IServiceChannelSerializer"/> name to be used to resolve ServiceEnpoint Uri.</param>
   /// <returns>Response stream of remote service endpoint or failure result as IAsyncEnumerable.</returns>
-  IAsyncEnumerable<Result> SendAsync(
+  IAsyncEnumerable<StreamingResponseItem> SendAsync(
     IServiceRequestWithStreamingResponse req,
     string? endpointUriPrefix,
     CancellationToken ct,
