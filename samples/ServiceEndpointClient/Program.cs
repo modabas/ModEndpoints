@@ -47,10 +47,9 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
 
   //resolve service channel from DI
   var channel = provider.GetRequiredService<IServiceChannel>();
-  var channelForStreamingResponse = provider.GetRequiredService<IServiceChannelForStreamingResponse>();
   List<ListStoresResponse> stores = new();
   //send request over channel to remote ServiceResultEndpoint
-  await foreach (var listResult in channelForStreamingResponse.SendAsync(
+  await foreach (var listResult in channel.SendAsync(
     new ListStoresRequest(),
     "v1/storesWithServiceEndpoint/",
     default))

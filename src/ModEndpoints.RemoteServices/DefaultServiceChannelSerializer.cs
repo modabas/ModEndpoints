@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
@@ -98,6 +99,85 @@ public class DefaultServiceChannelSerializer(
         contentStream,
         options.DeserializationOptions,
         ct);
+    }
+  }
+
+  public async IAsyncEnumerable<Result<TResponse>> DeserializeStreamingResultAsync<TResponse>(
+    HttpResponseMessage response,
+    [EnumeratorCancellation] CancellationToken ct)
+    where TResponse : notnull
+  {
+    if (!response.IsSuccessStatusCode)
+    {
+      yield return Result<TResponse>
+        .CriticalError(string.Format(
+          string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
+          (int)response.StatusCode,
+          response.ReasonPhrase))
+        .WithFact(string.Format(
+          InstanceFactMessage,
+          response.RequestMessage?.Method,
+          response.RequestMessage?.RequestUri));
+      yield break;
+    }
+    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<Result<TResponse>>(response, ct))
+    {
+      ct.ThrowIfCancellationRequested();
+      yield return resultObject ?? Result<TResponse>
+        .CriticalError(DeserializationErrorMessage)
+        .WithFact(string.Format(
+          InstanceFactMessage,
+          response.RequestMessage?.Method,
+          response.RequestMessage?.RequestUri));
+    }
+  }
+
+  public async IAsyncEnumerable<Result> DeserializeStreamingResultAsync(
+    HttpResponseMessage response,
+    [EnumeratorCancellation] CancellationToken ct)
+  {
+    if (!response.IsSuccessStatusCode)
+    {
+      yield return Result
+        .CriticalError(string.Format(
+          string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
+          (int)response.StatusCode,
+          response.ReasonPhrase))
+        .WithFact(string.Format(
+          InstanceFactMessage,
+          response.RequestMessage?.Method,
+          response.RequestMessage?.RequestUri));
+      yield break;
+    }
+    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<Result>(response, ct))
+    {
+      ct.ThrowIfCancellationRequested();
+      yield return resultObject ?? Result
+        .CriticalError(DeserializationErrorMessage)
+        .WithFact(string.Format(
+          InstanceFactMessage,
+          response.RequestMessage?.Method,
+          response.RequestMessage?.RequestUri));
+    }
+  }
+
+  private async IAsyncEnumerable<TResult?> DeserializeStreamingResultInternalAsync<TResult>(
+    HttpResponseMessage response,
+    [EnumeratorCancellation] CancellationToken ct)
+    where TResult : IModResult
+  {
+    using (var contentStream = await response.Content.ReadAsStreamAsync(ct))
+    //close contentStream forcefully if timeout token is cancelled
+    using (ct.Register(() => contentStream.Close()))
+    {
+      await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<TResult>(
+        contentStream,
+        options.StreamingDeserializationOptions,
+        ct).WithCancellation(ct))
+      {
+        ct.ThrowIfCancellationRequested();
+        yield return item;
+      }
     }
   }
 }

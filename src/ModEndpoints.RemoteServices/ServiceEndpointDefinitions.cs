@@ -6,7 +6,6 @@ public static class ServiceEndpointDefinitions
 {
   public const string DefaultUriResolverName = "DefaultServiceEndpointUriResolver";
   public const string DefaultSerializerName = "DefaultServiceChannelSerializer";
-  public const string DefaultSerializerForStreamingResponseName = "DefaultServiceChannelSerializerForStreamingResponse";
 
   internal static readonly JsonSerializerOptions DefaultJsonDeserializationOptions = new()
   {

@@ -27,6 +27,7 @@ internal class ListStores(ServiceDbContext db)
     {
       ct.ThrowIfCancellationRequested();
       yield return store;
+      await Task.Delay(200, ct);
     }
   }
 }
