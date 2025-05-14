@@ -10,7 +10,8 @@ public record StreamingResponseItem(
   string? ResponseType = null,
   string? ResponseId = null)
 {
-  public static implicit operator StreamingResponseItem(Result data) => new(data);
+  public static implicit operator StreamingResponseItem(Result result) 
+    => new(Result: result);
 }
 
 /// <summary>
@@ -23,7 +24,18 @@ public record StreamingResponseItem<TResponse>(
   string? ResponseId = null)
   where TResponse : notnull
 {
-  public static implicit operator StreamingResponseItem<TResponse>(TResponse responseValue) => new(ModResults.Result.Ok(responseValue));
+  public StreamingResponseItem ToSrItem() 
+    => new(
+      Result: Result,
+      ResponseType: ResponseType,
+      ResponseId: ResponseId);
 
-  public static implicit operator StreamingResponseItem<TResponse>(Result<TResponse> data) => new(data);
+  public static implicit operator StreamingResponseItem<TResponse>(TResponse responseValue)
+    => new(Result: responseValue);
+
+  public static implicit operator StreamingResponseItem<TResponse>(Result<TResponse> result)
+    => new(Result: result);
+
+  public static implicit operator StreamingResponseItem(StreamingResponseItem<TResponse> itemOfTResponse)
+    => itemOfTResponse.ToSrItem();
 }
