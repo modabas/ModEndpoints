@@ -289,16 +289,16 @@ public static class DependencyInjectionExtensions
     this IServiceCollection services)
   {
     services.TryAddKeyedSingleton<IServiceEndpointUriResolver, DefaultServiceEndpointUriResolver>(
-      ServiceEndpointDefinitions.DefaultUriResolverName);
+      RemoteServiceDefinitions.DefaultUriResolverName);
     services.AddKeyedTransient<IServiceChannelSerializer, DefaultServiceChannelSerializer>(
-      ServiceEndpointDefinitions.DefaultSerializerName,
+      RemoteServiceDefinitions.DefaultSerializerName,
       (_, _) =>
       {
         return new DefaultServiceChannelSerializer(new ServiceChannelSerializerOptions()
         {
           SerializationOptions = null,
-          DeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptions,
-          StreamingDeserializationOptions = ServiceEndpointDefinitions.DefaultJsonDeserializationOptionsForStreamingResponse
+          DeserializationOptions = RemoteServiceDefinitions.DefaultJsonDeserializationOptions,
+          StreamingDeserializationOptions = RemoteServiceDefinitions.DefaultJsonDeserializationOptionsForStreamingResponse
         });
       });
     services.TryAddTransient<IServiceChannel, DefaultServiceChannel>();

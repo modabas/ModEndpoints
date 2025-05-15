@@ -7,12 +7,8 @@ namespace ModEndpoints.RemoteServices;
 /// </summary>
 public record StreamingResponseItem(
   Result Result,
-  string? ResponseType = null,
-  string? ResponseId = null)
-{
-  public static implicit operator StreamingResponseItem(Result result) 
-    => new(Result: result);
-}
+  string? ResponseType = StreamingResponseItemDefinitions.DefaultResponseType,
+  string? ResponseId = null);
 
 /// <summary>
 /// Represents a streaming service endpoint response item.
@@ -20,22 +16,16 @@ public record StreamingResponseItem(
 /// <typeparam name="TResponse">Specifies the type of data payload in the response.</typeparam>
 public record StreamingResponseItem<TResponse>(
   Result<TResponse> Result,
-  string? ResponseType = null,
+  string? ResponseType = StreamingResponseItemDefinitions.DefaultResponseType,
   string? ResponseId = null)
   where TResponse : notnull
 {
-  public StreamingResponseItem ToSrItem() 
+  public StreamingResponseItem ToItem() 
     => new(
       Result: Result,
       ResponseType: ResponseType,
       ResponseId: ResponseId);
 
-  public static implicit operator StreamingResponseItem<TResponse>(TResponse responseValue)
-    => new(Result: responseValue);
-
-  public static implicit operator StreamingResponseItem<TResponse>(Result<TResponse> result)
-    => new(Result: result);
-
   public static implicit operator StreamingResponseItem(StreamingResponseItem<TResponse> itemOfTResponse)
-    => itemOfTResponse.ToSrItem();
+    => itemOfTResponse.ToItem();
 }

@@ -102,14 +102,14 @@ public class DefaultServiceChannelSerializer(
     }
   }
 
-  public async IAsyncEnumerable<StreamingResponseItem<TResponse>> DeserializeStreamingResultAsync<TResponse>(
+  public async IAsyncEnumerable<StreamingResponseItem<TResponse>> DeserializeStreamingResponseItemAsync<TResponse>(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
     where TResponse : notnull
   {
     if (!response.IsSuccessStatusCode)
     {
-      yield return Result<TResponse>
+      var result = Result<TResponse>
         .CriticalError(string.Format(
           string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
           (int)response.StatusCode,
@@ -118,27 +118,33 @@ public class DefaultServiceChannelSerializer(
           InstanceFactMessage,
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
+      yield return new StreamingResponseItem<TResponse>(
+        Result: result,
+        ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
       yield break;
     }
-    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<StreamingResponseItem<TResponse>>(response, ct))
+    await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem<TResponse>>(response, ct))
     {
       ct.ThrowIfCancellationRequested();
-      yield return resultObject ?? Result<TResponse>
-        .CriticalError(DeserializationErrorMessage)
-        .WithFact(string.Format(
-          InstanceFactMessage,
-          response.RequestMessage?.Method,
-          response.RequestMessage?.RequestUri));
+      yield return responseItemObject
+        ?? new StreamingResponseItem<TResponse>(
+          Result: Result<TResponse>
+          .CriticalError(DeserializationErrorMessage)
+          .WithFact(string.Format(
+            InstanceFactMessage,
+            response.RequestMessage?.Method,
+            response.RequestMessage?.RequestUri)),
+          ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
     }
   }
 
-  public async IAsyncEnumerable<StreamingResponseItem> DeserializeStreamingResultAsync(
+  public async IAsyncEnumerable<StreamingResponseItem> DeserializeStreamingResponseItemAsync(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
   {
     if (!response.IsSuccessStatusCode)
     {
-      yield return Result
+      var result = Result
         .CriticalError(string.Format(
           string.IsNullOrWhiteSpace(response.ReasonPhrase) ? ResponseNotSuccessfulErrorMessage : ResponseNotSuccessfulWithReasonErrorMessage,
           (int)response.StatusCode,
@@ -147,21 +153,27 @@ public class DefaultServiceChannelSerializer(
           InstanceFactMessage,
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
+      yield return new StreamingResponseItem(
+        Result: result,
+        ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
       yield break;
     }
-    await foreach (var resultObject in DeserializeStreamingResultInternalAsync<StreamingResponseItem>(response, ct))
+    await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem>(response, ct))
     {
       ct.ThrowIfCancellationRequested();
-      yield return resultObject ?? Result
-        .CriticalError(DeserializationErrorMessage)
-        .WithFact(string.Format(
-          InstanceFactMessage,
-          response.RequestMessage?.Method,
-          response.RequestMessage?.RequestUri));
+      yield return responseItemObject 
+        ?? new StreamingResponseItem(
+          Result: Result
+          .CriticalError(DeserializationErrorMessage)
+          .WithFact(string.Format(
+            InstanceFactMessage,
+            response.RequestMessage?.Method,
+            response.RequestMessage?.RequestUri)),
+          ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
     }
   }
 
-  private async IAsyncEnumerable<TResult?> DeserializeStreamingResultInternalAsync<TResult>(
+  private async IAsyncEnumerable<TResult?> DeserializeStreamingResponseItemInternalAsync<TResult>(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
   {

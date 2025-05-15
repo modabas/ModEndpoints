@@ -27,9 +27,9 @@ public class DefaultServiceChannel(
       using (var scope = serviceProvider.CreateScope())
       {
         var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
-          uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+          uriResolverName ?? RemoteServiceDefinitions.DefaultUriResolverName);
         var serializer = scope.ServiceProvider.GetRequiredKeyedService<IServiceChannelSerializer>(
-          serializerName ?? ServiceEndpointDefinitions.DefaultSerializerName);
+          serializerName ?? RemoteServiceDefinitions.DefaultSerializerName);
         var requestUriResult = uriResolver.Resolve(req);
         if (requestUriResult.IsFailed)
         {
@@ -81,9 +81,9 @@ public class DefaultServiceChannel(
       using (var scope = serviceProvider.CreateScope())
       {
         var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
-          uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+          uriResolverName ?? RemoteServiceDefinitions.DefaultUriResolverName);
         var serializer = scope.ServiceProvider.GetRequiredKeyedService<IServiceChannelSerializer>(
-          serializerName ?? ServiceEndpointDefinitions.DefaultSerializerName);
+          serializerName ?? RemoteServiceDefinitions.DefaultSerializerName);
         var requestUriResult = uriResolver.Resolve(req);
         if (requestUriResult.IsFailed)
         {
@@ -134,19 +134,23 @@ public class DefaultServiceChannel(
     using (var scope = serviceProvider.CreateScope())
     {
       var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
-        uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+        uriResolverName ?? RemoteServiceDefinitions.DefaultUriResolverName);
       var serializer = scope.ServiceProvider.GetRequiredKeyedService<IServiceChannelSerializer>(
-        serializerName ?? ServiceEndpointDefinitions.DefaultSerializerName);
+        serializerName ?? RemoteServiceDefinitions.DefaultSerializerName);
       var requestUriResult = uriResolver.Resolve(req);
       if (requestUriResult.IsFailed)
       {
-        yield return Result<TResponse>.Fail(requestUriResult);
+        yield return new StreamingResponseItem<TResponse>(
+          Result: Result<TResponse>.Fail(requestUriResult),
+          ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
         yield break;
       }
       var requestType = req.GetType();
       if (!ServiceChannelRegistry.Instance.IsRequestRegistered(requestType, out var clientName))
       {
-        yield return Result<TResponse>.CriticalError(string.Format(NoChannelRegistrationFound, requestType));
+        yield return new StreamingResponseItem<TResponse>(
+          Result: Result<TResponse>.CriticalError(string.Format(NoChannelRegistrationFound, requestType)),
+          ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
         yield break;
       }
       using (HttpRequestMessage httpReq = new(
@@ -165,7 +169,7 @@ public class DefaultServiceChannel(
           {
             await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
           }
-          await foreach (var resultObject in serializer.DeserializeStreamingResultAsync<TResponse>(httpResponse, ct))
+          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(httpResponse, ct))
           {
             ct.ThrowIfCancellationRequested();
             yield return resultObject;
@@ -187,19 +191,23 @@ public class DefaultServiceChannel(
     using (var scope = serviceProvider.CreateScope())
     {
       var uriResolver = scope.ServiceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(
-        uriResolverName ?? ServiceEndpointDefinitions.DefaultUriResolverName);
+        uriResolverName ?? RemoteServiceDefinitions.DefaultUriResolverName);
       var serializer = scope.ServiceProvider.GetRequiredKeyedService<IServiceChannelSerializer>(
-        serializerName ?? ServiceEndpointDefinitions.DefaultSerializerName);
+        serializerName ?? RemoteServiceDefinitions.DefaultSerializerName);
       var requestUriResult = uriResolver.Resolve(req);
       if (requestUriResult.IsFailed)
       {
-        yield return Result.Fail(requestUriResult);
+        yield return new StreamingResponseItem(
+          Result: Result.Fail(requestUriResult),
+          ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
         yield break;
       }
       var requestType = req.GetType();
       if (!ServiceChannelRegistry.Instance.IsRequestRegistered(requestType, out var clientName))
       {
-        yield return Result.CriticalError(string.Format(NoChannelRegistrationFound, requestType));
+        yield return new StreamingResponseItem(
+          Result: Result.CriticalError(string.Format(NoChannelRegistrationFound, requestType)),
+          ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
         yield break;
       }
       using (HttpRequestMessage httpReq = new(
@@ -218,7 +226,7 @@ public class DefaultServiceChannel(
           {
             await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
           }
-          await foreach (var resultObject in serializer.DeserializeStreamingResultAsync(httpResponse, ct))
+          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(httpResponse, ct))
           {
             ct.ThrowIfCancellationRequested();
             yield return resultObject;
