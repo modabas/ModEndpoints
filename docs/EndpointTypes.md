@@ -66,6 +66,10 @@ A ServiceEndpoint implementation, similar to BusinessResultEntpoint, encapsulate
 
 - **ServiceEndpoint&lt;TRequest, TResultValue&gt;**: Has a request model, supports request validation and returns a [Result&lt;TResultValue&gt;](https://github.com/modabas/ModResults) within HTTP 200 IResult.
 - **ServiceEndpoint&lt;TRequest&gt;**: Has a request model, supports request validation and returns a [Result](https://github.com/modabas/ModResults) within HTTP 200 IResult.
+- **ServiceEndpointWithStreamingResponse&lt;TRequest, TResultValue&gt;**: Has a request model, supports request validation and returns `IAsyncEnumerable<StreamingResponseItem<TResultValue>>`.
+- **ServiceEndpointWithStreamingResponse&lt;TRequest&gt;**: Has a request model, supports request validation and returns `IAsyncEnumerable<StreamingResponseItem>`.
+
+>**Note**: `StreamingResponseItem` is a specialized type that contains a `Result` object and also Response Type and Id fields. It is used for streaming responses to allow clients to process each item as it arrives.
 
 A ServiceEndpoint has following special traits and constraints:
 - A ServiceEndpoint is always registered as a POST method, and its bound pattern is determined accourding to its request type.

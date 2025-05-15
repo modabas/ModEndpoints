@@ -33,4 +33,29 @@ internal class ListCustomers(ServiceDbContext db)
   }
 }
 ```
->**Note**: The Cancellation Token is passed to the `HandleAsync` method, is also used to cancel enumeration of the returned `IAsyncEnumerable<T>` by the internals of base endpoint.
+>**Note**: The CancellationToken passed to the `HandleAsync` method, is also used to cancel enumeration of the returned `IAsyncEnumerable<T>` by the internals of base endpoint.
+
+Similarly, `ServiceEndpointWithStreamingResponse` can be used to implement service endpoints that return streaming responses.
+``` csharp
+internal class ListStores(ServiceDbContext db)
+  : ServiceEndpointWithStreamingResponse<ListStoresRequest, ListStoresResponse>
+{
+  protected override async IAsyncEnumerable<StreamingResponseItem<ListStoresResponse>> HandleAsync(
+    ListStoresRequest req,
+    [EnumeratorCancellation] CancellationToken ct)
+  {
+    var stores = db.Stores
+      .Select(b => new ListStoresResponse(
+        b.Id,
+        b.Name))
+      .AsAsyncEnumerable();
+
+    await foreach (var store in stores.WithCancellation(ct))
+    {
+      ct.ThrowIfCancellationRequested();
+      yield return new StreamingResponseItem<ListStoresResponse>(store, "store");
+      await Task.Delay(1000, ct);
+    }
+  }
+}
+```
