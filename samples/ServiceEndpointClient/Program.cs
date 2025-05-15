@@ -49,19 +49,19 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   var channel = provider.GetRequiredService<IServiceChannel>();
   List<ListStoresResponse> stores = new();
   //send request over channel to remote ServiceResultEndpoint
-  await foreach (var listResult in channel.SendAsync(
+  await foreach (var listStoreItem in channel.SendAsync(
     new ListStoresRequest(),
     "v1/storesWithServiceEndpoint/",
     default))
   {
-    Console.WriteLine($"***Received streaming response item with ResponseType: {listResult.ResponseType}");
-    if (listResult.Result.IsOk)
+    Console.WriteLine($"***Received streaming response item with ResponseType: {listStoreItem.ResponseType}");
+    if (listStoreItem.Result.IsOk)
     {
-      stores.Add(listResult.Result.Value);
+      stores.Add(listStoreItem.Result.Value);
     }
     else
     {
-      Console.WriteLine(listResult.Result.DumpMessages());
+      Console.WriteLine(listStoreItem.Result.DumpMessages());
     }
   }
 
