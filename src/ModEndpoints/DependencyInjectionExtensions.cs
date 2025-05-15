@@ -32,7 +32,7 @@ public static class DependencyInjectionExtensions
 
     //ServiceEndpoint components
     services.TryAddKeyedSingleton<IServiceEndpointUriResolver, DefaultServiceEndpointUriResolver>(
-      ServiceEndpointDefinitions.DefaultUriResolverName);
+      RemoteServiceDefinitions.DefaultUriResolverName);
     services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
 
     services.AddHttpContextAccessor();

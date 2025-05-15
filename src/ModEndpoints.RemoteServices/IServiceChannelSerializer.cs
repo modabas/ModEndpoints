@@ -13,6 +13,15 @@ public interface IServiceChannelSerializer
     CancellationToken ct)
     where TResponse : notnull;
 
+  IAsyncEnumerable<StreamingResponseItem> DeserializeStreamingResponseItemAsync(
+    HttpResponseMessage response,
+    CancellationToken ct);
+
+  IAsyncEnumerable<StreamingResponseItem<TResponse>> DeserializeStreamingResponseItemAsync<TResponse>(
+    HttpResponseMessage response,
+    CancellationToken ct)
+    where TResponse : notnull;
+
   ValueTask<HttpContent> CreateContentAsync<TRequest>(
     TRequest request,
     CancellationToken ct)

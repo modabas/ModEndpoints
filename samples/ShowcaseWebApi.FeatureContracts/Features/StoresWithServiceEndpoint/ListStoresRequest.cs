@@ -2,4 +2,4 @@
 
 namespace ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 
-public record ListStoresRequest() : IServiceRequest<ListStoresResponse>;
+public record ListStoresRequest() : IServiceRequestWithStreamingResponse<ListStoresResponse>;

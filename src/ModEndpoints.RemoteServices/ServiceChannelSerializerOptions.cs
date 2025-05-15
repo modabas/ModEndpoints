@@ -5,4 +5,5 @@ public class ServiceChannelSerializerOptions
 {
   public JsonSerializerOptions? SerializationOptions { get; set; }
   public JsonSerializerOptions? DeserializationOptions { get; set; }
+  public JsonSerializerOptions? StreamingDeserializationOptions { get; set; }
 }

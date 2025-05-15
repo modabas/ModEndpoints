@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
-using ModResults;
+using ModEndpoints.RemoteServices;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
@@ -10,18 +11,23 @@ namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
 
 [MapToGroup<StoresWithServiceEndpointRouteGroup>()]
 internal class ListStores(ServiceDbContext db)
-  : ServiceEndpoint<ListStoresRequest, ListStoresResponse>
+  : ServiceEndpointWithStreamingResponse<ListStoresRequest, ListStoresResponse>
 {
-  protected override async Task<Result<ListStoresResponse>> HandleAsync(
+  protected override async IAsyncEnumerable<StreamingResponseItem<ListStoresResponse>> HandleAsync(
     ListStoresRequest req,
-    CancellationToken ct)
+    [EnumeratorCancellation] CancellationToken ct)
   {
-    var stores = await db.Stores
-      .Select(b => new ListStoresResponseItem(
+    var stores = db.Stores
+      .Select(b => new ListStoresResponse(
         b.Id,
         b.Name))
-      .ToListAsync(ct);
+      .AsAsyncEnumerable();
 
-    return new ListStoresResponse(Stores: stores);
+    await foreach (var store in stores.WithCancellation(ct))
+    {
+      ct.ThrowIfCancellationRequested();
+      yield return new StreamingResponseItem<ListStoresResponse>(store, "store");
+      await Task.Delay(1000, ct);
+    }
   }
 }

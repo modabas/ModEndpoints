@@ -21,6 +21,6 @@ public class DefaultUriResolverProvider :
   private string GetResolverName(ServiceEndpointConfigurator endpoint)
   {
     return endpoint.GetType().GetCustomAttribute<UriResolverAttribute>()?.Name ??
-      ServiceEndpointDefinitions.DefaultUriResolverName;
+      RemoteServiceDefinitions.DefaultUriResolverName;
   }
 }

@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 
 namespace ModEndpoints.RemoteServices;
-public static class ServiceEndpointDefinitions
+public static class RemoteServiceDefinitions
 {
   public const string DefaultUriResolverName = "DefaultServiceEndpointUriResolver";
   public const string DefaultSerializerName = "DefaultServiceChannelSerializer";
@@ -12,5 +12,13 @@ public static class ServiceEndpointDefinitions
     PropertyNameCaseInsensitive = true,
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     NumberHandling = JsonNumberHandling.AllowReadingFromString
+  };
+
+  internal static readonly JsonSerializerOptions DefaultJsonDeserializationOptionsForStreamingResponse = new()
+  {
+    PropertyNameCaseInsensitive = true,
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    NumberHandling = JsonNumberHandling.AllowReadingFromString,
+    DefaultBufferSize = 128,
   };
 }

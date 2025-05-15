@@ -1,3 +1,3 @@
 ﻿namespace ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 
-public record ListStoresResponse(List<ListStoresResponseItem> Stores);
+public record ListStoresResponse(Guid Id, string Name);
