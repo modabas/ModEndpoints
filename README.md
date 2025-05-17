@@ -236,6 +236,7 @@ For more examples, refer to the following:
 - [Handling Files](./docs/HandlingFiles.md)
 - [Disabling Components](./docs/DisablingComponents.md)
 - [Result Pattern Integration](./docs/ResultPatternIntegration.md)
+- [WebResultEndpoint Response Mapping](./docs/WebResultEndpointResponseMapping.md)]
 - [Endpoint Types](./docs/EndpointTypes.md)
 - [Open API Documentation](./docs/OpenApiDocumentation.md)
 

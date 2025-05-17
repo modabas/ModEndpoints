@@ -54,7 +54,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{9FD33E1B-1
 		docs\IAsyncEnumerableResponse.md = docs\IAsyncEnumerableResponse.md
 		docs\OpenApiDocumentation.md = docs\OpenApiDocumentation.md
 		docs\ParameterBinding.md = docs\ParameterBinding.md
+		docs\ResultPatternIntegration.md = docs\ResultPatternIntegration.md
 		docs\RouteGroups.md = docs\RouteGroups.md
+		docs\WebResultEndpointResponseMapping.md = docs\WebResultEndpointResponseMapping.md
 	EndProjectSection
 EndProject
 Global
