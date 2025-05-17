@@ -52,6 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{9FD33E1B-1
 		docs\EndpointTypes.md = docs\EndpointTypes.md
 		docs\HandlingFiles.md = docs\HandlingFiles.md
 		docs\IAsyncEnumerableResponse.md = docs\IAsyncEnumerableResponse.md
+		OpenApiDocumentation.md = OpenApiDocumentation.md
 		docs\ParameterBinding.md = docs\ParameterBinding.md
 		docs\RouteGroups.md = docs\RouteGroups.md
 	EndProjectSection

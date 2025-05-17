@@ -237,6 +237,7 @@ For more examples, refer to the following:
 - [Disabling Components](./docs/DisablingComponents.md)
 - [Result Pattern Integration](./docs/ResultPatternIntegration.md)
 - [Endpoint Types](./docs/EndpointTypes.md)
+- [Open API Documentation](./docs/OpenApiDocumentation.md)
 
 ---
 
