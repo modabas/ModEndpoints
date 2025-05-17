@@ -1,5 +1,3 @@
 ﻿namespace ModEndpoints.Core;
 
-public interface IServiceEndpoint
-{
-}
+public interface IServiceEndpoint;
