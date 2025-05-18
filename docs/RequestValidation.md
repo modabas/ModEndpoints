@@ -12,6 +12,18 @@ You can customize this behavior for individual endpoints by overriding the `Hand
 >**Note**: If request validation fails, the endpoint handler method `HandleAsync` will not be called.
 
 ```csharp
+public record GetBookByIdRequest(Guid Id);
+
+public record GetBookByIdResponse(Guid Id, string Title, string Author, decimal Price);
+
+internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdRequest>
+{
+  public GetBookByIdRequestValidator()
+  {
+    RuleFor(x => x.Id).NotEmpty();
+  }
+}
+
 internal class GetBookById(ServiceDbContext db)
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {
