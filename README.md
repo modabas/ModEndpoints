@@ -231,6 +231,7 @@ internal class ListBooks(ServiceDbContext db)
 For more examples, refer to the following:  
 
 - [Parameter Binding](./docs/ParameterBinding.md)  
+- [Request Validation](./docs/RequestValidation.md)
 - [Route Groups](./docs/RouteGroups.md)
 - [Disabling Components](./docs/DisablingComponents.md)
 - [Open API Documentation](./docs/OpenApiDocumentation.md)
