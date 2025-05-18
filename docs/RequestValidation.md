@@ -9,6 +9,8 @@ Each endpoint type has its own default behavior when request validation fails:
 
 You can customize this behavior for individual endpoints by overriding the `HandleInvalidValidationResultAsync` method. This method is invoked by the internals of the endpoint implementation when request validation fails and receives a `ValidationResult` (from `FluentValidation`) in an invalid state and the `HttpContext` as parameters. Response type varies depending on the endpoint type and/or response model.
 
+>**Note**: If request validation fails, the endpoint handler method `HandleAsync` will not be called.
+
 ```csharp
 internal class GetBookById(ServiceDbContext db)
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
