@@ -1,15 +1,15 @@
-# ModEndpoints.Core
+﻿# ModEndpoints.Core
 
 MinimalEndpoints are the barebone implementation for organizing ASP.NET Core Minimal APIs in REPR format endpoints. Their handler methods may return Minimal API IResult based, string or T (any other type) response.
 
-Also contains core classes for ModEndpoints project.
+Also contains base classes for endpoints implemented in ModEndpoints project.
 
-## Key Features
+## ✨ Features
 
- - Organizes ASP.NET Core Minimal Apis in REPR pattern endpoints
- - Encapsulates endpoint behaviors like request validation and request handling.
- - Supports anything that Minimal Apis does. Configuration, parameter binding, authentication, Open Api tooling, filters, etc. are all Minimal Apis under the hood.
- - Supports auto discovery and registration.
- - Has built-in validation support with [FluentValidation](https://github.com/FluentValidation/FluentValidation). If a validator is registered for request model, request is automatically validated before being handled.
- - Supports constructor dependency injection in endpoint implementations.
+- **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint, Processor, and Response components.
+- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, filters, and more.
+- **Auto-Discovery and Registration**: Automatically discovers and registers endpoints.
+- **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a validator is registered.
+- **Dependency Injection**: Supports constructor-based dependency injection in endpoint implementations.
+- **Type-Safe Responses**: Enforces response model type safety in request handlers.
  
