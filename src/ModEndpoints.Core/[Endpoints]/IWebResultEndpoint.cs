@@ -1,5 +1,3 @@
 ﻿namespace ModEndpoints.Core;
 
-public interface IWebResultEndpoint
-{
-}
+public interface IWebResultEndpoint;

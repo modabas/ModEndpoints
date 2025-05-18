@@ -232,11 +232,14 @@ For more examples, refer to the following:
 
 - [Parameter Binding](./docs/ParameterBinding.md)  
 - [Route Groups](./docs/RouteGroups.md)
-- [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
-- [Handling Files](./docs/HandlingFiles.md)
 - [Disabling Components](./docs/DisablingComponents.md)
-- [Result Pattern Integration](./docs/ResultPatternIntegration.md)
+- [Open API Documentation](./docs/OpenApiDocumentation.md)
+- [Handling Files](./docs/HandlingFiles.md)
 - [Endpoint Types](./docs/EndpointTypes.md)
+- [Result Pattern Integration](./docs/ResultPatternIntegration.md)
+- [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
+- [WebResultEndpoint Response Mapping](./docs/WebResultEndpointResponseMapping.md)
+- [ServiceEndpoint Clients](./docs/ServiceEndpointClients.md)
 
 ---
 
