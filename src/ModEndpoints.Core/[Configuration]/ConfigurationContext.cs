@@ -2,18 +2,18 @@
 
 public class ConfigurationContext<T>
 {
-  public IServiceProvider ConfigurationServices { get; init; }
+  public IServiceProvider ServiceProvider { get; init; }
 
   public IRouteGroupConfiguration? ParentRouteGroup { get; init; }
 
   public T CurrentComponent { get; init; }
 
   public ConfigurationContext(
-    IServiceProvider configurationServices,
+    IServiceProvider serviceProvider,
     IRouteGroupConfiguration? parentRouteGroup,
     T currentComponent)
   {
-    ConfigurationServices = configurationServices;
+    ServiceProvider = serviceProvider;
     ParentRouteGroup = parentRouteGroup;
     CurrentComponent = currentComponent;
   }
