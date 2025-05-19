@@ -43,7 +43,8 @@ public static class DependencyInjectionExtensions
       assembly,
       conf =>
       {
-        conf.ServiceLifetime = options.CoreOptions.ServiceLifetime;
+        conf.EndpointLifetime = options.CoreOptions.EndpointLifetime;
+        conf.RouteGroupConfiguratorLifetime = options.CoreOptions.RouteGroupConfiguratorLifetime;
         conf.UseDefaultRequestValidation = options.CoreOptions.UseDefaultRequestValidation;
       });
   }

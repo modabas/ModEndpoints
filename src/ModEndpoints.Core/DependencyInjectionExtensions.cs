@@ -30,8 +30,8 @@ public static class DependencyInjectionExtensions
     }
 
     return services
-      .AddRouteGroupsCoreFromAssembly(assembly, options.ServiceLifetime)
-      .AddEndpointsCoreFromAssembly(assembly, options.ServiceLifetime);
+      .AddRouteGroupsCoreFromAssembly(assembly, options.RouteGroupConfiguratorLifetime)
+      .AddEndpointsCoreFromAssembly(assembly, options.EndpointLifetime);
   }
 
   private static IServiceCollection AddRouteGroupsCoreFromAssembly(
