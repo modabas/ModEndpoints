@@ -1,9 +1,7 @@
-﻿using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.Core;
 using ModResults;
-using ModResults.FluentValidation;
 
 namespace ModEndpoints;
 
@@ -23,7 +21,7 @@ public abstract class WebResultEndpoint<TRequest, TResponse>
   }
 
   protected override async ValueTask<IResult> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
@@ -47,7 +45,7 @@ public abstract class WebResultEndpoint<TRequest>
   }
 
   protected override async ValueTask<IResult> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {

@@ -21,6 +21,8 @@ public static class DependencyInjectionExtensions
     Assembly assembly,
     ServiceLifetime lifetime = ServiceLifetime.Transient)
   {
+    services.TryAddSingleton<IRequestValidator, DefaultRequestValidator>();
+
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, lifetime)
       .AddEndpointsCoreFromAssembly(assembly, lifetime);

@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
@@ -21,11 +19,11 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IValidator<TRequest>>();
+    var validator = context.RequestServices.GetService<IRequestValidator>();
     if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, ct);
-      if (!validationResult.IsValid)
+      var validationResult = await validator.ValidateAsync(req, context, ct);
+      if (validationResult.IsFailed)
       {
         yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
         yield break;
@@ -50,20 +48,20 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     CancellationToken ct);
 
   /// <summary>
-  /// This method is called if request validation fails, and is responsible for handling failed <see cref="ValidationResult"/>.
-  /// Throws <see cref="ValidationException"/> otherwise.
+  /// This method is called if request validation fails, and is responsible for handling failed <see cref="RequestValidationResult"/>.
+  /// Throws <see cref="RequestValidationException"/> otherwise.
   /// </summary>
   /// <param name="validationResult"></param>
   /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns>Endpoint's <typeparamref name="TResponse"/> type validation failed response to caller.</returns>
-  /// <exception cref="ValidationException"></exception>
+  /// <exception cref="RequestValidationException"></exception>
   protected virtual ValueTask<TResponse> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
-    throw new ValidationException(validationResult.Errors);
+    throw new RequestValidationException(validationResult.Errors);
   }
 }
 

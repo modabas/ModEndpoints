@@ -1,12 +1,10 @@
-﻿using FluentValidation.Results;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.Core;
 using ModEndpoints.RemoteServices.Core;
 using ModResults;
-using ModResults.FluentValidation;
 
 namespace ModEndpoints;
 public abstract class ServiceEndpoint<TRequest, TResultValue>
@@ -15,7 +13,7 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
   where TResultValue : notnull
 {
   protected override ValueTask<Result<TResultValue>> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
@@ -47,7 +45,7 @@ public abstract class ServiceEndpoint<TRequest>
   where TRequest : IServiceRequest
 {
   protected override ValueTask<Result> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {

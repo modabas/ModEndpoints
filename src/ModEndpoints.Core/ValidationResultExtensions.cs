@@ -1,38 +1,37 @@
-﻿using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ModEndpoints.Core;
 public static class ValidationResultExtensions
 {
-  public static IResult ToMinimalApiResult(this ValidationResult validationResult)
+  public static IResult ToMinimalApiResult(this RequestValidationResult validationResult)
   {
     var errors = GetErrors(validationResult);
     return Results.ValidationProblem(errors);
   }
-  public static ValidationProblem ToTypedValidationProblem(this ValidationResult validationResult)
+  public static ValidationProblem ToTypedValidationProblem(this RequestValidationResult validationResult)
   {
     var errors = GetErrors(validationResult);
     return TypedResults.ValidationProblem(errors);
   }
-  public static ProblemHttpResult ToTypedProblem(this ValidationResult validationResult)
+  public static ProblemHttpResult ToTypedProblem(this RequestValidationResult validationResult)
   {
     var errors = GetErrors(validationResult);
     return TypedResults.Problem(new HttpValidationProblemDetails(errors));
   }
-  public static BadRequest<HttpValidationProblemDetails> ToTypedBadRequestWithValidationProblem(this ValidationResult validationResult)
+  public static BadRequest<HttpValidationProblemDetails> ToTypedBadRequestWithValidationProblem(this RequestValidationResult validationResult)
   {
     var errors = GetErrors(validationResult);
     return TypedResults.BadRequest(new HttpValidationProblemDetails(errors));
   }
-  public static BadRequest<ProblemDetails> ToTypedBadRequestWithProblem(this ValidationResult validationResult)
+  public static BadRequest<ProblemDetails> ToTypedBadRequestWithProblem(this RequestValidationResult validationResult)
   {
     var errors = GetErrors(validationResult);
     return TypedResults.BadRequest((ProblemDetails)new HttpValidationProblemDetails(errors));
   }
 
-  private static Dictionary<string, string[]> GetErrors(ValidationResult validationResult)
+  private static Dictionary<string, string[]> GetErrors(RequestValidationResult validationResult)
   {
     return validationResult.Errors
       .GroupBy(e => e.PropertyName)
