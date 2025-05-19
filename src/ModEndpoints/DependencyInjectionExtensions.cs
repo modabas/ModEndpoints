@@ -10,16 +10,19 @@ public static class DependencyInjectionExtensions
 {
   public static IServiceCollection AddModEndpointsFromAssemblyContaining<T>(
     this IServiceCollection services,
-    ServiceLifetime lifetime = ServiceLifetime.Transient)
+    Action<ModEndpointsOptions>? configure = null)
   {
-    return services.AddModEndpointsFromAssembly(typeof(T).Assembly, lifetime);
+    return services.AddModEndpointsFromAssembly(typeof(T).Assembly, configure);
   }
 
   public static IServiceCollection AddModEndpointsFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
-    ServiceLifetime lifetime = ServiceLifetime.Transient)
+    Action<ModEndpointsOptions>? configure = null)
   {
+    ModEndpointsOptions options = new();
+    configure?.Invoke(options);
+
     //WebResultEndpoint components
     services.TryAddKeyedSingleton<IResultToResponseMapper, DefaultResultToResponseMapper>(
       WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
@@ -36,7 +39,13 @@ public static class DependencyInjectionExtensions
     services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
 
     services.AddHttpContextAccessor();
-    return services.AddModEndpointsCoreFromAssembly(assembly, lifetime);
+    return services.AddModEndpointsCoreFromAssembly(
+      assembly,
+      conf =>
+      {
+        conf.ServiceLifetime = options.CoreOptions.ServiceLifetime;
+        conf.UseDefaultRequestValidation = options.CoreOptions.UseDefaultRequestValidation;
+      });
   }
 
   public static WebApplication MapModEndpoints(

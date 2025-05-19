@@ -2,7 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints;
-public static class ValidationResultExtensions
+public static class RequestValidationResultExtensions
 {
   /// <summary>
   /// Converts a <see cref="RequestValidationResult"/> to a Failed <see cref="Result"/> with failure type <see cref="FailureType.Invalid"/>.
