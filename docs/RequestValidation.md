@@ -62,9 +62,9 @@ If you are using `ModEndpoints.Core` package:
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
+builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.CoreOptions.UseDefaultRequestValidation = false;
+  conf.UseDefaultRequestValidation = false;
 });
 
 // ... add other services
@@ -75,9 +75,9 @@ If you are using `ModEndpoints` package:
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>(conf =>
+builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.UseDefaultRequestValidation = false;
+  conf.CoreOptions.UseDefaultRequestValidation = false;
 });
 
 // ... add other services
