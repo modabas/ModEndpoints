@@ -22,8 +22,7 @@ internal class DownloadCustomers(ServiceDbContext db)
   : MinimalEndpoint<DownloadCustomersRequest, IResult>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapPost("/download/{FileName}");
   }

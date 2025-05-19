@@ -25,8 +25,7 @@ internal class UpdateBook
   : WebResultEndpoint<UpdateBookRequest>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapPut("/{Id}");
   }

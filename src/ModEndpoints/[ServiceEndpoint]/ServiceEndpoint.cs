@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,14 +23,14 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
-      parentRouteGroup,
+      configurationContext.ParentRouteGroup,
       this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
@@ -54,14 +55,14 @@ public abstract class ServiceEndpoint<TRequest>
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
-      parentRouteGroup,
+      configurationContext.ParentRouteGroup,
       this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)

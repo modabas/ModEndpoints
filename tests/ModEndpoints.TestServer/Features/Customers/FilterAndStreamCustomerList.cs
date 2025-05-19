@@ -29,8 +29,7 @@ internal class FilterAndStreamCustomerList
   : MinimalEndpointWithStreamingResponse<FilterAndStreamCustomerListRequest, FilterAndStreamCustomerListResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
   }

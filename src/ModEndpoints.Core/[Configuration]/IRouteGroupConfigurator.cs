@@ -3,18 +3,8 @@ using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
 
-public interface IRouteGroupConfigurator
+public interface IRouteGroupConfigurator : IRouteGroupConfiguration
 {
-  RouteGroupBuilder? Configure(IServiceProvider serviceProvider, IEndpointRouteBuilder builder, IRouteGroupConfigurator? parentRouteGroup);
+  RouteGroupBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<IRouteGroupConfiguration> configurationContext);
 
-  Dictionary<string, object?> PropertyBag { get; }
-
-  /// <summary>
-  /// Parameters: Endpoint's parent group (this group) and endpoint being configured 
-  /// </summary>
-  abstract Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator, IEndpointConfigurator>? EndpointConfigurationOverrides { get; }
-  /// <summary>
-  /// Parameters: Group's parent group (if any or null) and group being configured (this group)
-  /// </summary>
-  abstract Action<IServiceProvider, RouteGroupBuilder, IRouteGroupConfigurator?, IRouteGroupConfigurator>? ConfigurationOverrides { get; }
 }

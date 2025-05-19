@@ -6,8 +6,7 @@ namespace ModEndpoints.TestServer.Features.Books.Configuration;
 internal class BooksRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     MapGroup("/books");
   }

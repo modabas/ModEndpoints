@@ -9,8 +9,7 @@ internal class ResultEndpointWithEmptyRequest
   : BusinessResultEndpointWithEmptyRequest
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapDelete("/");
   }

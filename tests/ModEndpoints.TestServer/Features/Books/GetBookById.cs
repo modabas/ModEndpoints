@@ -23,8 +23,7 @@ internal class GetBookById
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapGet("/{Id}")
       .Produces<GetBookByIdResponse>();

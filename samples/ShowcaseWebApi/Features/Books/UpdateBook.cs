@@ -30,8 +30,7 @@ internal class UpdateBook(ServiceDbContext db)
   : WebResultEndpoint<UpdateBookRequest, UpdateBookResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapPut("/{Id}")
       .Produces<UpdateBookResponse>();

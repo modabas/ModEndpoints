@@ -10,24 +10,22 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
 
   private RouteHandlerBuilder? _handlerBuilder;
 
-  public Dictionary<string, object?>? PropertyBag { get; set; }
+  public Dictionary<string, object?>? ConfigurationPropertyBag { get; set; }
 
-  public virtual Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator?, IEndpointConfigurator>? ConfigurationOverrides => null;
+  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? ConfigurationOverrides => null;
 
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
-  /// <param name="serviceProvider"></param>
   /// <param name="builder"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder? Configure(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     _builder = builder;
-    Configure(serviceProvider, parentRouteGroup);
+    Configure(configurationContext);
     return _handlerBuilder;
   }
 
@@ -35,11 +33,9 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// Called during application startup, while registering and configuring endpoints.
   /// Start configuring endpoint by calling one of the Map[HttpVerb] methods and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
   /// </summary>
-  /// <param name="serviceProvider"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="configurationContext"></param>
   protected abstract void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup);
+    ConfigurationContext<IEndpointConfiguration> configurationContext);
 
   /// <summary>
   /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>

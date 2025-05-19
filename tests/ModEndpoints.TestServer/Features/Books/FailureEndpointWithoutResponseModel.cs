@@ -6,7 +6,8 @@ namespace ModEndpoints.TestServer.Features.Books;
 internal class FailureEndpointWithoutResponseModel
   : WebResultEndpointWithEmptyRequest
 {
-  protected override void Configure(IServiceProvider serviceProvider, IRouteGroupConfigurator? parentRouteGroup)
+  protected override void Configure(
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapPost("/failure/withoutResponseModel");
   }

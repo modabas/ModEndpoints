@@ -15,8 +15,7 @@ internal class StreamCustomerList
   : MinimalEndpointWithStreamingResponse<StreamCustomerListResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapMethods("/stream-list", [HttpMethod.Get.Method]);
   }

@@ -6,8 +6,7 @@ namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 internal class StoresWithServiceEndpointRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     MapGroup("/storesWithServiceEndpoint")
       .MapToApiVersion(1)

@@ -10,23 +10,23 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 
   private RouteGroupBuilder? _groupBuilder;
 
-  private readonly Dictionary<string, object?> _propertyBag = new();
-  public Dictionary<string, object?> PropertyBag => _propertyBag;
+  public Dictionary<string, object?> ConfigurationPropertyBag { get; private set; } = new();
+
+  public IRouteGroupConfiguration? ParentRouteGroup { get; private set; }
 
   /// <summary>
   /// Entry point for route group configuration. Called by DI.
   /// </summary>
-  /// <param name="serviceProvider"></param>
   /// <param name="builder"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the route group.</returns>
   public RouteGroupBuilder? Configure(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     _builder = builder;
-    Configure(serviceProvider, parentRouteGroup);
+    ParentRouteGroup = configurationContext.ParentRouteGroup;
+    Configure(configurationContext);
     return _groupBuilder;
   }
 
@@ -34,15 +34,13 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// Called during application startup, while registering and configuring groups.
   /// Start configuring route group by calling the MapGroup method and chain additional configuration on top of returned <see cref="RouteGroupBuilder"/>.
   /// </summary>
-  /// <param name="serviceProvider"></param>
-  /// <param name="parentRouteGroup">Null if this route group is registered at root.</param>
+  /// <param name="configurationContext"></param>
   protected abstract void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup);
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext);
 
-  public virtual Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator, IEndpointConfigurator>? EndpointConfigurationOverrides => null;
+  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? EndpointConfigurationOverrides => null;
 
-  public virtual Action<IServiceProvider, RouteGroupBuilder, IRouteGroupConfigurator?, IRouteGroupConfigurator>? ConfigurationOverrides => null;
+  public virtual Action<RouteGroupBuilder, ConfigurationContext<IRouteGroupConfiguration>>? ConfigurationOverrides => null;
 
   /// <summary>
   /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>

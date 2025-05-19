@@ -6,8 +6,7 @@ namespace ModEndpoints.TestServer.Features.StoresWithServiceEndpoint.Configurati
 internal class StoresWithServiceEndpointRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     MapGroup("/storesWithServiceEndpoint");
   }

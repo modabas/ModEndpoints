@@ -18,6 +18,6 @@ public interface IUriResolverProvider
   /// <returns></returns>
   IServiceEndpointUriResolver GetResolver(
     IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup,
+    IRouteGroupConfiguration? parentRouteGroup,
     ServiceEndpointConfigurator endpoint);
 }

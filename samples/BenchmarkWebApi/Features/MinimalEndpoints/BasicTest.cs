@@ -6,8 +6,7 @@ internal class BasicTest
   : MinimalEndpoint<IResult>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapGet("/MinimalEndpoints/BasicTest")
       .Produces<string>();

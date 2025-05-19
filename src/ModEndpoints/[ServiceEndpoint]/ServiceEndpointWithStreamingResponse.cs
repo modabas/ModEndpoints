@@ -23,14 +23,14 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValu
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
-      parentRouteGroup,
+      configurationContext.ParentRouteGroup,
       this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
@@ -56,14 +56,14 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest>
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
-      parentRouteGroup,
+      configurationContext.ParentRouteGroup,
       this);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)

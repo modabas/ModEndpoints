@@ -6,8 +6,7 @@ namespace ModEndpoints.TestServer.Features.Customers.Configuration;
 internal class CustomersRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     MapGroup("/customers");
   }

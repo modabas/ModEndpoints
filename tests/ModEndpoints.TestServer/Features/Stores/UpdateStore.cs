@@ -23,8 +23,7 @@ internal class UpdateStore
   : BusinessResultEndpoint<UpdateStoreRequest>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapPut("/{Id}");
   }

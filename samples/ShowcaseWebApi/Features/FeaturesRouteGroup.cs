@@ -6,8 +6,7 @@ namespace ShowcaseWebApi.Features;
 internal class FeaturesRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     var builder = MapGroup("/api/v{version:apiVersion}");
     var apiVersionSet = builder.NewApiVersionSet()

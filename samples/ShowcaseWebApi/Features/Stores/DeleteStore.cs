@@ -22,8 +22,7 @@ internal class DeleteStore(ServiceDbContext db)
   : BusinessResultEndpoint<DeleteStoreRequest>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapDelete("/{Id}");
   }

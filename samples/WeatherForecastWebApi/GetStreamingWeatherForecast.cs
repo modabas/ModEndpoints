@@ -22,8 +22,7 @@ internal class GetStreamingWeatherForecast
   ];
 
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapGet("/streamingweatherforecast")
       .WithName("GetStreamingWeatherForecast")

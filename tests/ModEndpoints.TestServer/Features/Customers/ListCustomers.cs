@@ -15,8 +15,7 @@ internal class ListCustomers
   : MinimalEndpoint<ListCustomersResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapMethods("/", [HttpMethod.Get.Method]);
   }

@@ -10,7 +10,7 @@ public class DefaultUriResolverProvider :
 {
   public IServiceEndpointUriResolver GetResolver(
     IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup,
+    IRouteGroupConfiguration? parentRouteGroup,
     ServiceEndpointConfigurator endpoint)
   {
     var resolverName = GetResolverName(endpoint);

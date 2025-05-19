@@ -16,8 +16,7 @@ internal class ListCustomers(ServiceDbContext db)
   : MinimalEndpointWithStreamingResponse<ListCustomersResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapGet("/");
   }

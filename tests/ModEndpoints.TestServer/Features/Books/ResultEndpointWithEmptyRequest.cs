@@ -9,8 +9,7 @@ internal class ResultEndpointWithEmptyRequest
   : WebResultEndpointWithEmptyRequest
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     MapDelete("/").Produces(StatusCodes.Status204NoContent);
   }
