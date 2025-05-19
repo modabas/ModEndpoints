@@ -4,7 +4,7 @@ namespace ModEndpoints.Core;
 
 public interface IEndpointConfiguration
 {
-  Dictionary<string, object?>? ConfigurationPropertyBag { get; }
+  Dictionary<string, object?>? ConfigurationPropertyBag { get; set; }
 
   /// <summary>
   /// Endpoint configuration overrides. This executes after endpoint has been configured and the global endpoint configuration has completed.

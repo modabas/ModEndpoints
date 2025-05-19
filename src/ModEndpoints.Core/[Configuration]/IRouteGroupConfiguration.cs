@@ -7,7 +7,7 @@ public interface IRouteGroupConfiguration
 {
   IRouteGroupConfiguration? ParentRouteGroup { get; }
 
-  Dictionary<string, object?> ConfigurationPropertyBag { get; }
+  Dictionary<string, object?> ConfigurationPropertyBag { get; set; }
 
   /// <summary>
   /// Endpoint configuration overrides. This executes after all child endpoints have been configured, the global endpoint configuration has completed, and any endpoint configuration overrides have run.

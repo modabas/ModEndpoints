@@ -7,7 +7,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 {
   private RouteGroupRegistrationBuilder? _builder;
 
-  public Dictionary<string, object?> ConfigurationPropertyBag { get; private set; } = new();
+  public Dictionary<string, object?> ConfigurationPropertyBag { get; set; } = new();
 
   public IRouteGroupConfiguration? ParentRouteGroup { get; private set; }
 
