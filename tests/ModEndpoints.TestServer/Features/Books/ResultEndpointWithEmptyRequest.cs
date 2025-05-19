@@ -9,9 +9,10 @@ internal class ResultEndpointWithEmptyRequest
   : WebResultEndpointWithEmptyRequest
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapDelete("/").Produces(StatusCodes.Status204NoContent);
+    builder.MapDelete("/").Produces(StatusCodes.Status204NoContent);
   }
 
   protected override async Task<Result> HandleAsync(

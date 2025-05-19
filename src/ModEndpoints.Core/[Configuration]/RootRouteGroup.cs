@@ -11,6 +11,7 @@
 public sealed class RootRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
+    RouteGroupRegistrationBuilder builder,
     ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
     throw new NotImplementedException();

@@ -28,9 +28,10 @@ internal class UpdateStore(ServiceDbContext db)
   : BusinessResultEndpoint<UpdateStoreRequest, UpdateStoreResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapPut("/{Id}");
+    builder.MapPut("/{Id}");
   }
 
   protected override async Task<Result<UpdateStoreResponse>> HandleAsync(

@@ -16,9 +16,10 @@ internal class ListCustomers(ServiceDbContext db)
   : MinimalEndpointWithStreamingResponse<ListCustomersResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/");
+    builder.MapGet("/");
   }
 
   protected override IAsyncEnumerable<ListCustomersResponse> HandleAsync(CancellationToken ct)

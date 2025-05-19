@@ -8,9 +8,10 @@ internal class BasicTest
   : WebResultEndpointWithEmptyRequest<string>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/WebResultEndpoints/BasicTest")
+    builder.MapGet("/WebResultEndpoints/BasicTest")
       .Produces<string>();
   }
 

@@ -26,9 +26,10 @@ internal class InProcessTest(IGetMeAStringService svc)
   : MinimalEndpoint<InProcessTestRequest, IResult>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapPost("/MinimalEndpoints/InProcessTest/{Id}")
+    builder.MapPost("/MinimalEndpoints/InProcessTest/{Id}")
       .Produces<InProcessTestResponse>();
   }
 

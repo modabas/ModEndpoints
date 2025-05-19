@@ -22,9 +22,10 @@ internal class GetStreamingWeatherForecast
   ];
 
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/streamingweatherforecast")
+    builder.MapGet("/streamingweatherforecast")
       .WithName("GetStreamingWeatherForecast")
       .WithTags("WeatherForecastWebApi");
   }

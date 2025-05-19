@@ -22,9 +22,10 @@ internal class DownloadCustomers(ServiceDbContext db)
   : MinimalEndpoint<DownloadCustomersRequest, IResult>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapPost("/download/{FileName}");
+    builder.MapPost("/download/{FileName}");
   }
 
   protected override async Task<IResult> HandleAsync(

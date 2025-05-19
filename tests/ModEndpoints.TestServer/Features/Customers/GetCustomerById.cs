@@ -22,9 +22,10 @@ internal class GetCustomerById
   : MinimalEndpoint<GetCustomerByIdRequest, Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem>>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/{Id}");
+    builder.MapGet("/{Id}");
   }
 
   protected override async Task<Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem>> HandleAsync(

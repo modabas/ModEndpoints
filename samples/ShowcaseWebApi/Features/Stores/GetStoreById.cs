@@ -24,9 +24,10 @@ internal class GetStoreById(ServiceDbContext db)
   : BusinessResultEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/{Id}");
+    builder.MapGet("/{Id}");
   }
 
   protected override async Task<Result<GetStoreByIdResponse>> HandleAsync(

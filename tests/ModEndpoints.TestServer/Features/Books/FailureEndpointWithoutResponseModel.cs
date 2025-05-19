@@ -7,9 +7,10 @@ internal class FailureEndpointWithoutResponseModel
   : WebResultEndpointWithEmptyRequest
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapPost("/failure/withoutResponseModel");
+    builder.MapPost("/failure/withoutResponseModel");
   }
 
   protected override Task<Result> HandleAsync(CancellationToken ct)

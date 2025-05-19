@@ -12,9 +12,10 @@ internal class ListStores
   : BusinessResultEndpointWithEmptyRequest<ListStoresResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/");
+    builder.MapGet("/");
   }
 
   protected override async Task<Result<ListStoresResponse>> HandleAsync(

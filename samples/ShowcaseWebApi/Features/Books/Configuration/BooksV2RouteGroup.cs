@@ -6,9 +6,10 @@ namespace ShowcaseWebApi.Features.Books.Configuration;
 internal class BooksV2RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
+    RouteGroupRegistrationBuilder builder,
     ConfigurationContext<IRouteGroupConfiguration> configurationContext)
   {
-    MapGroup("/books")
+    builder.MapGroup("/books")
       .MapToApiVersion(2)
       .WithTags("/BooksV2");
   }

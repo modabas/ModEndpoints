@@ -25,9 +25,10 @@ internal class UpdateBook
   : WebResultEndpoint<UpdateBookRequest>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapPut("/{Id}");
+    builder.MapPut("/{Id}");
   }
 
   protected override Task<Result> HandleAsync(

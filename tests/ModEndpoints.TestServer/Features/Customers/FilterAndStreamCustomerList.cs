@@ -29,9 +29,10 @@ internal class FilterAndStreamCustomerList
   : MinimalEndpointWithStreamingResponse<FilterAndStreamCustomerListRequest, FilterAndStreamCustomerListResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
+    builder.MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
   }
 
   protected override async IAsyncEnumerable<FilterAndStreamCustomerListResponse> HandleAsync(

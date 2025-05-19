@@ -22,9 +22,10 @@ internal class DeleteStore(ServiceDbContext db)
   : BusinessResultEndpoint<DeleteStoreRequest>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapDelete("/{Id}");
+    builder.MapDelete("/{Id}");
   }
 
   protected override async Task<Result> HandleAsync(

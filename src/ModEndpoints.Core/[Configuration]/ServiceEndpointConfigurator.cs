@@ -23,7 +23,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     _handlerBuilder = ConfigureDefaults(builder, configurationContext);
-    Configure(configurationContext);
+    Configure(GetRouteHandlerBuilder(), configurationContext);
     return _handlerBuilder;
   }
 
@@ -34,10 +34,12 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
   /// Runs after ConfigureDefaults method and can be overridden to further customize endpoint on top of default configuration.
-  /// Start configuring endpoint by calling <see cref="GetRouteHandlerBuilder"/> method to get a <see cref="RouteHandlerBuilder"/>, and chain additional configuration on top of it.
+  /// Use <see cref="RouteHandlerBuilder"/> parameter to chain additional configuration.
   /// </summary>
+  /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
   protected virtual void Configure(
+    RouteHandlerBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
     return;
@@ -48,7 +50,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// </summary>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder GetRouteHandlerBuilder()
+  private RouteHandlerBuilder GetRouteHandlerBuilder()
   {
     return _handlerBuilder is null
       ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))

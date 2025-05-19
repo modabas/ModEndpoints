@@ -10,9 +10,10 @@ internal class DisabledCustomerFeature
   : MinimalEndpoint<IResult>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapGet("/disabled/");
+    builder.MapGet("/disabled/");
   }
 
   protected override Task<IResult> HandleAsync(

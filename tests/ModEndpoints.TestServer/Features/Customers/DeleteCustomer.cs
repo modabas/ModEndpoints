@@ -18,9 +18,10 @@ internal class DeleteCustomer
   : MinimalEndpoint<DeleteCustomerRequest, IResult>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapDelete("/{Id}")
+    builder.MapDelete("/{Id}")
       .Produces(StatusCodes.Status204NoContent);
   }
 

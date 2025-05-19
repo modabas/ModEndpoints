@@ -24,9 +24,10 @@ internal class PartialUpdateCustomer
   : MinimalEndpoint<PartialUpdateCustomerRequest, PartialUpdateCustomerResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapPatch("/{Id}")
+    builder.MapPatch("/{Id}")
       .Produces<PartialUpdateCustomerResponse>();
   }
 

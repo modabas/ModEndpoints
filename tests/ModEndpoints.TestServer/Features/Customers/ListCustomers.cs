@@ -15,9 +15,10 @@ internal class ListCustomers
   : MinimalEndpoint<ListCustomersResponse>
 {
   protected override void Configure(
+    EndpointRegistrationBuilder builder,
     ConfigurationContext<IEndpointConfiguration> configurationContext)
   {
-    MapMethods("/", [HttpMethod.Get.Method]);
+    builder.MapMethods("/", [HttpMethod.Get.Method]);
   }
 
   protected override async Task<ListCustomersResponse> HandleAsync(
