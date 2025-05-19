@@ -1,0 +1,121 @@
+﻿ k6  .\k6 run minimal_api_basic.js
+
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
+
+     execution: local
+        script: minimal_api_basic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 100 max VUs, 2m20s max duration (incl. graceful stop):
+              * default: Up to 100 looping VUs for 1m50s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+
+     ✓ status was 200
+
+     checks.........................: 100.00% 8608101 out of 8608101
+     data_received..................: 1.5 GB  13 MB/s
+     data_sent......................: 878 MB  8.0 MB/s
+     http_req_blocked...............: avg=2.9µs    min=0s med=0s      max=34.96ms p(90)=0s     p(95)=0s
+     http_req_connecting............: avg=7ns      min=0s med=0s      max=1.52ms  p(90)=0s     p(95)=0s
+   ✓ http_req_duration..............: avg=895.55µs min=0s med=999.7µs max=60.58ms p(90)=1.82ms p(95)=2.01ms
+       { expected_response:true }...: avg=895.55µs min=0s med=999.7µs max=60.58ms p(90)=1.82ms p(95)=2.01ms
+     http_req_failed................: 0.00%   0 out of 8608101
+     http_req_receiving.............: avg=29.45µs  min=0s med=0s      max=52.89ms p(90)=0s     p(95)=0s
+     http_req_sending...............: avg=9.07µs   min=0s med=0s      max=49.85ms p(90)=0s     p(95)=0s
+     http_req_tls_handshaking.......: avg=0s       min=0s med=0s      max=0s      p(90)=0s     p(95)=0s
+     http_req_waiting...............: avg=857.02µs min=0s med=999.5µs max=60.58ms p(90)=1.66ms p(95)=2.01ms
+     http_reqs......................: 8608101 78255.150473/s
+     iteration_duration.............: avg=976.94µs min=0s med=1ms     max=70.23ms p(90)=1.99ms p(95)=2.03ms
+     iterations.....................: 8608101 78255.150473/s
+     vus............................: 1       min=1                  max=100
+     vus_max........................: 100     min=100                max=100
+
+
+running (1m50.0s), 000/100 VUs, 8608101 complete and 0 interrupted iterations
+default ✓ [======================================] 000/100 VUs  1m50s
+
+
+ k6  .\k6 run minimal_endpoint_basic.js
+
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
+
+     execution: local
+        script: minimal_endpoint_basic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 100 max VUs, 2m20s max duration (incl. graceful stop):
+              * default: Up to 100 looping VUs for 1m50s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+
+     ✓ status was 200
+
+     checks.........................: 100.00% 8705828 out of 8705828
+     data_received..................: 1.5 GB  14 MB/s
+     data_sent......................: 932 MB  8.5 MB/s
+     http_req_blocked...............: avg=2.89µs   min=0s med=0s      max=42.15ms  p(90)=0s     p(95)=0s
+     http_req_connecting............: avg=7ns      min=0s med=0s      max=3.84ms   p(90)=0s     p(95)=0s
+   ✓ http_req_duration..............: avg=877.57µs min=0s med=999.4µs max=100.48ms p(90)=1.71ms p(95)=2.01ms
+       { expected_response:true }...: avg=877.57µs min=0s med=999.4µs max=100.48ms p(90)=1.71ms p(95)=2.01ms
+     http_req_failed................: 0.00%   0 out of 8705828
+     http_req_receiving.............: avg=30.08µs  min=0s med=0s      max=88.46ms  p(90)=0s     p(95)=0s
+     http_req_sending...............: avg=9.37µs   min=0s med=0s      max=51.46ms  p(90)=0s     p(95)=0s
+     http_req_tls_handshaking.......: avg=0s       min=0s med=0s      max=0s       p(90)=0s     p(95)=0s
+     http_req_waiting...............: avg=838.11µs min=0s med=999.1µs max=100.48ms p(90)=1.59ms p(95)=2.01ms
+     http_reqs......................: 8705828 79143.69269/s
+     iteration_duration.............: avg=962.91µs min=0s med=999.9µs max=103.71ms p(90)=1.99ms p(95)=2.04ms
+     iterations.....................: 8705828 79143.69269/s
+     vus............................: 1       min=1                  max=100
+     vus_max........................: 100     min=100                max=100
+
+
+running (1m50.0s), 000/100 VUs, 8705828 complete and 0 interrupted iterations
+default ✓ [======================================] 000/100 VUs  1m50s
+
+
+ k6  .\k6 run webresult_endpoint_basic.js
+
+         /\      Grafana   /‾‾/
+    /\  /  \     |\  __   /  /
+   /  \/    \    | |/ /  /   ‾‾\
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/
+
+     execution: local
+        script: webresult_endpoint_basic.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 100 max VUs, 2m20s max duration (incl. graceful stop):
+              * default: Up to 100 looping VUs for 1m50s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+
+     ✓ status was 200
+
+     checks.........................: 100.00% 8558194 out of 8558194
+     data_received..................: 1.5 GB  13 MB/s
+     data_sent......................: 933 MB  8.5 MB/s
+     http_req_blocked...............: avg=2.95µs   min=0s med=0s      max=32.42ms p(90)=0s     p(95)=0s
+     http_req_connecting............: avg=7ns      min=0s med=0s      max=1.52ms  p(90)=0s     p(95)=0s
+   ✓ http_req_duration..............: avg=891.78µs min=0s med=999.6µs max=92.66ms p(90)=1.84ms p(95)=2.01ms
+       { expected_response:true }...: avg=891.78µs min=0s med=999.6µs max=92.66ms p(90)=1.84ms p(95)=2.01ms
+     http_req_failed................: 0.00%   0 out of 8558194
+     http_req_receiving.............: avg=29.78µs  min=0s med=0s      max=54.24ms p(90)=0s     p(95)=0s
+     http_req_sending...............: avg=9.2µs    min=0s med=0s      max=38.77ms p(90)=0s     p(95)=0s
+     http_req_tls_handshaking.......: avg=0s       min=0s med=0s      max=0s      p(90)=0s     p(95)=0s
+     http_req_waiting...............: avg=852.8µs  min=0s med=999.3µs max=79.03ms p(90)=1.68ms p(95)=2.01ms
+     http_reqs......................: 8558194 77801.723038/s
+     iteration_duration.............: avg=979.59µs min=0s med=1ms     max=93.54ms p(90)=1.99ms p(95)=2.06ms
+     iterations.....................: 8558194 77801.723038/s
+     vus............................: 1       min=1                  max=100
+     vus_max........................: 100     min=100                max=100
+
+
+running (1m50.0s), 000/100 VUs, 8558194 complete and 0 interrupted iterations
+default ✓ [======================================] 000/100 VUs  1m50s

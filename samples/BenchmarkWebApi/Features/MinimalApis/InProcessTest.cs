@@ -1,4 +1,5 @@
-﻿using BenchmarkWebApi.Services;
+﻿using BenchmarkWebApi.Extensions;
+using BenchmarkWebApi.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints.Core;

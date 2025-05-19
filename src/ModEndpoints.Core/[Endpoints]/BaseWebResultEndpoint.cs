@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
@@ -21,11 +19,11 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IValidator<TRequest>>();
+    var validator = context.RequestServices.GetService<IRequestValidator>();
     if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, ct);
-      if (!validationResult.IsValid)
+      var validationResult = await validator.ValidateAsync(req, context, ct);
+      if (validationResult.IsFailed)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }
@@ -38,14 +36,14 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
   }
 
   /// <summary>
-  /// This method is called if request validation fails, and is responsible for mapping <see cref="ValidationResult"/> to <see cref="IResult"/>.
+  /// This method is called if request validation fails, and is responsible for mapping <see cref="RequestValidationResult"/> to <see cref="IResult"/>.
   /// </summary>
   /// <param name="validationResult"></param>
   /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns>Endpoint's <see cref="IResult"/> type validation failed response to caller.</returns>
   protected virtual ValueTask<IResult> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {

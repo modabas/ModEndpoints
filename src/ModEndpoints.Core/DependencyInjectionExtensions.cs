@@ -11,19 +11,27 @@ public static class DependencyInjectionExtensions
 {
   public static IServiceCollection AddModEndpointsCoreFromAssemblyContaining<T>(
     this IServiceCollection services,
-    ServiceLifetime lifetime = ServiceLifetime.Transient)
+    Action<ModEndpointsCoreOptions>? configure = null)
   {
-    return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, lifetime);
+    return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, configure);
   }
 
   public static IServiceCollection AddModEndpointsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
-    ServiceLifetime lifetime = ServiceLifetime.Transient)
+    Action<ModEndpointsCoreOptions>? configure = null)
   {
+    ModEndpointsCoreOptions options = new();
+    configure?.Invoke(options);
+
+    if (options.UseDefaultRequestValidation)
+    {
+      services.AddSingleton<IRequestValidator, FluentValidationRequestValidator>();
+    }
+
     return services
-      .AddRouteGroupsCoreFromAssembly(assembly, lifetime)
-      .AddEndpointsCoreFromAssembly(assembly, lifetime);
+      .AddRouteGroupsCoreFromAssembly(assembly, options.ServiceLifetime)
+      .AddEndpointsCoreFromAssembly(assembly, options.ServiceLifetime);
   }
 
   private static IServiceCollection AddRouteGroupsCoreFromAssembly(

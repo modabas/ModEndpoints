@@ -1,6 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +22,11 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IValidator<TRequest>>();
+    var validator = context.RequestServices.GetService<IRequestValidator>();
     if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, ct);
-      if (!validationResult.IsValid)
+      var validationResult = await validator.ValidateAsync(req, context, ct);
+      if (validationResult.IsFailed)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }
@@ -49,16 +47,16 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     CancellationToken ct);
 
   /// <summary>
-  /// This method is called if request validation fails, and is responsible for mapping <see cref="ValidationResult"/> to <typeparamref name="TResponse"/> if <typeparamref name="TResponse"/> is assignable from <see cref="IResult"/>.
-  /// Throws <see cref="ValidationException"/> otherwise.
+  /// This method is called if request validation fails, and is responsible for mapping <see cref="RequestValidationResult"/> to <typeparamref name="TResponse"/> if <typeparamref name="TResponse"/> is assignable from <see cref="IResult"/>.
+  /// Throws <see cref="RequestValidationException"/> otherwise.
   /// </summary>
   /// <param name="validationResult"></param>
   /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns>Endpoint's <typeparamref name="TResponse"/> type validation failed response to caller.</returns>
-  /// <exception cref="ValidationException"></exception>
+  /// <exception cref="RequestValidationException"></exception>
   protected virtual ValueTask<TResponse> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
@@ -117,14 +115,14 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     }
     else
     {
-      throw new ValidationException(validationResult.Errors);
+      throw new RequestValidationException(validationResult.Errors);
     }
   }
 
   private static bool TryUseImplicitOperatorFor<T>(
     Type responseType,
-    ValidationResult validationResult,
-    Func<ValidationResult, T> conversionFunc,
+    RequestValidationResult validationResult,
+    Func<RequestValidationResult, T> conversionFunc,
     [NotNullWhen(true)] out TResponse? response)
   {
     var converter = responseType.GetMethod("op_Implicit", new[] { typeof(T) });

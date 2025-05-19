@@ -161,7 +161,7 @@ public class DefaultServiceChannelSerializer(
     await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem>(response, ct))
     {
       ct.ThrowIfCancellationRequested();
-      yield return responseItemObject 
+      yield return responseItemObject
         ?? new StreamingResponseItem(
           Result: Result
           .CriticalError(DeserializationErrorMessage)

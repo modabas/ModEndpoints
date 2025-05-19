@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.RemoteServices.Core;
@@ -22,11 +20,11 @@ public abstract class BaseServiceEndpoint<TRequest, TResponse>
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IValidator<TRequest>>();
+    var validator = context.RequestServices.GetService<IRequestValidator>();
     if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, ct);
-      if (!validationResult.IsValid)
+      var validationResult = await validator.ValidateAsync(req, context, ct);
+      if (validationResult.IsFailed)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }
@@ -47,14 +45,14 @@ public abstract class BaseServiceEndpoint<TRequest, TResponse>
     CancellationToken ct);
 
   /// <summary>
-  /// This method is called if request validation fails, and is responsible for mapping <see cref="ValidationResult"/> to <typeparamref name="TResponse"/>.
+  /// This method is called if request validation fails, and is responsible for mapping <see cref="RequestValidationResult"/> to <typeparamref name="TResponse"/>.
   /// </summary>
   /// <param name="validationResult"></param>
   /// <param name="context"></param>
   /// <param name="ct"></param>
   /// <returns>Endpoint's <typeparamref name="TResponse"/> type validation failed response to caller.</returns>
   protected abstract ValueTask<TResponse> HandleInvalidValidationResultAsync(
-    ValidationResult validationResult,
+    RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct);
 }
