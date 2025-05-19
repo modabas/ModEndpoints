@@ -278,7 +278,7 @@ public static class DependencyInjectionExtensions
     ConfigurationContext<IEndpointConfiguration> endpointConfigurationContext = new(
       serviceProvider,
       parentConfigurationContext?.CurrentComponent,
-      endpoint); 
+      endpoint);
     var routeHandlerBuilder = endpoint.Configure(builder, endpointConfigurationContext);
     if (routeHandlerBuilder is null)
     {
