@@ -8,8 +8,6 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
 
   private EndpointConfigurationBuilder? _builder;
 
-  public Dictionary<string, object?>? ConfigurationPropertyBag { get; set; }
-
   public virtual Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? ConfigurationOverrides => null;
 
   /// <summary>

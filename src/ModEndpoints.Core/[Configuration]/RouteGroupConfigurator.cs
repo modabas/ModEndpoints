@@ -7,8 +7,6 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 {
   private RouteGroupConfigurationBuilder? _configurationBuilder;
 
-  public Dictionary<string, object?> ConfigurationPropertyBag { get; set; } = new();
-
   public virtual Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? EndpointConfigurationOverrides => null;
 
   public virtual Action<RouteGroupBuilder, ConfigurationContext<RouteGroupConfigurationParameters>>? ConfigurationOverrides => null;
