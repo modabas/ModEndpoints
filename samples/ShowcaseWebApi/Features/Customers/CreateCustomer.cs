@@ -27,10 +27,10 @@ internal class CreateCustomer(ServiceDbContext db)
   : MinimalEndpoint<CreateCustomerRequest, Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/");
+    builder.MapPost("/");
   }
 
   protected override async Task<Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>> HandleAsync(

@@ -6,10 +6,10 @@ internal class BasicTest
   : MinimalEndpoint<IResult>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapGet("/MinimalEndpoints/BasicTest")
+    builder.MapGet("/MinimalEndpoints/BasicTest")
       .Produces<string>();
   }
 

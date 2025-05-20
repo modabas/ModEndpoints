@@ -6,9 +6,11 @@ namespace ModEndpoints.TestServer.Features.Books;
 internal class FailureEndpointWithoutResponseModel
   : WebResultEndpointWithEmptyRequest
 {
-  protected override void Configure(IServiceProvider serviceProvider, IRouteGroupConfigurator? parentRouteGroup)
+  protected override void Configure(
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/failure/withoutResponseModel");
+    builder.MapPost("/failure/withoutResponseModel");
   }
 
   protected override Task<Result> HandleAsync(CancellationToken ct)

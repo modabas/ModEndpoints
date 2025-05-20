@@ -6,10 +6,10 @@ namespace ShowcaseWebApi.Features.Stores.Configuration;
 internal class StoresRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    MapGroup("/stores")
+    builder.MapGroup("/stores")
       .MapToApiVersion(1)
       .MapToApiVersion(2)
       .WithTags("/Stores");

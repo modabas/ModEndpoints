@@ -25,10 +25,10 @@ internal class UpdateBook
   : WebResultEndpoint<UpdateBookRequest>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPut("/{Id}");
+    builder.MapPut("/{Id}");
   }
 
   protected override Task<Result> HandleAsync(

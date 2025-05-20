@@ -10,15 +10,15 @@ public class DefaultUriResolverProvider :
 {
   public IServiceEndpointUriResolver GetResolver(
     IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup,
-    ServiceEndpointConfigurator endpoint)
+    EndpointConfigurationParameters endpointConfigurationParameters)
   {
+    var endpoint = endpointConfigurationParameters.CurrentEndpoint;
     var resolverName = GetResolverName(endpoint);
     var resolver = serviceProvider.GetRequiredKeyedService<IServiceEndpointUriResolver>(resolverName);
     return resolver;
   }
 
-  private string GetResolverName(ServiceEndpointConfigurator endpoint)
+  private string GetResolverName(IEndpointConfiguratorMarker endpoint)
   {
     return endpoint.GetType().GetCustomAttribute<UriResolverAttribute>()?.Name ??
       RemoteServiceDefinitions.DefaultUriResolverName;

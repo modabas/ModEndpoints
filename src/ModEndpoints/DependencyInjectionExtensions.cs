@@ -43,14 +43,15 @@ public static class DependencyInjectionExtensions
       assembly,
       conf =>
       {
-        conf.ServiceLifetime = options.CoreOptions.ServiceLifetime;
+        conf.EndpointLifetime = options.CoreOptions.EndpointLifetime;
+        conf.RouteGroupConfiguratorLifetime = options.CoreOptions.RouteGroupConfiguratorLifetime;
         conf.UseDefaultRequestValidation = options.CoreOptions.UseDefaultRequestValidation;
       });
   }
 
   public static WebApplication MapModEndpoints(
     this WebApplication app,
-    Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator?, IEndpointConfigurator>? globalEndpointConfiguration = null,
+    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
     return app.MapModEndpointsCore(

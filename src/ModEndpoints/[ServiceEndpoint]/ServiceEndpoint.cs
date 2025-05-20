@@ -22,15 +22,14 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
+    var serviceProvider = configurationContext.ServiceProvider;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
-      parentRouteGroup,
-      this);
+      configurationContext.Parameters);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
     {
@@ -54,15 +53,14 @@ public abstract class ServiceEndpoint<TRequest>
   }
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
+    var serviceProvider = configurationContext.ServiceProvider;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
-      parentRouteGroup,
-      this);
+      configurationContext.Parameters);
     var patternResult = uriResolver.Resolve<TRequest>();
     if (patternResult.IsOk)
     {

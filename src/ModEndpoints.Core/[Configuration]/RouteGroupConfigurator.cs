@@ -1,76 +1,66 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace ModEndpoints.Core;
 
 public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 {
-  private IEndpointRouteBuilder? _builder;
+  private RouteGroupConfigurationBuilder? _configurationBuilder;
 
-  private RouteGroupBuilder? _groupBuilder;
+  public virtual Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? EndpointConfigurationOverrides => null;
 
-  private readonly Dictionary<string, object?> _propertyBag = new();
-  public Dictionary<string, object?> PropertyBag => _propertyBag;
+  public virtual Action<RouteGroupBuilder, ConfigurationContext<RouteGroupConfigurationParameters>>? ConfigurationOverrides => null;
 
   /// <summary>
   /// Entry point for route group configuration. Called by DI.
   /// </summary>
-  /// <param name="serviceProvider"></param>
   /// <param name="builder"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the route group.</returns>
   public RouteGroupBuilder? Configure(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    _builder = builder;
-    Configure(serviceProvider, parentRouteGroup);
-    return _groupBuilder;
+    _configurationBuilder = new(builder);
+    Configure(_configurationBuilder, configurationContext);
+    return _configurationBuilder.GroupBuilder;
   }
 
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
   /// Start configuring route group by calling the MapGroup method and chain additional configuration on top of returned <see cref="RouteGroupBuilder"/>.
   /// </summary>
-  /// <param name="serviceProvider"></param>
-  /// <param name="parentRouteGroup">Null if this route group is registered at root.</param>
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
   protected abstract void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup);
-
-  public virtual Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator, IEndpointConfigurator>? EndpointConfigurationOverrides => null;
-
-  public virtual Action<IServiceProvider, RouteGroupBuilder, IRouteGroupConfigurator?, IRouteGroupConfigurator>? ConfigurationOverrides => null;
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext);
 
   /// <summary>
-  /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
-  /// for defining endpoints, all prefixed with <paramref name="prefix"/>
+  /// Called during application startup, while registering and configuring groups.
+  /// Runs after all child groups and endpoints have been fully configured.
+  /// Can be used to modify group configuration.
   /// </summary>
-  /// <param name="prefix"></param>
-  /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the group.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteGroupBuilder MapGroup(string prefix)
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
+  public virtual void PostConfigure(
+    RouteGroupBuilder builder,
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    _groupBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForRouteGroupMessage, GetType()))
-      : _builder.MapGroup(prefix);
-    return _groupBuilder;
+    return;
   }
 
   /// <summary>
-  /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
-  /// for defining endpoints, all prefixed with <paramref name="prefix"/>
+  /// Called during application startup, while registering and configuring groups.
+  /// This executes for each endpoint directly under this route group, after endpoint has been configured, the global endpoint configuration has completed, and endpoint's own configuration overrides have run.
+  /// Can be used to modify child endpoint configuration.
   /// </summary>
-  /// <param name="prefix"></param>
-  /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the group.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteGroupBuilder MapGroup(RoutePattern prefix)
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
+  public virtual void EndpointPostConfigure(
+    RouteHandlerBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    _groupBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForRouteGroupMessage, GetType()))
-      : _builder.MapGroup(prefix);
-    return _groupBuilder;
+    return;
   }
 }

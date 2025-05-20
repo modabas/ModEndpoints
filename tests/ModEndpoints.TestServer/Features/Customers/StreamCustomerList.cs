@@ -15,10 +15,10 @@ internal class StreamCustomerList
   : MinimalEndpointWithStreamingResponse<StreamCustomerListResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapMethods("/stream-list", [HttpMethod.Get.Method]);
+    builder.MapMethods("/stream-list", [HttpMethod.Get.Method]);
   }
 
   protected override async IAsyncEnumerable<StreamCustomerListResponse> HandleAsync(

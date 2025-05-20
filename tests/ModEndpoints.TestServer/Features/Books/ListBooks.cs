@@ -12,10 +12,10 @@ internal class ListBooks
   : WebResultEndpointWithEmptyRequest<ListBooksResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapGet("/")
+    builder.MapGet("/")
       .Produces<ListBooksResponse>();
   }
 

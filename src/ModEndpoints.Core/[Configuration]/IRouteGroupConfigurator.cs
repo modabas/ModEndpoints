@@ -3,18 +3,20 @@ using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
 
-public interface IRouteGroupConfigurator
+public interface IRouteGroupConfiguratorMarker;
+
+public interface IRouteGroupConfigurator : IRouteGroupConfiguratorMarker
 {
-  RouteGroupBuilder? Configure(IServiceProvider serviceProvider, IEndpointRouteBuilder builder, IRouteGroupConfigurator? parentRouteGroup);
-
-  Dictionary<string, object?> PropertyBag { get; }
+  RouteGroupBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<RouteGroupConfigurationParameters> configurationContext);
 
   /// <summary>
-  /// Parameters: Endpoint's parent group (this group) and endpoint being configured 
+  /// Endpoint configuration overrides. This executes for each endpoint directly under this route group, after endpoint has been configured, the global endpoint configuration has completed, and endpoint's own configuration overrides have run.
   /// </summary>
-  abstract Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator, IEndpointConfigurator>? EndpointConfigurationOverrides { get; }
+  void EndpointPostConfigure(RouteHandlerBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+
   /// <summary>
-  /// Parameters: Group's parent group (if any or null) and group being configured (this group)
+  /// Group configuration overrides, runs after all child groups and endpoints have been fully configured.
   /// </summary>
-  abstract Action<IServiceProvider, RouteGroupBuilder, IRouteGroupConfigurator?, IRouteGroupConfigurator>? ConfigurationOverrides { get; }
+  void PostConfigure(RouteGroupBuilder builder, ConfigurationContext<RouteGroupConfigurationParameters> configurationContext);
+
 }

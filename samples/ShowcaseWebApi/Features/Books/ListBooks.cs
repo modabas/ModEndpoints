@@ -15,10 +15,10 @@ internal class ListBooks(ServiceDbContext db)
   : WebResultEndpointWithEmptyRequest<ListBooksResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapGet("/")
+    builder.MapGet("/")
       .Produces<ListBooksResponse>();
   }
 

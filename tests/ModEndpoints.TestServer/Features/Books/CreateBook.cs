@@ -26,10 +26,10 @@ internal class CreateBook(ILocationStore location)
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/")
+    builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
   protected override async Task<Result<CreateBookResponse>> HandleAsync(

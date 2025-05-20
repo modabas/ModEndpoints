@@ -15,8 +15,9 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.MapModEndpoints(
-  (serviceProvider, builder, group, endpoint) =>
+  (builder, configurationContext) =>
   {
+    var endpoint = configurationContext.Parameters.CurrentEndpoint;
     var endpointFullName = endpoint.GetType().FullName;
     if (!string.IsNullOrWhiteSpace(endpointFullName))
     {

@@ -3,14 +3,11 @@ using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
 
-public interface IEndpointConfigurator
+public interface IEndpointConfiguratorMarker;
+
+public interface IEndpointConfigurator : IEndpointConfiguratorMarker
 {
-  RouteHandlerBuilder? Configure(IServiceProvider serviceProvider, IEndpointRouteBuilder builder, IRouteGroupConfigurator? parentRouteGroup);
+  RouteHandlerBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 
-  Dictionary<string, object?>? PropertyBag { get; set; }
-
-  /// <summary>
-  /// Parameters: Endpoint's parent group (if any or null) and endpoint being configured (this endpoint)
-  /// </summary>
-  abstract Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator?, IEndpointConfigurator>? ConfigurationOverrides { get; }
+  void PostConfigure(RouteHandlerBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 }

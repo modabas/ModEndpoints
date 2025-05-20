@@ -13,11 +13,9 @@ public interface IUriResolverProvider
   /// that will be used to determine the uri, endpoint will be mapped to. 
   /// </summary>
   /// <param name="serviceProvider"></param>
-  /// <param name="parentRouteGroup"></param>
-  /// <param name="endpoint"></param>
+  /// <param name="endpointConfigurationParameters"></param>
   /// <returns></returns>
   IServiceEndpointUriResolver GetResolver(
     IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup,
-    ServiceEndpointConfigurator endpoint);
+    EndpointConfigurationParameters endpointConfigurationParameters);
 }

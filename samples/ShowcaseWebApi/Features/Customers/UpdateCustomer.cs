@@ -28,10 +28,10 @@ internal class UpdateCustomer(ServiceDbContext db)
   : MinimalEndpoint<UpdateCustomerRequest, IResult>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPut("/{Id}")
+    builder.MapPut("/{Id}")
       .Produces<UpdateCustomerResponse>();
   }
 

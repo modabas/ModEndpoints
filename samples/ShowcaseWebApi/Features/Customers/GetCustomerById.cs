@@ -24,10 +24,10 @@ internal class GetCustomerById(ServiceDbContext db)
   : MinimalEndpoint<GetCustomerByIdRequest, Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem, ProblemHttpResult>>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapGet("/{Id}");
+    builder.MapGet("/{Id}");
   }
 
   protected override async Task<Results<Ok<GetCustomerByIdResponse>, NotFound, ValidationProblem, ProblemHttpResult>> HandleAsync(

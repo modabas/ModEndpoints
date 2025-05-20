@@ -5,9 +5,9 @@ namespace ModEndpoints.TestServer.Features;
 internal class FeaturesRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    MapGroup("/api");
+    builder.MapGroup("/api");
   }
 }

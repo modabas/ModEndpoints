@@ -24,10 +24,10 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
   ];
 
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapGet("/weatherforecast")
+    builder.MapGet("/weatherforecast")
       .WithName("GetWeatherForecast")
       .WithTags("WeatherForecastWebApi");
   }

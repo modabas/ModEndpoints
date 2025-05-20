@@ -22,10 +22,10 @@ internal class UploadBook
   : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/upload/{Title}")
+    builder.MapPost("/upload/{Title}")
       .DisableAntiforgery()
       .Produces<UploadBookResponse>();
   }
@@ -69,10 +69,10 @@ internal class DownloadCustomers(ServiceDbContext db)
   : MinimalEndpoint<DownloadCustomersRequest, IResult>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/download/{FileName}");
+    builder.MapPost("/download/{FileName}");
   }
 
   protected override async Task<IResult> HandleAsync(

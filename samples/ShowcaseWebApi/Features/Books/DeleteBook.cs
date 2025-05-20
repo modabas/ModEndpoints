@@ -22,10 +22,10 @@ internal class DeleteBook(ServiceDbContext db)
   : WebResultEndpoint<DeleteBookRequest>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapDelete("/{Id}");
+    builder.MapDelete("/{Id}");
   }
 
   protected override async Task<Result> HandleAsync(

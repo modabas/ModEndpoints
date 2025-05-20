@@ -15,10 +15,10 @@ internal class ListCustomers
   : MinimalEndpoint<ListCustomersResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapMethods("/", [HttpMethod.Get.Method]);
+    builder.MapMethods("/", [HttpMethod.Get.Method]);
   }
 
   protected override async Task<ListCustomersResponse> HandleAsync(

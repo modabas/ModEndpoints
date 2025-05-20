@@ -29,10 +29,10 @@ internal class FilterAndStreamCustomerList
   : MinimalEndpointWithStreamingResponse<FilterAndStreamCustomerListRequest, FilterAndStreamCustomerListResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
+    builder.MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
   }
 
   protected override async IAsyncEnumerable<FilterAndStreamCustomerListResponse> HandleAsync(

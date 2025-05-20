@@ -8,9 +8,11 @@ public record FailureEndpointWithoutResponseModelResponse(Guid Id);
 internal class FailureEndpointWithResponseModel
   : WebResultEndpointWithEmptyRequest<FailureEndpointWithoutResponseModelResponse>
 {
-  protected override void Configure(IServiceProvider serviceProvider, IRouteGroupConfigurator? parentRouteGroup)
+  protected override void Configure(
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/failure/withResponseModel");
+    builder.MapPost("/failure/withResponseModel");
   }
 
   protected override Task<Result<FailureEndpointWithoutResponseModelResponse>> HandleAsync(CancellationToken ct)

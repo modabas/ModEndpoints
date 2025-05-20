@@ -6,135 +6,44 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
 {
   protected abstract Delegate ExecuteDelegate { get; }
 
-  private IEndpointRouteBuilder? _builder;
-
-  private RouteHandlerBuilder? _handlerBuilder;
-
-  public Dictionary<string, object?>? PropertyBag { get; set; }
-
-  public virtual Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator?, IEndpointConfigurator>? ConfigurationOverrides => null;
+  private EndpointConfigurationBuilder? _builder;
 
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
-  /// <param name="serviceProvider"></param>
   /// <param name="builder"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder? Configure(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    _builder = builder;
-    Configure(serviceProvider, parentRouteGroup);
-    return _handlerBuilder;
+    _builder = new(builder, ExecuteDelegate);
+    Configure(_builder, configurationContext);
+    return _builder.HandlerBuilder;
   }
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
   /// Start configuring endpoint by calling one of the Map[HttpVerb] methods and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
   /// </summary>
-  /// <param name="serviceProvider"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
   protected abstract void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup);
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 
   /// <summary>
-  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
-  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches HTTP GET 
-  /// requests for the specified pattern.
+  /// Called during application startup, while registering and configuring endpoints.
+  /// This executes after endpoint has been configured and the global endpoint configuration has completed.
+  /// Can be used to modify configuration.
   /// </summary>
-  /// <param name="pattern"></param>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder MapGet(string pattern)
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
+  public virtual void PostConfigure(
+    RouteHandlerBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    _handlerBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _builder.MapGet(pattern, ExecuteDelegate);
-    return _handlerBuilder;
-  }
-
-  /// <summary>
-  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
-  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches HTTP POST 
-  /// requests for the specified pattern.
-  /// </summary>
-  /// <param name="pattern"></param>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder MapPost(string pattern)
-  {
-    _handlerBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _builder.MapPost(pattern, ExecuteDelegate);
-    return _handlerBuilder;
-  }
-
-  /// <summary>
-  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
-  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches HTTP DELETE 
-  /// requests for the specified pattern.
-  /// </summary>
-  /// <param name="pattern"></param>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder MapDelete(string pattern)
-  {
-    _handlerBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _builder.MapDelete(pattern, ExecuteDelegate);
-    return _handlerBuilder;
-  }
-
-  /// <summary>
-  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
-  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches HTTP PUT 
-  /// requests for the specified pattern.
-  /// </summary>
-  /// <param name="pattern"></param>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder MapPut(string pattern)
-  {
-    _handlerBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _builder.MapPut(pattern, ExecuteDelegate);
-    return _handlerBuilder;
-  }
-
-  /// <summary>
-  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
-  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches HTTP PATCH 
-  /// requests for the specified pattern.
-  /// </summary>
-  /// <param name="pattern"></param>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder MapPatch(string pattern)
-  {
-    _handlerBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _builder.MapPatch(pattern, ExecuteDelegate);
-    return _handlerBuilder;
-  }
-
-  /// <summary>
-  /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
-  /// to the application <see cref="IEndpointRouteBuilder"/>, that matches requests with
-  /// specified HTTP methods for the specified pattern.
-  /// </summary>
-  /// <param name="pattern"></param>
-  /// <param name="httpMethods"></param>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder MapMethods(string pattern, IEnumerable<string> httpMethods)
-  {
-    _handlerBuilder = _builder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _builder.MapMethods(pattern, httpMethods, ExecuteDelegate);
-    return _handlerBuilder;
+    return;
   }
 }

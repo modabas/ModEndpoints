@@ -25,10 +25,10 @@ internal class UploadBook
   : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/upload/{Title}")
+    builder.MapPost("/upload/{Title}")
       .DisableAntiforgery()
       .Produces<UploadBookResponse>();
   }

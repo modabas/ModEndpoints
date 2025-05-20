@@ -26,10 +26,10 @@ internal class InProcessTest(IGetMeAStringService svc)
   : WebResultEndpoint<InProcessTestRequest, InProcessTestResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/WebResultEndpoints/InProcessTest/{Id}")
+    builder.MapPost("/WebResultEndpoints/InProcessTest/{Id}")
       .Produces<InProcessTestResponse>();
   }
 

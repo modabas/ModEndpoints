@@ -8,52 +8,53 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 
   private RouteHandlerBuilder? _handlerBuilder;
 
-  public Dictionary<string, object?>? PropertyBag { get; set; }
-
-  public virtual Action<IServiceProvider, RouteHandlerBuilder, IRouteGroupConfigurator?, IEndpointConfigurator>? ConfigurationOverrides => null;
-
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
-  /// <param name="serviceProvider"></param>
   /// <param name="builder"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder? Configure(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    _handlerBuilder = ConfigureDefaults(serviceProvider, builder, parentRouteGroup);
-    Configure(serviceProvider, parentRouteGroup);
+    _handlerBuilder = ConfigureDefaults(builder, configurationContext);
+    Configure(GetRouteHandlerBuilder(), configurationContext);
     return _handlerBuilder;
   }
 
   protected abstract RouteHandlerBuilder? ConfigureDefaults(
-    IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    IRouteGroupConfigurator? parentRouteGroup);
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
   /// Runs after ConfigureDefaults method and can be overridden to further customize endpoint on top of default configuration.
-  /// Start configuring endpoint by calling <see cref="GetRouteHandlerBuilder"/> method to get a <see cref="RouteHandlerBuilder"/>, and chain additional configuration on top of it.
+  /// Use <see cref="RouteHandlerBuilder"/> parameter to chain additional configuration.
   /// </summary>
-  /// <param name="serviceProvider"></param>
-  /// <param name="parentRouteGroup"></param>
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
   protected virtual void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    RouteHandlerBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     return;
   }
 
   /// <summary>
-  /// 
+  /// Called during application startup, while registering and configuring endpoints.
+  /// This executes after endpoint has been configured and the global endpoint configuration has completed. Can be used to override previous configuration.
   /// </summary>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  protected RouteHandlerBuilder GetRouteHandlerBuilder()
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
+  public virtual void PostConfigure(
+    RouteHandlerBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+  {
+    return;
+  }
+
+  private RouteHandlerBuilder GetRouteHandlerBuilder()
   {
     return _handlerBuilder is null
       ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
