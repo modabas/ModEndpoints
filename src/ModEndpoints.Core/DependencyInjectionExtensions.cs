@@ -171,7 +171,7 @@ public static class DependencyInjectionExtensions
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     Func<Type, bool> filterPredicate,
-    ConfigurationContext<IRouteGroupConfigurationSettings>? currentConfigurationContext,
+    IRouteGroupConfigurator? currentRouteGroup,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
     Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration,
@@ -183,7 +183,7 @@ public static class DependencyInjectionExtensions
     {
       ConfigurationContext<IRouteGroupConfigurationSettings> childConfigurationContext = new(
         serviceProvider,
-        currentConfigurationContext?.CurrentComponent,
+        currentRouteGroup,
         childRouteGroup);
       var routeGroupBuilder = childRouteGroup.Configure(builder, childConfigurationContext);
       if (routeGroupBuilder is null)
@@ -215,7 +215,7 @@ public static class DependencyInjectionExtensions
           endpoints,
           globalEndpointConfiguration,
           throwOnMissingConfiguration,
-          childConfigurationContext);
+          childRouteGroup);
 
         childRouteGroup.ConfigurationOverrides?.Invoke(
           routeGroupBuilder,
@@ -230,7 +230,7 @@ public static class DependencyInjectionExtensions
       _ = endpoint.Map(
         serviceProvider,
         builder,
-        currentConfigurationContext,
+        currentRouteGroup,
         globalEndpointConfiguration,
         throwOnMissingConfiguration);
     }
@@ -246,7 +246,7 @@ public static class DependencyInjectionExtensions
     IEnumerable<IEndpointConfigurator> endpoints,
     Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration,
-    ConfigurationContext<IRouteGroupConfigurationSettings> parentConfigurationContext)
+    IRouteGroupConfigurator parentRouteGroup)
   {
     //Items having membership to this route group
     Func<Type, bool> typeIsMemberOfCurrentGroupPredicate =
@@ -258,7 +258,7 @@ public static class DependencyInjectionExtensions
       serviceProvider,
       builder,
       typeIsMemberOfCurrentGroupPredicate,
-      parentConfigurationContext, //process items under this group's hierarchy
+      parentRouteGroup, //process items under this group's hierarchy
       routeGroups,
       endpoints,
       globalEndpointConfiguration,
@@ -271,13 +271,13 @@ public static class DependencyInjectionExtensions
     this IEndpointConfigurator endpoint,
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    ConfigurationContext<IRouteGroupConfigurationSettings>? parentConfigurationContext,
+    IRouteGroupConfigurator? parentRouteGroup,
     Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     ConfigurationContext<IEndpointConfigurationSettings> endpointConfigurationContext = new(
       serviceProvider,
-      parentConfigurationContext?.CurrentComponent,
+      parentRouteGroup,
       endpoint);
     var routeHandlerBuilder = endpoint.Configure(builder, endpointConfigurationContext);
     if (routeHandlerBuilder is null)
@@ -307,7 +307,7 @@ public static class DependencyInjectionExtensions
       endpoint.ConfigurationOverrides?.Invoke(
         routeHandlerBuilder,
         endpointConfigurationContext);
-      parentConfigurationContext?.CurrentComponent.EndpointConfigurationOverrides?.Invoke(
+      parentRouteGroup?.EndpointConfigurationOverrides?.Invoke(
         routeHandlerBuilder,
         endpointConfigurationContext);
     }
