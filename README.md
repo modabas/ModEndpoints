@@ -53,7 +53,7 @@
 
 Each endpoint must implement two virtual methods:
 
-1. **Configure**: Invoked during application startup to define the route and HTTP method for an endpoint. It begins with methods like `MapGet`, `MapPost`, etc., to specify the route pattern. The returned `RouteHandlerBuilder` from the Map[HttpVerb] method can then be used for further endpoint customization.
+1. **Configure**: Invoked during application startup to define the route and HTTP method for an endpoint. It begins with calling input parameter `builder`'s methods like `MapGet`, `MapPost`, etc., to specify the route pattern. The returned `RouteHandlerBuilder` from the Map[HttpVerb] method can then be used for further endpoint customization.
 
 2. **HandleAsync**: Contains the logic to handle incoming requests. Called after the request is validated (if applicable).
 
