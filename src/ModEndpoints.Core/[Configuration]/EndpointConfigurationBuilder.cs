@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
-public class EndpointRegistrationBuilder(IEndpointRouteBuilder endpointRouteBuilder, Delegate executeDelegate)
+public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBuilder, Delegate executeDelegate)
 {
   internal RouteHandlerBuilder? HandlerBuilder { get; private set; }
 

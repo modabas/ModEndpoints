@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace ModEndpoints.Core;
 
-public class RouteGroupRegistrationBuilder(IEndpointRouteBuilder endpointRouteBuilder)
+public class RouteGroupConfigurationBuilder(IEndpointRouteBuilder endpointRouteBuilder)
 {
   internal RouteGroupBuilder? GroupBuilder { get; private set; }
 

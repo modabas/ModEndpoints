@@ -4,13 +4,13 @@ public class ConfigurationContext<T>
 {
   public IServiceProvider ServiceProvider { get; init; }
 
-  public IRouteGroupConfiguration? ParentRouteGroup { get; init; }
+  public IRouteGroupConfigurationSettings? ParentRouteGroup { get; init; }
 
   public T CurrentComponent { get; init; }
 
   public ConfigurationContext(
     IServiceProvider serviceProvider,
-    IRouteGroupConfiguration? parentRouteGroup,
+    IRouteGroupConfigurationSettings? parentRouteGroup,
     T currentComponent)
   {
     ServiceProvider = serviceProvider;

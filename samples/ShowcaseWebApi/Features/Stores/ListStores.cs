@@ -15,8 +15,8 @@ internal class ListStores(ServiceDbContext db)
   : BusinessResultEndpointWithEmptyRequest<ListStoresResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapGet("/");
   }

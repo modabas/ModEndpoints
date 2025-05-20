@@ -22,8 +22,8 @@ internal class DownloadCustomers(ServiceDbContext db)
   : MinimalEndpoint<DownloadCustomersRequest, IResult>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPost("/download/{FileName}");
   }

@@ -25,8 +25,8 @@ internal class UpdateBook
   : WebResultEndpoint<UpdateBookRequest>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPut("/{Id}");
   }

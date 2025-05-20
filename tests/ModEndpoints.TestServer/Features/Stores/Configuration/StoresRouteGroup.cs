@@ -6,8 +6,8 @@ namespace ModEndpoints.TestServer.Features.Stores.Configuration;
 internal class StoresRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    RouteGroupRegistrationBuilder builder,
-    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
   {
     builder.MapGroup("/stores");
   }

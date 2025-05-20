@@ -6,8 +6,8 @@ namespace ModEndpoints.TestServer.Features.Books.Configuration;
 internal class BooksRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    RouteGroupRegistrationBuilder builder,
-    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
   {
     builder.MapGroup("/books");
   }

@@ -6,8 +6,8 @@ namespace ShowcaseWebApi.Features.Customers.Configuration;
 internal class CustomersV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    RouteGroupRegistrationBuilder builder,
-    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
   {
     builder.MapGroup("/customers")
       .MapToApiVersion(1)

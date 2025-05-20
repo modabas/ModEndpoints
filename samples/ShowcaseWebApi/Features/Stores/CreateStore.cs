@@ -25,8 +25,8 @@ internal class CreateStore(ServiceDbContext db)
   : BusinessResultEndpoint<CreateStoreRequest, CreateStoreResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPost("/");
   }

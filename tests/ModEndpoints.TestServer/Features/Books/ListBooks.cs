@@ -12,8 +12,8 @@ internal class ListBooks
   : WebResultEndpointWithEmptyRequest<ListBooksResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapGet("/")
       .Produces<ListBooksResponse>();

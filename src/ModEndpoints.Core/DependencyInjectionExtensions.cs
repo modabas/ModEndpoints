@@ -138,7 +138,7 @@ public static class DependencyInjectionExtensions
   //Group overrides apply to endpoints directly under that group (not if they are under another group, which is under this group)
   public static WebApplication MapModEndpointsCore(
     this WebApplication app,
-    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? globalEndpointConfiguration = null,
+    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
     IEndpointRouteBuilder builder = app;
@@ -171,17 +171,17 @@ public static class DependencyInjectionExtensions
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     Func<Type, bool> filterPredicate,
-    ConfigurationContext<IRouteGroupConfiguration>? currentConfigurationContext,
+    ConfigurationContext<IRouteGroupConfigurationSettings>? currentConfigurationContext,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
-    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? globalEndpointConfiguration,
+    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     //Process groups matching filter predicate
     foreach (var childRouteGroup in routeGroups.Where(
       x => filterPredicate(x.GetType())))
     {
-      ConfigurationContext<IRouteGroupConfiguration> childConfigurationContext = new(
+      ConfigurationContext<IRouteGroupConfigurationSettings> childConfigurationContext = new(
         serviceProvider,
         currentConfigurationContext?.CurrentComponent,
         childRouteGroup);
@@ -244,9 +244,9 @@ public static class DependencyInjectionExtensions
     RouteGroupBuilder builder,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
-    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? globalEndpointConfiguration,
+    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration,
-    ConfigurationContext<IRouteGroupConfiguration> parentConfigurationContext)
+    ConfigurationContext<IRouteGroupConfigurationSettings> parentConfigurationContext)
   {
     //Items having membership to this route group
     Func<Type, bool> typeIsMemberOfCurrentGroupPredicate =
@@ -271,11 +271,11 @@ public static class DependencyInjectionExtensions
     this IEndpointConfigurator endpoint,
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
-    ConfigurationContext<IRouteGroupConfiguration>? parentConfigurationContext,
-    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? globalEndpointConfiguration,
+    ConfigurationContext<IRouteGroupConfigurationSettings>? parentConfigurationContext,
+    Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
-    ConfigurationContext<IEndpointConfiguration> endpointConfigurationContext = new(
+    ConfigurationContext<IEndpointConfigurationSettings> endpointConfigurationContext = new(
       serviceProvider,
       parentConfigurationContext?.CurrentComponent,
       endpoint);

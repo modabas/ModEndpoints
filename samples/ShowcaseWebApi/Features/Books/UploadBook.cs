@@ -25,8 +25,8 @@ internal class UploadBook
   : WebResultEndpoint<UploadBookRequest, UploadBookResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPost("/upload/{Title}")
       .DisableAntiforgery()

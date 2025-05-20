@@ -9,8 +9,8 @@ internal class ResultEndpointWithEmptyRequest
   : WebResultEndpointWithEmptyRequest
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapDelete("/").Produces(StatusCodes.Status204NoContent);
   }

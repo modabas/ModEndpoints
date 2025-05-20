@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
 
-public interface IEndpointConfigurator : IEndpointConfiguration
+public interface IEndpointConfigurator : IEndpointConfigurationSettings
 {
-  RouteHandlerBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<IEndpointConfiguration> configurationContext);
+  RouteHandlerBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<IEndpointConfigurationSettings> configurationContext);
 }

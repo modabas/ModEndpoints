@@ -2,8 +2,8 @@
 
 namespace ModEndpoints.Core;
 
-public interface IRouteGroupConfigurator : IRouteGroupConfiguration
+public interface IRouteGroupConfigurator : IRouteGroupConfigurationSettings
 {
-  RouteGroupBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<IRouteGroupConfiguration> configurationContext);
+  RouteGroupBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext);
 
 }

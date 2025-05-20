@@ -30,8 +30,8 @@ internal class UpdateBook(ServiceDbContext db)
   : WebResultEndpoint<UpdateBookRequest, UpdateBookResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPut("/{Id}")
       .Produces<UpdateBookResponse>();

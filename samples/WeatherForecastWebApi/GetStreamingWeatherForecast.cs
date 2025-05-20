@@ -22,8 +22,8 @@ internal class GetStreamingWeatherForecast
   ];
 
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapGet("/streamingweatherforecast")
       .WithName("GetStreamingWeatherForecast")

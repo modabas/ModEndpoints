@@ -5,11 +5,15 @@ namespace ModEndpoints.Core;
 
 public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 {
-  private RouteGroupRegistrationBuilder? _builder;
+  private RouteGroupConfigurationBuilder? _configurationBuilder;
 
   public Dictionary<string, object?> ConfigurationPropertyBag { get; set; } = new();
 
-  public IRouteGroupConfiguration? ParentRouteGroup { get; private set; }
+  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? EndpointConfigurationOverrides => null;
+
+  public virtual Action<RouteGroupBuilder, ConfigurationContext<IRouteGroupConfigurationSettings>>? ConfigurationOverrides => null;
+
+  public IRouteGroupConfigurationSettings? ParentRouteGroup { get; private set; }
 
   /// <summary>
   /// Entry point for route group configuration. Called by DI.
@@ -19,12 +23,12 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the route group.</returns>
   public RouteGroupBuilder? Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<IRouteGroupConfiguration> configurationContext)
+    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
   {
-    _builder = new(builder);
+    _configurationBuilder = new(builder);
     ParentRouteGroup = configurationContext.ParentRouteGroup;
-    Configure(_builder, configurationContext);
-    return _builder.GroupBuilder;
+    Configure(_configurationBuilder, configurationContext);
+    return _configurationBuilder.GroupBuilder;
   }
 
   /// <summary>
@@ -34,10 +38,6 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
   protected abstract void Configure(
-    RouteGroupRegistrationBuilder builder,
-    ConfigurationContext<IRouteGroupConfiguration> configurationContext);
-
-  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? EndpointConfigurationOverrides => null;
-
-  public virtual Action<RouteGroupBuilder, ConfigurationContext<IRouteGroupConfiguration>>? ConfigurationOverrides => null;
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext);
 }

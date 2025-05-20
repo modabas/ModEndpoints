@@ -15,8 +15,8 @@ internal class StreamCustomerList
   : MinimalEndpointWithStreamingResponse<StreamCustomerListResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapMethods("/stream-list", [HttpMethod.Get.Method]);
   }

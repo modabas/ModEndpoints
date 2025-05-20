@@ -9,8 +9,8 @@ internal class FailureEndpointWithResponseModel
   : WebResultEndpointWithEmptyRequest<FailureEndpointWithoutResponseModelResponse>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPost("/failure/withResponseModel");
   }

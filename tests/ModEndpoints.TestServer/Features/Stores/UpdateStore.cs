@@ -23,8 +23,8 @@ internal class UpdateStore
   : BusinessResultEndpoint<UpdateStoreRequest>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPut("/{Id}");
   }

@@ -28,8 +28,8 @@ internal class UpdateCustomer(ServiceDbContext db)
   : MinimalEndpoint<UpdateCustomerRequest, IResult>
 {
   protected override void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     builder.MapPut("/{Id}")
       .Produces<UpdateCustomerResponse>();

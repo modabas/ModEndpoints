@@ -6,11 +6,11 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
 {
   protected abstract Delegate ExecuteDelegate { get; }
 
-  private EndpointRegistrationBuilder? _builder;
+  private EndpointConfigurationBuilder? _builder;
 
   public Dictionary<string, object?>? ConfigurationPropertyBag { get; set; }
 
-  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfiguration>>? ConfigurationOverrides => null;
+  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? ConfigurationOverrides => null;
 
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
@@ -20,7 +20,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder? Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext)
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
   {
     _builder = new(builder, ExecuteDelegate);
     Configure(_builder, configurationContext);
@@ -34,7 +34,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
   protected abstract void Configure(
-    EndpointRegistrationBuilder builder,
-    ConfigurationContext<IEndpointConfiguration> configurationContext);
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<IEndpointConfigurationSettings> configurationContext);
 
 }
