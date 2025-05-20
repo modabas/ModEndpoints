@@ -12,16 +12,16 @@ Following sample creates a parent route group (FeaturesRouteGroup), a child rout
 internal class FeaturesRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    var builder = MapGroup("/api/v{version:apiVersion}");
-    var apiVersionSet = builder.NewApiVersionSet()
+    var groupBuilder = builder.MapGroup("/api/v{version:apiVersion}");
+    var apiVersionSet = groupBuilder.NewApiVersionSet()
       .HasApiVersion(new ApiVersion(1))
       .HasApiVersion(new ApiVersion(2))
       .ReportApiVersions()
       .Build();
-    builder.WithApiVersionSet(apiVersionSet);
+    groupBuilder.WithApiVersionSet(apiVersionSet);
   }
 }
 
@@ -29,10 +29,10 @@ internal class FeaturesRouteGroup : RouteGroupConfigurator
 internal class BooksV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    RouteGroupConfigurationBuilder builder,
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    MapGroup("/books")
+    builder.MapGroup("/books")
       .MapToApiVersion(1)
       .WithTags("/BooksV1");
   }
@@ -43,10 +43,10 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {
   protected override void Configure(
-    IServiceProvider serviceProvider,
-    IRouteGroupConfigurator? parentRouteGroup)
+    EndpointConfigurationBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    MapPost("/")
+    builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
   protected override async Task<Result<CreateBookResponse>> HandleAsync(
