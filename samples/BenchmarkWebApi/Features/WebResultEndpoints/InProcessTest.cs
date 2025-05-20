@@ -27,7 +27,7 @@ internal class InProcessTest(IGetMeAStringService svc)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapPost("/WebResultEndpoints/InProcessTest/{Id}")
       .Produces<InProcessTestResponse>();

@@ -25,7 +25,7 @@ internal class GetCustomerById(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapGet("/{Id}");
   }

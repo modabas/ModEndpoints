@@ -19,7 +19,7 @@ internal class DeleteCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapDelete("/{Id}")
       .Produces(StatusCodes.Status204NoContent);

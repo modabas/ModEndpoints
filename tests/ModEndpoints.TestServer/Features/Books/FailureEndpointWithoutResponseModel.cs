@@ -8,7 +8,7 @@ internal class FailureEndpointWithoutResponseModel
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapPost("/failure/withoutResponseModel");
   }

@@ -25,7 +25,7 @@ internal class PartialUpdateCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapPatch("/{Id}")
       .Produces<PartialUpdateCustomerResponse>();

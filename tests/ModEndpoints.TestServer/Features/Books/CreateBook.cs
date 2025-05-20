@@ -27,7 +27,7 @@ internal class CreateBook(ILocationStore location)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);

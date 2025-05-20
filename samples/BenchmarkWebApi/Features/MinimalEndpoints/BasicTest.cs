@@ -7,7 +7,7 @@ internal class BasicTest
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapGet("/MinimalEndpoints/BasicTest")
       .Produces<string>();

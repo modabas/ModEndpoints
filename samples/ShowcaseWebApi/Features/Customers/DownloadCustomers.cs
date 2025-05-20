@@ -23,7 +23,7 @@ internal class DownloadCustomers(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapPost("/download/{FileName}");
   }

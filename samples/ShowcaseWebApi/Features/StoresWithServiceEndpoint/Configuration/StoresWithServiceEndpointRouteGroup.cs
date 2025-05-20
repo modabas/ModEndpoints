@@ -7,7 +7,7 @@ internal class StoresWithServiceEndpointRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
     builder.MapGroup("/storesWithServiceEndpoint")
       .MapToApiVersion(1)

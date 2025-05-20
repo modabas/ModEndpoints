@@ -10,7 +10,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 
   public Dictionary<string, object?>? ConfigurationPropertyBag { get; set; }
 
-  public virtual Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? ConfigurationOverrides => null;
+  public virtual Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? ConfigurationOverrides => null;
 
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
@@ -20,7 +20,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder? Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     _handlerBuilder = ConfigureDefaults(builder, configurationContext);
     Configure(GetRouteHandlerBuilder(), configurationContext);
@@ -29,7 +29,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 
   protected abstract RouteHandlerBuilder? ConfigureDefaults(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext);
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
@@ -40,7 +40,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// <param name="configurationContext"></param>
   protected virtual void Configure(
     RouteHandlerBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     return;
   }

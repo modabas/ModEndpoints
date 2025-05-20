@@ -7,7 +7,7 @@ internal class CustomersRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
     builder.MapGroup("/customers");
   }

@@ -7,7 +7,7 @@ internal class BooksV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
     builder.MapGroup("/books")
       .MapToApiVersion(1)

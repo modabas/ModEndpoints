@@ -7,7 +7,7 @@ internal class CustomersV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<IRouteGroupConfigurationSettings> configurationContext)
+    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
     builder.MapGroup("/customers")
       .MapToApiVersion(1)

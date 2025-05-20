@@ -26,7 +26,7 @@ internal class UploadBook
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<IEndpointConfigurationSettings> configurationContext)
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     builder.MapPost("/upload/{Title}")
       .DisableAntiforgery()

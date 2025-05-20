@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
 
-public interface IEndpointConfigurator : IEndpointConfigurationSettings
+public interface IEndpointConfiguratorMarker;
+
+public interface IEndpointConfigurator : IEndpointConfiguratorMarker
 {
-  RouteHandlerBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<IEndpointConfigurationSettings> configurationContext);
+  RouteHandlerBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 
   /// <summary>
   /// Endpoint configuration overrides. This executes after endpoint has been configured and the global endpoint configuration has completed.
   /// </summary>
-  abstract Action<RouteHandlerBuilder, ConfigurationContext<IEndpointConfigurationSettings>>? ConfigurationOverrides { get; }
+  abstract Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? ConfigurationOverrides { get; }
 }
