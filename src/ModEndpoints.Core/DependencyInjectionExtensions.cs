@@ -153,7 +153,7 @@ public static class DependencyInjectionExtensions
         x => !x.GetCustomAttributes(typeof(MapToGroupAttribute<>)).Any() ||
               x.GetCustomAttributes<MapToGroupAttribute<RootRouteGroup>>().Any();
 
-      _ = MapInternal(
+      _ = MapComponents(
         scope.ServiceProvider,
         builder,
         typeIsNotMemberOfAnyRouteGroupPredicate,
@@ -168,7 +168,7 @@ public static class DependencyInjectionExtensions
     }
   }
 
-  private static IEndpointRouteBuilder MapInternal(
+  private static IEndpointRouteBuilder MapComponents(
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     Func<Type, bool> filterPredicate,
@@ -209,7 +209,8 @@ public static class DependencyInjectionExtensions
 
       if (routeGroupBuilder is not null)
       {
-        _ = childRouteGroup.Map(
+        _ = MapRouteGroup(
+          childRouteGroup,
           serviceProvider,
           routeGroupBuilder,
           childRouteGroup,
@@ -219,7 +220,7 @@ public static class DependencyInjectionExtensions
           globalEndpointConfiguration,
           throwOnMissingConfiguration);
 
-        childRouteGroup.ConfigurationOverrides?.Invoke(
+        childRouteGroup.OverrideConfiguration(
           routeGroupBuilder,
           childConfigurationContext);
       }
@@ -229,7 +230,8 @@ public static class DependencyInjectionExtensions
     foreach (var endpoint in endpoints.Where(
       x => filterPredicate(x.GetType())))
     {
-      _ = endpoint.Map(
+      _ = MapEndpoint(
+        endpoint,
         serviceProvider,
         builder,
         currentRouteGroup,
@@ -241,8 +243,8 @@ public static class DependencyInjectionExtensions
   }
 
   //Recursive
-  private static RouteGroupBuilder Map(
-    this IRouteGroupConfigurator routeGroup,
+  private static RouteGroupBuilder MapRouteGroup(
+    IRouteGroupConfigurator routeGroup,
     IServiceProvider serviceProvider,
     RouteGroupBuilder builder,
     IRouteGroupConfigurator parentRouteGroup,
@@ -258,7 +260,7 @@ public static class DependencyInjectionExtensions
         a => (Type?)a.GetType().GetProperty("GroupType")?.GetValue(a) == routeGroup.GetType());
 
     //Pass this group as current route group
-    _ = MapInternal(
+    _ = MapComponents(
       serviceProvider,
       builder,
       typeIsMemberOfCurrentGroupPredicate,
@@ -272,8 +274,8 @@ public static class DependencyInjectionExtensions
     return builder;
   }
 
-  private static RouteHandlerBuilder? Map(
-    this IEndpointConfigurator endpoint,
+  private static RouteHandlerBuilder? MapEndpoint(
+    IEndpointConfigurator endpoint,
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup,
@@ -307,12 +309,12 @@ public static class DependencyInjectionExtensions
     if (routeHandlerBuilder is not null)
     {
       globalEndpointConfiguration?.Invoke(
-          routeHandlerBuilder,
-          endpointConfigurationContext);
-      endpoint.ConfigurationOverrides?.Invoke(
         routeHandlerBuilder,
         endpointConfigurationContext);
-      parentRouteGroup?.EndpointConfigurationOverrides?.Invoke(
+      endpoint.OverrideConfiguration(
+        routeHandlerBuilder,
+        endpointConfigurationContext);
+      parentRouteGroup?.OverrideEndpointConfigurations(
         routeHandlerBuilder,
         endpointConfigurationContext);
     }

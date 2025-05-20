@@ -12,9 +12,11 @@ public interface IRouteGroupConfigurator : IRouteGroupConfiguratorMarker
   /// <summary>
   /// Endpoint configuration overrides. This executes for each endpoint directly under this route group, after endpoint has been configured, the global endpoint configuration has completed, and endpoint's own configuration overrides have run.
   /// </summary>
-  abstract Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? EndpointConfigurationOverrides { get; }
+  void OverrideEndpointConfigurations(RouteHandlerBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+
   /// <summary>
   /// Group configuration overrides, runs after all child groups and endpoints have been fully configured.
   /// </summary>
-  abstract Action<RouteGroupBuilder, ConfigurationContext<RouteGroupConfigurationParameters>>? ConfigurationOverrides { get; }
+  void OverrideConfiguration(RouteGroupBuilder builder, ConfigurationContext<RouteGroupConfigurationParameters> configurationContext);
+
 }

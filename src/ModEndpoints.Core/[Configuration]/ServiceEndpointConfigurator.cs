@@ -8,8 +8,6 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 
   private RouteHandlerBuilder? _handlerBuilder;
 
-  public virtual Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? ConfigurationOverrides => null;
-
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
@@ -44,10 +42,18 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   }
 
   /// <summary>
-  /// 
+  /// Called during application startup, while registering and configuring endpoints.
+  /// This executes after endpoint has been configured and the global endpoint configuration has completed. Can be used to override previous configuration.
   /// </summary>
-  /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
+  /// <param name="builder"></param>
+  /// <param name="configurationContext"></param>
+  public virtual void OverrideConfiguration(
+    RouteHandlerBuilder builder,
+    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+  {
+    return;
+  }
+
   private RouteHandlerBuilder GetRouteHandlerBuilder()
   {
     return _handlerBuilder is null
