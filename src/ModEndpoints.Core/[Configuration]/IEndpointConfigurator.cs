@@ -9,5 +9,5 @@ public interface IEndpointConfigurator : IEndpointConfiguratorMarker
 {
   RouteHandlerBuilder? Configure(IEndpointRouteBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 
-  void OverrideConfiguration(RouteHandlerBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+  void PostConfigure(RouteHandlerBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
 }

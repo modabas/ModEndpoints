@@ -39,11 +39,11 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
   /// Runs after all child groups and endpoints have been fully configured.
-  /// Can be used to override previous configuration.
+  /// Can be used to modify group configuration.
   /// </summary>
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
-  public virtual void OverrideConfiguration(
+  public virtual void PostConfigure(
     RouteGroupBuilder builder,
     ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
@@ -53,11 +53,11 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
   /// This executes for each endpoint directly under this route group, after endpoint has been configured, the global endpoint configuration has completed, and endpoint's own configuration overrides have run.
-  /// Can be used to override previous configuration.
+  /// Can be used to modify child endpoint configuration.
   /// </summary>
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
-  public virtual void OverrideEndpointConfigurations(
+  public virtual void EndpointPostConfigure(
     RouteHandlerBuilder builder,
     ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {

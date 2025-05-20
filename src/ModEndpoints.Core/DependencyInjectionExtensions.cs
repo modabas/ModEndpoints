@@ -220,7 +220,7 @@ public static class DependencyInjectionExtensions
           globalEndpointConfiguration,
           throwOnMissingConfiguration);
 
-        childRouteGroup.OverrideConfiguration(
+        childRouteGroup.PostConfigure(
           routeGroupBuilder,
           childConfigurationContext);
       }
@@ -311,10 +311,10 @@ public static class DependencyInjectionExtensions
       globalEndpointConfiguration?.Invoke(
         routeHandlerBuilder,
         endpointConfigurationContext);
-      endpoint.OverrideConfiguration(
+      endpoint.PostConfigure(
         routeHandlerBuilder,
         endpointConfigurationContext);
-      parentRouteGroup?.OverrideEndpointConfigurations(
+      parentRouteGroup?.EndpointPostConfigure(
         routeHandlerBuilder,
         endpointConfigurationContext);
     }

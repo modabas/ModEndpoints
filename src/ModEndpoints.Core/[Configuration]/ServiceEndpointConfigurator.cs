@@ -47,7 +47,7 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// </summary>
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
-  public virtual void OverrideConfiguration(
+  public virtual void PostConfigure(
     RouteHandlerBuilder builder,
     ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
