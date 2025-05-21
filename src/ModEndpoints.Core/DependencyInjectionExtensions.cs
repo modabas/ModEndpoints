@@ -49,6 +49,8 @@ public static class DependencyInjectionExtensions
       services.AddSingleton<IRequestValidator, FluentValidationRequestValidator>();
     }
 
+    services.TryAddSingleton<IComponentDiscriminator, ComponentDiscriminator>();
+
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, options.RouteGroupConfiguratorLifetime)
       .AddEndpointsCoreFromAssembly(assembly, options.EndpointLifetime);
@@ -214,9 +216,13 @@ public static class DependencyInjectionExtensions
     foreach (var childRouteGroup in routeGroups.Where(
       x => filterPredicate(x.GetType())))
     {
+      var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
       ConfigurationContext<RouteGroupConfigurationParameters> childConfigurationContext = new(
         serviceProvider,
-        new(childRouteGroup, currentConfigurationContext?.Parameters));
+        new(
+          childRouteGroup,
+          componentDiscriminator.GetDiscriminator(childRouteGroup),
+          currentConfigurationContext?.Parameters));
       var routeGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
       if (routeGroupBuilders.Length == 0)
       {
@@ -252,6 +258,9 @@ public static class DependencyInjectionExtensions
         childRouteGroup.PostConfigure(
           routeGroupBuilder,
           childConfigurationContext);
+
+        childConfigurationContext.Parameters.SelfDiscriminator =
+          componentDiscriminator.IncrementDiscriminator(childRouteGroup);
       }
     }
 
@@ -312,9 +321,13 @@ public static class DependencyInjectionExtensions
     Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
+    var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
     ConfigurationContext<EndpointConfigurationParameters> endpointConfigurationContext = new(
       serviceProvider,
-      new(endpoint, parentConfigurationContext?.Parameters));
+      new(
+        endpoint,
+        componentDiscriminator.GetDiscriminator(endpoint),
+        parentConfigurationContext?.Parameters));
     var routeHandlerBuilders = endpoint.Configure(builder, endpointConfigurationContext);
     if (routeHandlerBuilders.Length == 0)
     {
@@ -344,6 +357,9 @@ public static class DependencyInjectionExtensions
       parentRouteGroup?.EndpointPostConfigure(
         routeHandlerBuilder,
         endpointConfigurationContext);
+
+      endpointConfigurationContext.Parameters.SelfDiscriminator =
+        componentDiscriminator.IncrementDiscriminator(endpoint);
     }
     return routeHandlerBuilders;
   }

@@ -23,7 +23,15 @@ app.MapModEndpoints(
     var endpointFullName = endpoint.GetType().FullName;
     if (!string.IsNullOrWhiteSpace(endpointFullName))
     {
-      builder.WithName(endpointFullName);
+      var discriminator = configurationContext.Parameters.SelfDiscriminator;
+      if (discriminator == 0)
+      {
+        builder.WithName(endpointFullName);
+      }
+      else
+      {
+        builder.WithName($"{endpointFullName}_{discriminator}");
+      }
     }
   });
 
