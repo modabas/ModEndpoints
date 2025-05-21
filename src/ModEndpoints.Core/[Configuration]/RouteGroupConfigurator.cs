@@ -17,13 +17,13 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the route group.</returns>
-  public RouteGroupBuilder? Configure(
+  public RouteGroupBuilder[] Configure(
     IEndpointRouteBuilder builder,
     ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
     _configurationBuilder = new(builder);
     Configure(_configurationBuilder, configurationContext);
-    return _configurationBuilder.GroupBuilder;
+    return _configurationBuilder.GroupBuilders.ToArray();
   }
 
   /// <summary>

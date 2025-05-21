@@ -6,21 +6,20 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 {
   protected abstract Delegate ExecuteDelegate { get; }
 
-  private RouteHandlerBuilder? _handlerBuilder;
-
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  public RouteHandlerBuilder? Configure(
+  public RouteHandlerBuilder[] Configure(
     IEndpointRouteBuilder builder,
     ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    _handlerBuilder = ConfigureDefaults(builder, configurationContext);
-    Configure(GetRouteHandlerBuilder(), configurationContext);
-    return _handlerBuilder;
+    var handlerBuilder = ConfigureDefaults(builder, configurationContext);
+    handlerBuilder = ValidateRouteHandlerBuilder(handlerBuilder);
+    Configure(handlerBuilder, configurationContext);
+    return [handlerBuilder];
   }
 
   protected abstract RouteHandlerBuilder? ConfigureDefaults(
@@ -43,7 +42,8 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
-  /// This executes after endpoint has been configured and the global endpoint configuration has completed. Can be used to override previous configuration.
+  /// This executes after endpoint has been configured and the global endpoint configuration has completed.
+  /// Can be used to modify endpoint configuration.
   /// </summary>
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
@@ -54,10 +54,10 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
     return;
   }
 
-  private RouteHandlerBuilder GetRouteHandlerBuilder()
+  private RouteHandlerBuilder ValidateRouteHandlerBuilder(RouteHandlerBuilder? handlerBuilder)
   {
-    return _handlerBuilder is null
+    return handlerBuilder is null
       ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : _handlerBuilder;
+      : handlerBuilder;
   }
 }

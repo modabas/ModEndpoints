@@ -85,11 +85,16 @@ public static class DependencyInjectionExtensions
       var requestType = GetGenericArgumentsOfBase(serviceEndpointType, typeof(BaseServiceEndpoint<,>)).Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
       if (ServiceEndpointRegistry.Instance.IsRegistered(requestType))
       {
-        throw new InvalidOperationException($"An endpoint for request type {requestType} is already registered.");
+        throw new InvalidOperationException(string.Format(
+          Constants.ServiceEndpointAlreadyRegisteredMessage,
+          requestType));
       }
       if (!ServiceEndpointRegistry.Instance.Register(requestType, serviceEndpointType))
       {
-        throw new InvalidOperationException($"An endpoint of type {serviceEndpointType} couldn't be registered for request type {requestType}.");
+        throw new InvalidOperationException(string.Format(
+          Constants.ServiceEndpointCannotBeRegisteredMessage,
+          serviceEndpointType,
+          requestType));
       }
     }
     return;
@@ -133,9 +138,9 @@ public static class DependencyInjectionExtensions
   }
 
   //Configuration processing order:
-  //Group Configuration -> Endpoint Configuration -> Global Endpoint Configuration -> Endpoint Override -> Group Endpoint Override -> Group Override
-  //Global overrides apply to all endpoints
-  //Group overrides apply to endpoints directly under that group (not if they are under another group, which is under this group)
+  //Group's Configuration -> Endpoint's Configuration -> Global Endpoint Configuration -> Endpoint's PostConfigure -> Group's EndpointPostConfigure -> Group's PostConfigure
+  //Global Endpoint Configuration apply to all endpoints
+  //Group's EndpointPostConfigure apply to endpoints directly under that group (not if they are under a child group of current group)
   public static WebApplication MapModEndpointsCore(
     this WebApplication app,
     Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
@@ -186,14 +191,13 @@ public static class DependencyInjectionExtensions
       ConfigurationContext<RouteGroupConfigurationParameters> childConfigurationContext = new(
         serviceProvider,
         new(childRouteGroup, currentConfigurationContext?.Parameters));
-      var routeGroupBuilder = childRouteGroup.Configure(builder, childConfigurationContext);
-      if (routeGroupBuilder is null)
+      var routeGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
+      if (routeGroupBuilders.Length == 0)
       {
         if (throwOnMissingConfiguration)
         {
           throw new InvalidOperationException(string.Format(
-            "Missing route group configuration! " +
-            "Start configuring {0} route group by calling the MapGroup method.",
+            Constants.MissingRouteGroupConfigurationMessage,
             childRouteGroup.GetType()));
         }
         else
@@ -201,13 +205,12 @@ public static class DependencyInjectionExtensions
           var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
             .CreateLogger<RouteGroupConfigurator>();
           logger.LogWarning(
-            "Missing route group configuration! " +
-            "Start configuring {routeGroupType} route group by calling the MapGroup method.",
+            Constants.MissingRouteGroupConfigurationLogMessage,
             childRouteGroup.GetType());
         }
       }
 
-      if (routeGroupBuilder is not null)
+      foreach (var routeGroupBuilder in routeGroupBuilders)
       {
         _ = MapRouteGroup(
           childRouteGroup,
@@ -274,7 +277,7 @@ public static class DependencyInjectionExtensions
     return builder;
   }
 
-  private static RouteHandlerBuilder? MapEndpoint(
+  private static RouteHandlerBuilder[] MapEndpoint(
     IEndpointConfigurator endpoint,
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
@@ -286,14 +289,13 @@ public static class DependencyInjectionExtensions
     ConfigurationContext<EndpointConfigurationParameters> endpointConfigurationContext = new(
       serviceProvider,
       new(endpoint, parentConfigurationContext?.Parameters));
-    var routeHandlerBuilder = endpoint.Configure(builder, endpointConfigurationContext);
-    if (routeHandlerBuilder is null)
+    var routeHandlerBuilders = endpoint.Configure(builder, endpointConfigurationContext);
+    if (routeHandlerBuilders.Length == 0)
     {
       if (throwOnMissingConfiguration)
       {
         throw new InvalidOperationException(string.Format(
-          "Missing endpoint configuration! " +
-          "Start configuring {0} endpoint by calling one of the Map[HttpVerb] methods.",
+          Constants.MissingEndpointConfigurationMessage,
           endpoint.GetType()));
       }
       else
@@ -301,12 +303,11 @@ public static class DependencyInjectionExtensions
         var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
           .CreateLogger<EndpointConfigurator>();
         logger.LogWarning(
-          "Missing endpoint configuration! " +
-          "Start configuring {endpointType} endpoint by calling one of the Map[HttpVerb] methods.",
+          Constants.MissingEndpointConfigurationLogMessage,
           endpoint.GetType());
       }
     }
-    if (routeHandlerBuilder is not null)
+    foreach (var routeHandlerBuilder in routeHandlerBuilders)
     {
       globalEndpointConfiguration?.Invoke(
         routeHandlerBuilder,
@@ -318,6 +319,6 @@ public static class DependencyInjectionExtensions
         routeHandlerBuilder,
         endpointConfigurationContext);
     }
-    return routeHandlerBuilder;
+    return routeHandlerBuilders;
   }
 }
