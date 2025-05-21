@@ -52,25 +52,29 @@ public static class DependencyInjectionExtensions
     services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
     return services
-      .AddRouteGroupsCoreFromAssembly(assembly, options.RouteGroupConfiguratorLifetime)
-      .AddEndpointsCoreFromAssembly(assembly, options.EndpointLifetime);
+      .AddRouteGroupsCoreFromAssembly(assembly, options)
+      .AddEndpointsCoreFromAssembly(assembly, options);
   }
 
   private static IServiceCollection AddRouteGroupsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
-    ServiceLifetime lifetime)
+    ModEndpointsCoreOptions options)
   {
     //Don't add RootRouteGroup, it's just a marker class to define root
     //Normally its assembly won't be loaded with this method anyway but just in case
     var serviceDescriptors = assembly
-        .DefinedTypes
-        .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                       type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
-                       type != typeof(RootRouteGroup) &&
-                       !type.GetCustomAttributes<DoNotRegisterAttribute>().Any())
-        .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IRouteGroupConfigurator), type, type, lifetime))
-        .ToArray();
+      .DefinedTypes
+      .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+        type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
+        type != typeof(RootRouteGroup) &&
+        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any())
+      .Select(type => ServiceDescriptor.DescribeKeyed(
+        typeof(IRouteGroupConfigurator),
+        type,
+        type,
+        options.RouteGroupConfiguratorLifetime))
+      .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
 
@@ -80,46 +84,92 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddEndpointsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
-    ServiceLifetime lifetime)
+    ModEndpointsCoreOptions options)
   {
     var endpointTypes = assembly
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                     type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
-                     !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
+        type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
+        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
-    CheckServiceEndpointRegistrations(endpointTypes);
-
-    var serviceDescriptors = endpointTypes
-        .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IEndpointConfigurator), type, type, lifetime))
-        .ToArray();
-
-    services.TryAddEnumerable(serviceDescriptors);
+    AddEndpoints(services, endpointTypes, options);
 
     return services;
   }
 
-  private static void CheckServiceEndpointRegistrations(IEnumerable<TypeInfo> endpointTypes)
+  private static void AddEndpoints(
+    IServiceCollection services,
+    IEnumerable<TypeInfo> endpointTypes,
+    ModEndpointsCoreOptions options)
   {
-    var serviceEndpointTypes = endpointTypes.Where(type => IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>))).ToList();
-    foreach (var serviceEndpointType in serviceEndpointTypes)
+    foreach (var endpointType in endpointTypes)
     {
-      var requestType = GetGenericArgumentsOfBase(serviceEndpointType, typeof(BaseServiceEndpoint<,>)).Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
-      if (ServiceEndpointRegistry.Instance.IsRegistered(requestType))
+      if (IsServiceEndpoint(endpointType))
       {
-        throw new InvalidOperationException(string.Format(
-          Constants.ServiceEndpointAlreadyRegisteredMessage,
-          requestType));
+        AddServiceEndpoint(services, endpointType, options);
       }
-      if (!ServiceEndpointRegistry.Instance.Register(requestType, serviceEndpointType))
+      else
       {
-        throw new InvalidOperationException(string.Format(
-          Constants.ServiceEndpointCannotBeRegisteredMessage,
-          serviceEndpointType,
-          requestType));
+        AddEndpoint(services, endpointType, options);
       }
     }
     return;
+
+    static bool IsServiceEndpoint(TypeInfo type) => 
+      IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>));
+
+    static void AddServiceEndpoint(
+      IServiceCollection services,
+      TypeInfo endpointType,
+      ModEndpointsCoreOptions options)
+    {
+      var requestType = GetGenericArgumentsOfBase(
+        endpointType,
+        typeof(BaseServiceEndpoint<,>))
+        .Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
+      var isDuplicate = false;
+      var isRegistered = false;
+      if (ServiceEndpointRegistry.Instance.IsRegistered(requestType))
+      {
+        if (options.ThrowOnDuplicateServiceEndpointRequest)
+        {
+          throw new InvalidOperationException(string.Format(
+            Constants.ServiceEndpointAlreadyRegisteredMessage,
+            requestType));
+        }
+        isDuplicate = true;
+      }
+      if (!isDuplicate)
+      {
+        if (ServiceEndpointRegistry.Instance.Register(requestType, endpointType))
+        {
+          isRegistered = true;
+        }
+        else if (options.ThrowOnServiceEndpointRegistrationFailure)
+        {
+          throw new InvalidOperationException(string.Format(
+            Constants.ServiceEndpointCannotBeRegisteredMessage,
+            endpointType,
+            requestType));
+        }
+      }
+      if (isRegistered)
+      {
+        AddEndpoint(services, endpointType, options);
+      }
+    }
+
+    static void AddEndpoint(
+      IServiceCollection services,
+      TypeInfo endpointType,
+      ModEndpointsCoreOptions options)
+    {
+      services.TryAdd(ServiceDescriptor.DescribeKeyed(
+        typeof(IEndpointConfigurator),
+        endpointType,
+        endpointType,
+        options.EndpointLifetime));
+    }
   }
 
   private static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
