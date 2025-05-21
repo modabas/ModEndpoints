@@ -46,7 +46,7 @@ public static class DependencyInjectionExtensions
 
     if (options.UseDefaultRequestValidation)
     {
-      services.AddSingleton<IRequestValidator, FluentValidationRequestValidator>();
+      services.TryAddSingleton<IRequestValidator, FluentValidationRequestValidator>();
     }
 
     services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
