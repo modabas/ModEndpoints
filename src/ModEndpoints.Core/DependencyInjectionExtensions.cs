@@ -49,7 +49,7 @@ public static class DependencyInjectionExtensions
       services.AddSingleton<IRequestValidator, FluentValidationRequestValidator>();
     }
 
-    services.TryAddSingleton<IComponentDiscriminator, ComponentDiscriminator>();
+    services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, options.RouteGroupConfiguratorLifetime)
