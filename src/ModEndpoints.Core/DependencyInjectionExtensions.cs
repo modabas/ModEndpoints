@@ -128,11 +128,31 @@ public static class DependencyInjectionExtensions
         typeof(BaseServiceEndpoint<,>))
         .Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
 
-      services.TryAdd(ServiceDescriptor.DescribeKeyed(
+      var descriptor = ServiceDescriptor.DescribeKeyed(
         typeof(IEndpointConfigurator),
         requestType,
         endpointType,
-        options.EndpointLifetime));
+        options.EndpointLifetime);
+
+      if (options.ThrowOnDuplicateServiceEndpointRequest)
+      {
+        int count = services.Count;
+        for (int i = 0; i < count; i++)
+        {
+          if (Equals(services[i].ServiceKey, descriptor.ServiceKey))
+          {
+            // Already added
+            throw new InvalidOperationException(string.Format(
+              Constants.ServiceEndpointAlreadyRegisteredMessage,
+              requestType));
+          }
+        }
+        services.Add(descriptor);
+      }
+      else
+      {
+        services.TryAdd(descriptor);
+      }
     }
 
     static void AddEndpoint(

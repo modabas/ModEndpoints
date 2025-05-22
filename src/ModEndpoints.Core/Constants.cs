@@ -15,6 +15,4 @@ internal static class Constants
     "Missing endpoint configuration! Start configuring {endpointType} endpoint by calling one of the Map[HttpVerb] methods of the builder.";
   public const string ServiceEndpointAlreadyRegisteredMessage =
     "An endpoint for request type {0} is already registered.";
-  public const string ServiceEndpointCannotBeRegisteredMessage =
-    "An endpoint of type {0} couldn't be registered for request type {1}.";
 }
