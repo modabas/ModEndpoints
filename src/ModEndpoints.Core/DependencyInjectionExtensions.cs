@@ -104,36 +104,38 @@ public static class DependencyInjectionExtensions
   {
     foreach (var endpointType in endpointTypes)
     {
-      if (IsServiceEndpoint(endpointType))
-      {
-        AddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpoint<,>), options);
-      }
-      else if (IsServiceEndpointWithStreamingResponse(endpointType))
-      {
-        AddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpointWithStreamingResponse<,>), options);
-      }
-      else
+      if (!TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpoint<,>), options) && 
+        !TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpointWithStreamingResponse<,>), options))
       {
         AddEndpoint(services, endpointType, options);
       }
     }
     return;
 
-    static bool IsServiceEndpoint(TypeInfo type) =>
-      IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>));
+    static bool TryAddServiceEndpoint(
+      IServiceCollection services,
+      TypeInfo endpointType,
+      Type genericServiceEndpointBaseType,
+      ModEndpointsCoreOptions options)
+    {
+      if (IsAssignableFrom(endpointType, genericServiceEndpointBaseType))
+      {
+        AddServiceEndpoint(services, endpointType, genericServiceEndpointBaseType, options);
+        return true;
+      }
 
-    static bool IsServiceEndpointWithStreamingResponse(TypeInfo type) =>
-      IsAssignableFrom(type, typeof(BaseServiceEndpointWithStreamingResponse<,>));
+      return false;
+    }
 
     static void AddServiceEndpoint(
       IServiceCollection services,
       TypeInfo endpointType,
-      Type serviceEndpointType,
+      Type genericServiceEndpointBaseType,
       ModEndpointsCoreOptions options)
     {
       var requestType = GetGenericArgumentsOfBase(
         endpointType,
-        serviceEndpointType)
+        genericServiceEndpointBaseType)
         .Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
 
       var descriptor = ServiceDescriptor.DescribeKeyed(
