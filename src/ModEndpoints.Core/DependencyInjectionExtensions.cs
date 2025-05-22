@@ -106,7 +106,11 @@ public static class DependencyInjectionExtensions
     {
       if (IsServiceEndpoint(endpointType))
       {
-        AddServiceEndpoint(services, endpointType, options);
+        AddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpoint<,>), options);
+      }
+      else if (IsServiceEndpointWithStreamingResponse(endpointType))
+      {
+        AddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpointWithStreamingResponse<,>), options);
       }
       else
       {
@@ -118,14 +122,18 @@ public static class DependencyInjectionExtensions
     static bool IsServiceEndpoint(TypeInfo type) =>
       IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>));
 
+    static bool IsServiceEndpointWithStreamingResponse(TypeInfo type) =>
+      IsAssignableFrom(type, typeof(BaseServiceEndpointWithStreamingResponse<,>));
+
     static void AddServiceEndpoint(
       IServiceCollection services,
       TypeInfo endpointType,
+      Type serviceEndpointType,
       ModEndpointsCoreOptions options)
     {
       var requestType = GetGenericArgumentsOfBase(
         endpointType,
-        typeof(BaseServiceEndpoint<,>))
+        serviceEndpointType)
         .Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
 
       var descriptor = ServiceDescriptor.DescribeKeyed(
