@@ -115,7 +115,7 @@ public static class DependencyInjectionExtensions
     }
     return;
 
-    static bool IsServiceEndpoint(TypeInfo type) => 
+    static bool IsServiceEndpoint(TypeInfo type) =>
       IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>));
 
     static void AddServiceEndpoint(
