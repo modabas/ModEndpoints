@@ -104,7 +104,7 @@ public static class DependencyInjectionExtensions
   {
     foreach (var endpointType in endpointTypes)
     {
-      if (!TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpoint<,>), options) && 
+      if (!TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpoint<,>), options) &&
         !TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpointWithStreamingResponse<,>), options))
       {
         AddEndpoint(services, endpointType, options);
@@ -123,7 +123,6 @@ public static class DependencyInjectionExtensions
         AddServiceEndpoint(services, endpointType, genericServiceEndpointBaseType, options);
         return true;
       }
-
       return false;
     }
 
@@ -176,43 +175,43 @@ public static class DependencyInjectionExtensions
         endpointType,
         options.EndpointLifetime));
     }
-  }
 
-  private static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
-  {
-    while (derivedType.BaseType != null)
+    static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
     {
-      derivedType = derivedType.BaseType;
-      if (derivedType.IsGenericType && derivedType.GetGenericTypeDefinition() == baseType)
+      while (derivedType.BaseType != null)
       {
-        return derivedType.GetGenericArguments();
+        derivedType = derivedType.BaseType;
+        if (derivedType.IsGenericType && derivedType.GetGenericTypeDefinition() == baseType)
+        {
+          return derivedType.GetGenericArguments();
+        }
       }
+      throw new InvalidOperationException("Base type was not found");
     }
-    throw new InvalidOperationException("Base type was not found");
-  }
 
-  private static bool IsAssignableFrom(Type extendType, Type baseType)
-  {
-    while (!baseType.IsAssignableFrom(extendType))
+    static bool IsAssignableFrom(Type extendType, Type baseType)
     {
-      if (extendType.Equals(typeof(object)))
+      while (!baseType.IsAssignableFrom(extendType))
       {
-        return false;
-      }
-      if (extendType.IsGenericType && !extendType.IsGenericTypeDefinition)
-      {
-        extendType = extendType.GetGenericTypeDefinition();
-      }
-      else
-      {
-        if (extendType.BaseType is null)
+        if (extendType.Equals(typeof(object)))
         {
           return false;
         }
-        extendType = extendType.BaseType;
+        if (extendType.IsGenericType && !extendType.IsGenericTypeDefinition)
+        {
+          extendType = extendType.GetGenericTypeDefinition();
+        }
+        else
+        {
+          if (extendType.BaseType is null)
+          {
+            return false;
+          }
+          extendType = extendType.BaseType;
+        }
       }
+      return true;
     }
-    return true;
   }
 
   /// <summary>
