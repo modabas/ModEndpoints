@@ -127,36 +127,12 @@ public static class DependencyInjectionExtensions
         endpointType,
         typeof(BaseServiceEndpoint<,>))
         .Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
-      var isDuplicate = false;
-      var isRegistered = false;
-      if (ServiceEndpointRegistry.Instance.IsRegistered(requestType))
-      {
-        if (options.ThrowOnDuplicateServiceEndpointRequest)
-        {
-          throw new InvalidOperationException(string.Format(
-            Constants.ServiceEndpointAlreadyRegisteredMessage,
-            requestType));
-        }
-        isDuplicate = true;
-      }
-      if (!isDuplicate)
-      {
-        if (ServiceEndpointRegistry.Instance.Register(requestType, endpointType))
-        {
-          isRegistered = true;
-        }
-        else if (options.ThrowOnServiceEndpointRegistrationFailure)
-        {
-          throw new InvalidOperationException(string.Format(
-            Constants.ServiceEndpointCannotBeRegisteredMessage,
-            endpointType,
-            requestType));
-        }
-      }
-      if (isRegistered)
-      {
-        AddEndpoint(services, endpointType, options);
-      }
+
+      services.TryAdd(ServiceDescriptor.DescribeKeyed(
+        typeof(IEndpointConfigurator),
+        requestType,
+        endpointType,
+        options.EndpointLifetime));
     }
 
     static void AddEndpoint(
