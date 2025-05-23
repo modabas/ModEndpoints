@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
-public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBuilder, Delegate executeDelegate)
+public class EndpointConfigurationBuilder(
+  IEndpointRouteBuilder endpointRouteBuilder,
+  Delegate executeDelegate)
 {
-  internal RouteHandlerBuilder? HandlerBuilder { get; private set; }
+  internal List<RouteHandlerBuilder> HandlerBuilders { get; private set; } = new();
 
   /// <summary>
   /// To be used in "Configure" overload method to add a <see cref="RouteEndpoint"/>
@@ -16,10 +18,9 @@ public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBui
   /// <exception cref="InvalidOperationException"></exception>
   public RouteHandlerBuilder MapGet(string pattern)
   {
-    HandlerBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : endpointRouteBuilder.MapGet(pattern, executeDelegate);
-    return HandlerBuilder;
+    var handlerBuilder = endpointRouteBuilder.MapGet(pattern, executeDelegate);
+    HandlerBuilders.Add(handlerBuilder);
+    return handlerBuilder;
   }
 
   /// <summary>
@@ -32,10 +33,9 @@ public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBui
   /// <exception cref="InvalidOperationException"></exception>
   public RouteHandlerBuilder MapPost(string pattern)
   {
-    HandlerBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : endpointRouteBuilder.MapPost(pattern, executeDelegate);
-    return HandlerBuilder;
+    var handlerBuilder = endpointRouteBuilder.MapPost(pattern, executeDelegate);
+    HandlerBuilders.Add(handlerBuilder);
+    return handlerBuilder;
   }
 
   /// <summary>
@@ -48,10 +48,9 @@ public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBui
   /// <exception cref="InvalidOperationException"></exception>
   public RouteHandlerBuilder MapDelete(string pattern)
   {
-    HandlerBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : endpointRouteBuilder.MapDelete(pattern, executeDelegate);
-    return HandlerBuilder;
+    var handlerBuilder = endpointRouteBuilder.MapDelete(pattern, executeDelegate);
+    HandlerBuilders.Add(handlerBuilder);
+    return handlerBuilder;
   }
 
   /// <summary>
@@ -64,10 +63,9 @@ public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBui
   /// <exception cref="InvalidOperationException"></exception>
   public RouteHandlerBuilder MapPut(string pattern)
   {
-    HandlerBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : endpointRouteBuilder.MapPut(pattern, executeDelegate);
-    return HandlerBuilder;
+    var handlerBuilder = endpointRouteBuilder.MapPut(pattern, executeDelegate);
+    HandlerBuilders.Add(handlerBuilder);
+    return handlerBuilder;
   }
 
   /// <summary>
@@ -80,10 +78,9 @@ public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBui
   /// <exception cref="InvalidOperationException"></exception>
   public RouteHandlerBuilder MapPatch(string pattern)
   {
-    HandlerBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : endpointRouteBuilder.MapPatch(pattern, executeDelegate);
-    return HandlerBuilder;
+    var handlerBuilder = endpointRouteBuilder.MapPatch(pattern, executeDelegate);
+    HandlerBuilders.Add(handlerBuilder);
+    return handlerBuilder;
   }
 
   /// <summary>
@@ -97,9 +94,8 @@ public class EndpointConfigurationBuilder(IEndpointRouteBuilder endpointRouteBui
   /// <exception cref="InvalidOperationException"></exception>
   public RouteHandlerBuilder MapMethods(string pattern, IEnumerable<string> httpMethods)
   {
-    HandlerBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : endpointRouteBuilder.MapMethods(pattern, httpMethods, executeDelegate);
-    return HandlerBuilder;
+    var handlerBuilder = endpointRouteBuilder.MapMethods(pattern, httpMethods, executeDelegate);
+    HandlerBuilders.Add(handlerBuilder);
+    return handlerBuilder;
   }
 }

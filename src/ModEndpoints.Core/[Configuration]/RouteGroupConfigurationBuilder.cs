@@ -6,7 +6,7 @@ namespace ModEndpoints.Core;
 
 public class RouteGroupConfigurationBuilder(IEndpointRouteBuilder endpointRouteBuilder)
 {
-  internal RouteGroupBuilder? GroupBuilder { get; private set; }
+  internal List<RouteGroupBuilder> GroupBuilders { get; private set; } = new();
 
   /// <summary>
   /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
@@ -17,10 +17,9 @@ public class RouteGroupConfigurationBuilder(IEndpointRouteBuilder endpointRouteB
   /// <exception cref="InvalidOperationException"></exception>
   public RouteGroupBuilder MapGroup(string prefix)
   {
-    GroupBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForRouteGroupMessage, GetType()))
-      : endpointRouteBuilder.MapGroup(prefix);
-    return GroupBuilder;
+    var groupBuilder = endpointRouteBuilder.MapGroup(prefix);
+    GroupBuilders.Add(groupBuilder);
+    return groupBuilder;
   }
 
   /// <summary>
@@ -32,9 +31,8 @@ public class RouteGroupConfigurationBuilder(IEndpointRouteBuilder endpointRouteB
   /// <exception cref="InvalidOperationException"></exception>
   public RouteGroupBuilder MapGroup(RoutePattern prefix)
   {
-    GroupBuilder = endpointRouteBuilder is null
-      ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForRouteGroupMessage, GetType()))
-      : endpointRouteBuilder.MapGroup(prefix);
-    return GroupBuilder;
+    var groupBuilder = endpointRouteBuilder.MapGroup(prefix);
+    GroupBuilders.Add(groupBuilder);
+    return groupBuilder;
   }
 }

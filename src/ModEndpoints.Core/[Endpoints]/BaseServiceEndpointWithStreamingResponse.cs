@@ -14,7 +14,7 @@ public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TRespon
     [FromBody] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
+    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), typeof(TRequest));
     var handler = baseHandler as BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;

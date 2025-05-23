@@ -14,13 +14,13 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <param name="builder"></param>
   /// <param name="configurationContext"></param>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
-  public RouteHandlerBuilder? Configure(
+  public RouteHandlerBuilder[] Configure(
     IEndpointRouteBuilder builder,
     ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
     _builder = new(builder, ExecuteDelegate);
     Configure(_builder, configurationContext);
-    return _builder.HandlerBuilder;
+    return _builder.HandlerBuilders.ToArray();
   }
 
   /// <summary>

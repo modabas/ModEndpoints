@@ -9,6 +9,16 @@ using ModEndpoints.RemoteServices.Core;
 namespace ModEndpoints.Core;
 public static class DependencyInjectionExtensions
 {
+  /// <summary>
+  /// Registers route groups and endpoints from the assembly containing the specified type into the dependency injection container. 
+  /// </summary>
+  /// <remarks>This method scans the assembly containing the specified type for components and registers them with the
+  /// dependency injection container.</remarks>
+  /// <typeparam name="T"></typeparam>
+  /// <param name="services">The <see cref="IServiceCollection"/> to which the services will be added.</param>
+  /// <param name="configure">An optional delegate to configure <see cref="ModEndpointsCoreOptions"/> for customizing the behavior of the
+  /// registration process.</param>
+  /// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
   public static IServiceCollection AddModEndpointsCoreFromAssemblyContaining<T>(
     this IServiceCollection services,
     Action<ModEndpointsCoreOptions>? configure = null)
@@ -16,6 +26,16 @@ public static class DependencyInjectionExtensions
     return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, configure);
   }
 
+  /// <summary>
+  /// Registers route groups and endpoints from the specified assembly into the dependency injection container.
+  /// </summary>
+  /// <remarks>This method scans the specified assembly for components and registers them with the
+  /// dependency injection container.</remarks>
+  /// <param name="services">The <see cref="IServiceCollection"/> to which the services will be added.</param>
+  /// <param name="assembly">The assembly containing components to be registered.</param>
+  /// <param name="configure">An optional delegate to configure <see cref="ModEndpointsCoreOptions"/> for customizing the behavior of the
+  /// registration process.</param>
+  /// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
   public static IServiceCollection AddModEndpointsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
@@ -24,31 +44,37 @@ public static class DependencyInjectionExtensions
     ModEndpointsCoreOptions options = new();
     configure?.Invoke(options);
 
-    if (options.UseDefaultRequestValidation)
+    if (options.AddDefaultRequestValidatorService)
     {
-      services.AddSingleton<IRequestValidator, FluentValidationRequestValidator>();
+      services.TryAddSingleton<IRequestValidator, FluentValidationRequestValidator>();
     }
 
+    services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
+
     return services
-      .AddRouteGroupsCoreFromAssembly(assembly, options.RouteGroupConfiguratorLifetime)
-      .AddEndpointsCoreFromAssembly(assembly, options.EndpointLifetime);
+      .AddRouteGroupsCoreFromAssembly(assembly, options)
+      .AddEndpointsCoreFromAssembly(assembly, options);
   }
 
   private static IServiceCollection AddRouteGroupsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
-    ServiceLifetime lifetime)
+    ModEndpointsCoreOptions options)
   {
     //Don't add RootRouteGroup, it's just a marker class to define root
     //Normally its assembly won't be loaded with this method anyway but just in case
     var serviceDescriptors = assembly
-        .DefinedTypes
-        .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                       type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
-                       type != typeof(RootRouteGroup) &&
-                       !type.GetCustomAttributes<DoNotRegisterAttribute>().Any())
-        .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IRouteGroupConfigurator), type, type, lifetime))
-        .ToArray();
+      .DefinedTypes
+      .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+        type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
+        type != typeof(RootRouteGroup) &&
+        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any())
+      .Select(type => ServiceDescriptor.DescribeKeyed(
+        typeof(IRouteGroupConfigurator),
+        type,
+        type,
+        options.RouteGroupConfiguratorLifetime))
+      .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
 
@@ -58,84 +84,146 @@ public static class DependencyInjectionExtensions
   private static IServiceCollection AddEndpointsCoreFromAssembly(
     this IServiceCollection services,
     Assembly assembly,
-    ServiceLifetime lifetime)
+    ModEndpointsCoreOptions options)
   {
     var endpointTypes = assembly
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-                     type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
-                     !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
+        type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
+        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
-    CheckServiceEndpointRegistrations(endpointTypes);
-
-    var serviceDescriptors = endpointTypes
-        .Select(type => ServiceDescriptor.DescribeKeyed(typeof(IEndpointConfigurator), type, type, lifetime))
-        .ToArray();
-
-    services.TryAddEnumerable(serviceDescriptors);
+    AddEndpoints(services, endpointTypes, options);
 
     return services;
   }
 
-  private static void CheckServiceEndpointRegistrations(IEnumerable<TypeInfo> endpointTypes)
+  private static void AddEndpoints(
+    IServiceCollection services,
+    IEnumerable<TypeInfo> endpointTypes,
+    ModEndpointsCoreOptions options)
   {
-    var serviceEndpointTypes = endpointTypes.Where(type => IsAssignableFrom(type, typeof(BaseServiceEndpoint<,>))).ToList();
-    foreach (var serviceEndpointType in serviceEndpointTypes)
+    foreach (var endpointType in endpointTypes)
     {
-      var requestType = GetGenericArgumentsOfBase(serviceEndpointType, typeof(BaseServiceEndpoint<,>)).Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
-      if (ServiceEndpointRegistry.Instance.IsRegistered(requestType))
+      if (!TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpoint<,>), options) &&
+        !TryAddServiceEndpoint(services, endpointType, typeof(BaseServiceEndpointWithStreamingResponse<,>), options))
       {
-        throw new InvalidOperationException($"An endpoint for request type {requestType} is already registered.");
-      }
-      if (!ServiceEndpointRegistry.Instance.Register(requestType, serviceEndpointType))
-      {
-        throw new InvalidOperationException($"An endpoint of type {serviceEndpointType} couldn't be registered for request type {requestType}.");
+        AddEndpoint(services, endpointType, options);
       }
     }
     return;
-  }
 
-  private static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
-  {
-    while (derivedType.BaseType != null)
+    static bool TryAddServiceEndpoint(
+      IServiceCollection services,
+      TypeInfo endpointType,
+      Type genericServiceEndpointBaseType,
+      ModEndpointsCoreOptions options)
     {
-      derivedType = derivedType.BaseType;
-      if (derivedType.IsGenericType && derivedType.GetGenericTypeDefinition() == baseType)
+      if (IsAssignableFrom(endpointType, genericServiceEndpointBaseType))
       {
-        return derivedType.GetGenericArguments();
+        AddServiceEndpoint(services, endpointType, genericServiceEndpointBaseType, options);
+        return true;
       }
+      return false;
     }
-    throw new InvalidOperationException("Base type was not found");
-  }
 
-  private static bool IsAssignableFrom(Type extendType, Type baseType)
-  {
-    while (!baseType.IsAssignableFrom(extendType))
+    static void AddServiceEndpoint(
+      IServiceCollection services,
+      TypeInfo endpointType,
+      Type genericServiceEndpointBaseType,
+      ModEndpointsCoreOptions options)
     {
-      if (extendType.Equals(typeof(object)))
+      var requestType = GetGenericArgumentsOfBase(
+        endpointType,
+        genericServiceEndpointBaseType)
+        .Single(type => type.IsAssignableTo(typeof(IServiceRequestMarker)));
+
+      var descriptor = ServiceDescriptor.DescribeKeyed(
+        typeof(IEndpointConfigurator),
+        requestType,
+        endpointType,
+        options.EndpointLifetime);
+
+      if (options.ThrowOnDuplicateUseOfServiceEndpointRequest)
       {
-        return false;
-      }
-      if (extendType.IsGenericType && !extendType.IsGenericTypeDefinition)
-      {
-        extendType = extendType.GetGenericTypeDefinition();
+        int count = services.Count;
+        for (int i = 0; i < count; i++)
+        {
+          if (Equals(services[i].ServiceKey, descriptor.ServiceKey))
+          {
+            // Already added
+            throw new InvalidOperationException(string.Format(
+              Constants.ServiceEndpointAlreadyRegisteredMessage,
+              requestType));
+          }
+        }
+        services.Add(descriptor);
       }
       else
       {
-        if (extendType.BaseType is null)
+        services.TryAdd(descriptor);
+      }
+    }
+
+    static void AddEndpoint(
+      IServiceCollection services,
+      TypeInfo endpointType,
+      ModEndpointsCoreOptions options)
+    {
+      services.TryAdd(ServiceDescriptor.DescribeKeyed(
+        typeof(IEndpointConfigurator),
+        endpointType,
+        endpointType,
+        options.EndpointLifetime));
+    }
+
+    static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
+    {
+      while (derivedType.BaseType != null)
+      {
+        derivedType = derivedType.BaseType;
+        if (derivedType.IsGenericType && derivedType.GetGenericTypeDefinition() == baseType)
+        {
+          return derivedType.GetGenericArguments();
+        }
+      }
+      throw new InvalidOperationException("Base type was not found");
+    }
+
+    static bool IsAssignableFrom(Type extendType, Type baseType)
+    {
+      while (!baseType.IsAssignableFrom(extendType))
+      {
+        if (extendType.Equals(typeof(object)))
         {
           return false;
         }
-        extendType = extendType.BaseType;
+        if (extendType.IsGenericType && !extendType.IsGenericTypeDefinition)
+        {
+          extendType = extendType.GetGenericTypeDefinition();
+        }
+        else
+        {
+          if (extendType.BaseType is null)
+          {
+            return false;
+          }
+          extendType = extendType.BaseType;
+        }
       }
+      return true;
     }
-    return true;
   }
 
-  //Configuration processing order:
-  //Group Configuration -> Endpoint Configuration -> Global Endpoint Configuration -> Endpoint Override -> Group Endpoint Override -> Group Override
-  //Global overrides apply to all endpoints
-  //Group overrides apply to endpoints directly under that group (not if they are under another group, which is under this group)
+  /// <summary>
+  /// Maps and configures route groups and endpoints. Configuration processing order:
+  /// Group's Configuration -> Endpoint's Configuration -> Global Endpoint Configuration -> Endpoint's PostConfigure -> Group's EndpointPostConfigure -> Group's PostConfigure.
+  /// Global Endpoint Configuration apply to all endpoints.
+  /// Group's EndpointPostConfigure apply to endpoints directly under that group (not if they are under a child group of current group).
+  /// </summary>
+  /// <param name="app"></param>
+  /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
+  /// <param name="throwOnMissingConfiguration"></param>
+  /// <returns></returns>
   public static WebApplication MapModEndpointsCore(
     this WebApplication app,
     Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
@@ -183,17 +271,20 @@ public static class DependencyInjectionExtensions
     foreach (var childRouteGroup in routeGroups.Where(
       x => filterPredicate(x.GetType())))
     {
+      var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
       ConfigurationContext<RouteGroupConfigurationParameters> childConfigurationContext = new(
         serviceProvider,
-        new(childRouteGroup, currentConfigurationContext?.Parameters));
-      var routeGroupBuilder = childRouteGroup.Configure(builder, childConfigurationContext);
-      if (routeGroupBuilder is null)
+        new(
+          childRouteGroup,
+          componentDiscriminator.GetDiscriminator(childRouteGroup),
+          currentConfigurationContext?.Parameters));
+      var routeGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
+      if (routeGroupBuilders.Length == 0)
       {
         if (throwOnMissingConfiguration)
         {
           throw new InvalidOperationException(string.Format(
-            "Missing route group configuration! " +
-            "Start configuring {0} route group by calling the MapGroup method.",
+            Constants.MissingRouteGroupConfigurationMessage,
             childRouteGroup.GetType()));
         }
         else
@@ -201,13 +292,12 @@ public static class DependencyInjectionExtensions
           var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
             .CreateLogger<RouteGroupConfigurator>();
           logger.LogWarning(
-            "Missing route group configuration! " +
-            "Start configuring {routeGroupType} route group by calling the MapGroup method.",
+            Constants.MissingRouteGroupConfigurationLogMessage,
             childRouteGroup.GetType());
         }
       }
 
-      if (routeGroupBuilder is not null)
+      foreach (var routeGroupBuilder in routeGroupBuilders)
       {
         _ = MapRouteGroup(
           childRouteGroup,
@@ -223,6 +313,9 @@ public static class DependencyInjectionExtensions
         childRouteGroup.PostConfigure(
           routeGroupBuilder,
           childConfigurationContext);
+
+        childConfigurationContext.Parameters.SelfDiscriminator =
+          componentDiscriminator.IncrementDiscriminator(childRouteGroup);
       }
     }
 
@@ -274,7 +367,7 @@ public static class DependencyInjectionExtensions
     return builder;
   }
 
-  private static RouteHandlerBuilder? MapEndpoint(
+  private static RouteHandlerBuilder[] MapEndpoint(
     IEndpointConfigurator endpoint,
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
@@ -283,17 +376,20 @@ public static class DependencyInjectionExtensions
     Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
+    var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
     ConfigurationContext<EndpointConfigurationParameters> endpointConfigurationContext = new(
       serviceProvider,
-      new(endpoint, parentConfigurationContext?.Parameters));
-    var routeHandlerBuilder = endpoint.Configure(builder, endpointConfigurationContext);
-    if (routeHandlerBuilder is null)
+      new(
+        endpoint,
+        componentDiscriminator.GetDiscriminator(endpoint),
+        parentConfigurationContext?.Parameters));
+    var routeHandlerBuilders = endpoint.Configure(builder, endpointConfigurationContext);
+    if (routeHandlerBuilders.Length == 0)
     {
       if (throwOnMissingConfiguration)
       {
         throw new InvalidOperationException(string.Format(
-          "Missing endpoint configuration! " +
-          "Start configuring {0} endpoint by calling one of the Map[HttpVerb] methods.",
+          Constants.MissingEndpointConfigurationMessage,
           endpoint.GetType()));
       }
       else
@@ -301,12 +397,11 @@ public static class DependencyInjectionExtensions
         var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
           .CreateLogger<EndpointConfigurator>();
         logger.LogWarning(
-          "Missing endpoint configuration! " +
-          "Start configuring {endpointType} endpoint by calling one of the Map[HttpVerb] methods.",
+          Constants.MissingEndpointConfigurationLogMessage,
           endpoint.GetType());
       }
     }
-    if (routeHandlerBuilder is not null)
+    foreach (var routeHandlerBuilder in routeHandlerBuilders)
     {
       globalEndpointConfiguration?.Invoke(
         routeHandlerBuilder,
@@ -317,7 +412,10 @@ public static class DependencyInjectionExtensions
       parentRouteGroup?.EndpointPostConfigure(
         routeHandlerBuilder,
         endpointConfigurationContext);
+
+      endpointConfigurationContext.Parameters.SelfDiscriminator =
+        componentDiscriminator.IncrementDiscriminator(endpoint);
     }
-    return routeHandlerBuilder;
+    return routeHandlerBuilders;
   }
 }
