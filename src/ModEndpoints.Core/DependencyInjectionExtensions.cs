@@ -44,7 +44,7 @@ public static class DependencyInjectionExtensions
     ModEndpointsCoreOptions options = new();
     configure?.Invoke(options);
 
-    if (options.UseDefaultRequestValidation)
+    if (options.AddDefaultRequestValidatorService)
     {
       services.TryAddSingleton<IRequestValidator, FluentValidationRequestValidator>();
     }
@@ -143,7 +143,7 @@ public static class DependencyInjectionExtensions
         endpointType,
         options.EndpointLifetime);
 
-      if (options.ThrowOnDuplicateServiceEndpointRequest)
+      if (options.ThrowOnDuplicateUseOfServiceEndpointRequest)
       {
         int count = services.Count;
         for (int i = 0; i < count; i++)

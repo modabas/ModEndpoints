@@ -65,8 +65,8 @@ public static class DependencyInjectionExtensions
       {
         conf.EndpointLifetime = options.CoreOptions.EndpointLifetime;
         conf.RouteGroupConfiguratorLifetime = options.CoreOptions.RouteGroupConfiguratorLifetime;
-        conf.UseDefaultRequestValidation = options.CoreOptions.UseDefaultRequestValidation;
-        conf.ThrowOnDuplicateServiceEndpointRequest = options.CoreOptions.ThrowOnDuplicateServiceEndpointRequest;
+        conf.AddDefaultRequestValidatorService = options.CoreOptions.AddDefaultRequestValidatorService;
+        conf.ThrowOnDuplicateUseOfServiceEndpointRequest = options.CoreOptions.ThrowOnDuplicateUseOfServiceEndpointRequest;
       });
   }
 

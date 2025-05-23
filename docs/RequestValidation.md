@@ -55,7 +55,7 @@ internal class GetBookById(ServiceDbContext db)
 ```
 
 ## Disabling Default Request Validation
-Default request validation can be disabled during dependency injection by setting UseDefaultRequestValidation to false. This can be useful if you want to implement your own request validation logic or if you want to use a different validation library.
+You can opt out of default request validation by setting AddDefaultRequestValidatorService to false. This can be useful if you want to implement your own request validation logic or if you want to use a different validation library.
 
 If you are using `ModEndpoints.Core` package:
 ```csharp
@@ -64,7 +64,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.UseDefaultRequestValidation = false;
+  conf.AddDefaultRequestValidatorService = false;
 });
 
 // ... add other services
@@ -77,7 +77,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.CoreOptions.UseDefaultRequestValidation = false;
+  conf.CoreOptions.AddDefaultRequestValidatorService = false;
 });
 
 // ... add other services
