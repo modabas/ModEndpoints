@@ -4,13 +4,13 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-**ModEndpoints** provides a structured approach to organizing ASP.NET Core Minimal APIs using the REPR (Request, Endpoint, Processor, Response) pattern. It enhances the Minimal API paradigm by introducing reusable, testable, and consistent components for request validation, handling, and response mapping.
+**ModEndpoints** provides a structured approach to organizing ASP.NET Core Minimal APIs using the REPR (Request - Endpoint - Response) pattern. It enhances the Minimal API paradigm by introducing reusable, testable, and consistent components for request validation, handling, and response mapping.
 
 ---
 
 ## ✨ Features
 
-- **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint, Processor, and Response components.
+- **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint and Response components.
 - **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, filters, and more.
 - **Auto-Discovery and Registration**: Automatically discovers and registers endpoints.
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a validator is registered.
