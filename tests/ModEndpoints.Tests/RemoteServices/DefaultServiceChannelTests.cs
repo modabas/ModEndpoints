@@ -15,24 +15,14 @@ public class DefaultServiceChannelTests
   private class DummyRequestNoResponse : IServiceRequest { }
   private class DummyStreamingRequestNoResponse : IServiceRequestWithStreamingResponse { }
 
+  private class UnregisteredDummyRequest : IServiceRequest<string> { }
+  private class UnregisteredDummyStreamingRequest : IServiceRequestWithStreamingResponse<string> { }
+  private class UnregisteredDummyRequestNoResponse : IServiceRequest { }
+  private class UnregisteredDummyStreamingRequestNoResponse : IServiceRequestWithStreamingResponse { }
+
   private readonly IHttpClientFactory _clientFactory = Substitute.For<IHttpClientFactory>();
   private readonly IServiceEndpointUriResolver _uriResolver = Substitute.For<IServiceEndpointUriResolver>();
   private readonly IServiceChannelSerializer _serializer = Substitute.For<IServiceChannelSerializer>();
-
-  [Fact]
-  public async Task SendAsync_ReturnsFail_WhenUriResolverFailsAsync()
-  {
-    var req = new DummyRequest();
-    _uriResolver.Resolve(req).Returns(Result<string>.CriticalError("fail"));
-
-    var serviceProvider = CreateServiceProvider();
-
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
-
-    Assert.True(result.IsFailed);
-  }
 
   private ServiceProvider CreateServiceProvider()
   {
@@ -53,13 +43,47 @@ public class DefaultServiceChannelTests
     return serviceProvider;
   }
 
+  public DefaultServiceChannelTests()
+  {
+    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyRequest)))
+    {
+      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyRequest), "client");
+    }
+    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyStreamingRequest)))
+    {
+      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyStreamingRequest), "client");
+    }
+    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyRequestNoResponse)))
+    {
+      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyRequestNoResponse), "client");
+    }
+    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyStreamingRequestNoResponse)))
+    {
+      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyStreamingRequestNoResponse), "client");
+    }
+  }
+
+  [Fact]
+  public async Task SendAsync_ReturnsFail_WhenUriResolverFailsAsync()
+  {
+    var req = new UnregisteredDummyRequest();
+    _uriResolver.Resolve(req).Returns(Result<string>.CriticalError("fail"));
+
+    var serviceProvider = CreateServiceProvider();
+
+    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
+
+    var result = await channel.SendAsync(req, null, CancellationToken.None);
+
+    Assert.True(result.IsFailed);
+  }
+
   [Fact]
   public async Task SendAsync_ReturnsCriticalError_WhenNotRegisteredAsync()
   {
-    var req = new DummyRequest();
+    var req = new UnregisteredDummyRequest();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
     var serviceProvider = CreateServiceProvider();
-    ServiceChannelRegistry.Instance.Clear();
 
     var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
 
@@ -75,8 +99,6 @@ public class DefaultServiceChannelTests
   {
     var req = new DummyRequest();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
-    ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyRequest), "client");
 
     var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
     _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
@@ -99,7 +121,7 @@ public class DefaultServiceChannelTests
   [Fact]
   public async Task SendAsync_NoResponse_ReturnsFail_WhenUriResolverFailsAsync()
   {
-    var req = new DummyRequestNoResponse();
+    var req = new UnregisteredDummyRequestNoResponse();
     _uriResolver.Resolve(req).Returns(Result<string>.CriticalError("fail"));
 
     var serviceProvider = CreateServiceProvider();
@@ -114,9 +136,8 @@ public class DefaultServiceChannelTests
   [Fact]
   public async Task SendAsync_NoResponse_ReturnsCriticalError_WhenNotRegisteredAsync()
   {
-    var req = new DummyRequestNoResponse();
+    var req = new UnregisteredDummyRequestNoResponse();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
 
     var serviceProvider = CreateServiceProvider();
 
@@ -134,8 +155,6 @@ public class DefaultServiceChannelTests
   {
     var req = new DummyRequestNoResponse();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
-    ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyRequestNoResponse), "client");
 
     var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
     _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
@@ -157,7 +176,7 @@ public class DefaultServiceChannelTests
   [Fact]
   public async Task SendAsync_Streaming_ReturnsFail_WhenUriResolverFailsAsync()
   {
-    var req = new DummyStreamingRequest();
+    var req = new UnregisteredDummyStreamingRequest();
     _uriResolver.Resolve(req).Returns(Result<string>.CriticalError("fail"));
 
     var serviceProvider = CreateServiceProvider();
@@ -177,9 +196,8 @@ public class DefaultServiceChannelTests
   [Fact]
   public async Task SendAsync_Streaming_ReturnsCriticalError_WhenNotRegisteredAsync()
   {
-    var req = new DummyStreamingRequest();
+    var req = new UnregisteredDummyStreamingRequest();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
 
     var serviceProvider = CreateServiceProvider();
 
@@ -200,18 +218,16 @@ public class DefaultServiceChannelTests
   {
     var req = new DummyStreamingRequest();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
-    ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyStreamingRequest), "client");
 
     var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
     _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
         .Returns(new StringContent("test"));
 
     var streamingItems = new List<StreamingResponseItem<string>>
-          {
-              new(Result<string>.Ok("stream1")),
-              new(Result<string>.Ok("stream2"))
-          };
+    {
+      new(Result<string>.Ok("stream1")),
+      new(Result<string>.Ok("stream2"))
+    };
     _serializer.DeserializeStreamingResponseItemAsync<string>(messageHandler.Response, Arg.Any<CancellationToken>())
         .Returns(streamingItems.ToAsyncEnumerable());
 
@@ -236,7 +252,7 @@ public class DefaultServiceChannelTests
   [Fact]
   public async Task SendAsync_Streaming_NoResponse_ReturnsFail_WhenUriResolverFailsAsync()
   {
-    var req = new DummyStreamingRequestNoResponse();
+    var req = new UnregisteredDummyStreamingRequestNoResponse();
     _uriResolver.Resolve(req).Returns(Result<string>.CriticalError("fail"));
 
     var serviceProvider = CreateServiceProvider();
@@ -256,9 +272,8 @@ public class DefaultServiceChannelTests
   [Fact]
   public async Task SendAsync_Streaming_NoResponse_ReturnsCriticalError_WhenNotRegisteredAsync()
   {
-    var req = new DummyStreamingRequestNoResponse();
+    var req = new UnregisteredDummyStreamingRequestNoResponse();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
 
     var serviceProvider = CreateServiceProvider();
 
@@ -279,18 +294,16 @@ public class DefaultServiceChannelTests
   {
     var req = new DummyStreamingRequestNoResponse();
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-    ServiceChannelRegistry.Instance.Clear();
-    ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyStreamingRequestNoResponse), "client");
 
     var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
     _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
         .Returns(new StringContent("test"));
 
     var streamingItems = new List<StreamingResponseItem>
-          {
-              new(Result.Ok()),
-              new(Result.Ok())
-          };
+    {
+      new(Result.Ok()),
+      new(Result.Ok())
+    };
     _serializer.DeserializeStreamingResponseItemAsync(messageHandler.Response, Arg.Any<CancellationToken>())
         .Returns(streamingItems.ToAsyncEnumerable());
 
