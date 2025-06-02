@@ -4,7 +4,7 @@ WebResultEndpoints, BusinessResultEndpoints, and ServiceEndpoints structure ASP.
 
 ## ✨ Features
 
-- **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint, Processor, and Response components.
+- **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint and Response components.
 - **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, filters, and more.
 - **Auto-Discovery and Registration**: Automatically discovers and registers endpoints.
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a validator is registered.
