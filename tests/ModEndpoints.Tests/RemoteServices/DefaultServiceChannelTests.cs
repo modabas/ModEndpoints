@@ -1,5 +1,4 @@
-﻿using System.Net;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModEndpoints.RemoteServices;
 using ModEndpoints.RemoteServices.Core;
@@ -196,22 +195,6 @@ public class DefaultServiceChannelTests
 
       Assert.Single(results);
       Assert.True(results[0].Result.IsFailed);
-    }
-  }
-
-  // Helper for faking HttpMessageHandler
-  public class FakeHttpMessageHandler : HttpMessageHandler
-  {
-    public HttpResponseMessage Response { get; init; }
-
-    public FakeHttpMessageHandler(HttpStatusCode statusCode)
-    {
-      Response = new HttpResponseMessage(statusCode);
-    }
-
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
-      return Task.FromResult(Response);
     }
   }
 }
