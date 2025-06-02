@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using ModEndpoints.RemoteServices;
-using ModEndpoints.TestServer.Features.Customers;
 using ModEndpoints.TestServer.Features.StoresWithServiceEndpoint;
 using ModResults;
 

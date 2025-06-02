@@ -7,7 +7,7 @@ using ModEndpoints.TestServer.Features.StoresWithServiceEndpoint.Configuration;
 
 namespace ModEndpoints.TestServer.Features.StoresWithServiceEndpoint;
 
-public record FilterAndStreamStoreListRequest(string Name) 
+public record FilterAndStreamStoreListRequest(string Name)
   : IServiceRequestWithStreamingResponse<FilterAndStreamStoreListResponse>;
 
 public record FilterAndStreamStoreListResponse(

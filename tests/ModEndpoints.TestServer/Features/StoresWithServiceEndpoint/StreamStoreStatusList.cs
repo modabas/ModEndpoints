@@ -10,7 +10,7 @@ namespace ModEndpoints.TestServer.Features.StoresWithServiceEndpoint;
 
 public record StreamStoreStatusListRequest(string Name) : IServiceRequestWithStreamingResponse;
 
-internal class StreamStoreStatusListRequestValidator 
+internal class StreamStoreStatusListRequestValidator
   : AbstractValidator<StreamStoreStatusListRequest>
 {
   public StreamStoreStatusListRequestValidator()
