@@ -46,4 +46,13 @@ public class ServiceChannelRegistry
   {
     return _registry.TryGetValue(requestType, out clientName);
   }
+
+  /// <summary>
+  /// for testing purposes only, clears the registry and http client list.
+  /// </summary>
+  internal void Clear()
+  {
+    _registry.Clear();
+    _httpClientList.Clear();
+  }
 }
