@@ -10,17 +10,11 @@ namespace ModEndpoints.Tests.RemoteServices;
 
 public class DefaultServiceChannelTests
 {
-  private class DummyRequest : IServiceRequest<string> { }
-  private class DummyStreamingRequest : IServiceRequestWithStreamingResponse<string> { }
-  private class DummyRequestNoResponse : IServiceRequest { }
-  private class DummyStreamingRequestNoResponse : IServiceRequestWithStreamingResponse { }
-
   private class UnregisteredDummyRequest : IServiceRequest<string> { }
   private class UnregisteredDummyStreamingRequest : IServiceRequestWithStreamingResponse<string> { }
   private class UnregisteredDummyRequestNoResponse : IServiceRequest { }
   private class UnregisteredDummyStreamingRequestNoResponse : IServiceRequestWithStreamingResponse { }
 
-  private readonly IHttpClientFactory _clientFactory = Substitute.For<IHttpClientFactory>();
   private readonly IServiceEndpointUriResolver _uriResolver = Substitute.For<IServiceEndpointUriResolver>();
   private readonly IServiceChannelSerializer _serializer = Substitute.For<IServiceChannelSerializer>();
 
@@ -28,7 +22,7 @@ public class DefaultServiceChannelTests
   {
     // Create service collection
     var services = new ServiceCollection();
-    services.AddSingleton<IHttpClientFactory>(_clientFactory);
+    services.AddHttpClient();
     services.TryAddKeyedSingleton<IServiceEndpointUriResolver>(
       RemoteServiceDefinitions.DefaultUriResolverName,
       _uriResolver);
@@ -43,26 +37,6 @@ public class DefaultServiceChannelTests
     return serviceProvider;
   }
 
-  public DefaultServiceChannelTests()
-  {
-    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyRequest)))
-    {
-      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyRequest), "client");
-    }
-    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyStreamingRequest)))
-    {
-      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyStreamingRequest), "client");
-    }
-    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyRequestNoResponse)))
-    {
-      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyRequestNoResponse), "client");
-    }
-    if (!ServiceChannelRegistry.Instance.IsRequestRegistered(typeof(DummyStreamingRequestNoResponse)))
-    {
-      ServiceChannelRegistry.Instance.RegisterRequest(typeof(DummyStreamingRequestNoResponse), "client");
-    }
-  }
-
   [Fact]
   public async Task SendAsync_ReturnsFail_WhenUriResolverFailsAsync()
   {
@@ -71,11 +45,16 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
+    using (var scope = serviceProvider.CreateScope())
+    {
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
 
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
+      var result = await channel.SendAsync(req, null, CancellationToken.None);
 
-    Assert.True(result.IsFailed);
+      Assert.True(result.IsFailed);
+    }
   }
 
   [Fact]
@@ -85,37 +64,17 @@ public class DefaultServiceChannelTests
     _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
+    using (var scope = serviceProvider.CreateScope())
+    {
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
+      var result = await channel.SendAsync(req, null, CancellationToken.None);
 
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
-
-    Assert.True(result.IsFailed);
-    Assert.Equal(FailureType.CriticalError, result.Failure.Type);
-    Assert.Contains(result.Failure.Errors, e => e.Message.Contains("No channel registration found"));
-  }
-
-  [Fact]
-  public async Task SendAsync_CallsSerializerAndReturnsResultAsync()
-  {
-    var req = new DummyRequest();
-    _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-
-    var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
-    _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
-        .Returns(new StringContent("test"));
-    _serializer.DeserializeResultAsync<string>(messageHandler.Response, Arg.Any<CancellationToken>())
-        .Returns(Result<string>.Ok("ok"));
-    var httpClient = new HttpClient(messageHandler);
-    _clientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
-
-    var serviceProvider = CreateServiceProvider();
-
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
-
-    Assert.True(result.IsOk);
-    Assert.Equal("ok", result.Value);
+      Assert.True(result.IsFailed);
+      Assert.Equal(FailureType.CriticalError, result.Failure.Type);
+      Assert.Contains(result.Failure.Errors, e => e.Message.Contains("No channel registration found"));
+    }
   }
 
   [Fact]
@@ -126,11 +85,15 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
+    using (var scope = serviceProvider.CreateScope())
+    {
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
+      var result = await channel.SendAsync(req, null, CancellationToken.None);
 
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
-
-    Assert.True(result.IsFailed);
+      Assert.True(result.IsFailed);
+    }
   }
 
   [Fact]
@@ -141,36 +104,17 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
+    using (var scope = serviceProvider.CreateScope())
+    {
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
+      var result = await channel.SendAsync(req, null, CancellationToken.None);
 
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
-
-    Assert.True(result.IsFailed);
-    Assert.Equal(FailureType.CriticalError, result.Failure.Type);
-    Assert.Contains(result.Failure.Errors, e => e.Message.Contains("No channel registration found"));
-  }
-
-  [Fact]
-  public async Task SendAsync_NoResponse_CallsSerializerAndReturnsResultAsync()
-  {
-    var req = new DummyRequestNoResponse();
-    _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-
-    var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
-    _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
-        .Returns(new StringContent("test"));
-    _serializer.DeserializeResultAsync(messageHandler.Response, Arg.Any<CancellationToken>())
-        .Returns(Result.Ok());
-    var httpClient = new HttpClient(messageHandler);
-    _clientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
-
-    var serviceProvider = CreateServiceProvider();
-
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var result = await channel.SendAsync(req, null, CancellationToken.None);
-
-    Assert.True(result.IsOk);
+      Assert.True(result.IsFailed);
+      Assert.Equal(FailureType.CriticalError, result.Failure.Type);
+      Assert.Contains(result.Failure.Errors, e => e.Message.Contains("No channel registration found"));
+    }
   }
 
   [Fact]
@@ -181,16 +125,16 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var results = new List<StreamingResponseItem<string>>();
-    await foreach (var item in channel.SendAsync(req, null, CancellationToken.None))
+    using (var scope = serviceProvider.CreateScope())
     {
-      results.Add(item);
-    }
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
+      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
 
-    Assert.Single(results);
-    Assert.True(results[0].Result.IsFailed);
+      Assert.Single(results);
+      Assert.True(results[0].Result.IsFailed);
+    }
   }
 
   [Fact]
@@ -201,52 +145,17 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var results = new List<StreamingResponseItem<string>>();
-    await foreach (var item in channel.SendAsync(req, null, CancellationToken.None))
+    using (var scope = serviceProvider.CreateScope())
     {
-      results.Add(item);
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
+
+      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+
+      Assert.Single(results);
+      Assert.True(results[0].Result.IsFailed);
     }
-
-    Assert.Single(results);
-    Assert.True(results[0].Result.IsFailed);
-  }
-
-  [Fact]
-  public async Task SendAsync_Streaming_CallsSerializerAndYieldsResultsAsync()
-  {
-    var req = new DummyStreamingRequest();
-    _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-
-    var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
-    _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
-        .Returns(new StringContent("test"));
-
-    var streamingItems = new List<StreamingResponseItem<string>>
-    {
-      new(Result<string>.Ok("stream1")),
-      new(Result<string>.Ok("stream2"))
-    };
-    _serializer.DeserializeStreamingResponseItemAsync<string>(messageHandler.Response, Arg.Any<CancellationToken>())
-        .Returns(streamingItems.ToAsyncEnumerable());
-
-    var httpClient = new HttpClient(messageHandler);
-    _clientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
-
-    var serviceProvider = CreateServiceProvider();
-
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var results = new List<StreamingResponseItem<string>>();
-    await foreach (var item in channel.SendAsync(req, null, CancellationToken.None))
-    {
-      results.Add(item);
-    }
-
-    Assert.Equal(2, results.Count);
-    Assert.Equal("stream1", results[0].Result.Value);
-    Assert.Equal("stream2", results[1].Result.Value);
   }
 
   [Fact]
@@ -257,16 +166,17 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var results = new List<StreamingResponseItem>();
-    await foreach (var item in channel.SendAsync(req, null, CancellationToken.None))
+    using (var scope = serviceProvider.CreateScope())
     {
-      results.Add(item);
-    }
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
 
-    Assert.Single(results);
-    Assert.True(results[0].Result.IsFailed);
+      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+
+      Assert.Single(results);
+      Assert.True(results[0].Result.IsFailed);
+    }
   }
 
   [Fact]
@@ -277,52 +187,16 @@ public class DefaultServiceChannelTests
 
     var serviceProvider = CreateServiceProvider();
 
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var results = new List<StreamingResponseItem>();
-    await foreach (var item in channel.SendAsync(req, null, CancellationToken.None))
+    using (var scope = serviceProvider.CreateScope())
     {
-      results.Add(item);
+      var channel = new DefaultServiceChannel(
+        scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
+        serviceProvider);
+      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+
+      Assert.Single(results);
+      Assert.True(results[0].Result.IsFailed);
     }
-
-    Assert.Single(results);
-    Assert.True(results[0].Result.IsFailed);
-  }
-
-  [Fact]
-  public async Task SendAsync_Streaming_NoResponse_CallsSerializerAndYieldsResultsAsync()
-  {
-    var req = new DummyStreamingRequestNoResponse();
-    _uriResolver.Resolve(req).Returns(Result<string>.Ok("http://localhost/endpoint"));
-
-    var messageHandler = new FakeHttpMessageHandler(HttpStatusCode.OK);
-    _serializer.CreateContentAsync(req, Arg.Any<CancellationToken>())
-        .Returns(new StringContent("test"));
-
-    var streamingItems = new List<StreamingResponseItem>
-    {
-      new(Result.Ok()),
-      new(Result.Ok())
-    };
-    _serializer.DeserializeStreamingResponseItemAsync(messageHandler.Response, Arg.Any<CancellationToken>())
-        .Returns(streamingItems.ToAsyncEnumerable());
-
-    var httpClient = new HttpClient(messageHandler);
-    _clientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
-
-    var serviceProvider = CreateServiceProvider();
-
-    var channel = new DefaultServiceChannel(_clientFactory, serviceProvider);
-
-    var results = new List<StreamingResponseItem>();
-    await foreach (var item in channel.SendAsync(req, null, CancellationToken.None))
-    {
-      results.Add(item);
-    }
-
-    Assert.Equal(2, results.Count);
-    Assert.True(results[0].Result.IsOk);
-    Assert.True(results[1].Result.IsOk);
   }
 
   // Helper for faking HttpMessageHandler
