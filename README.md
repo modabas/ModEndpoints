@@ -252,7 +252,7 @@ For more examples, refer to the following:
  - `BusinessResultEndpoint` samples are in [Stores](./samples/ShowcaseWebApi/Features/Stores) subfolder,
  - `ServiceEndpoint` samples are in [StoresWithServiceEndpoint](./samples/ShowcaseWebApi/Features/StoresWithServiceEndpoint) subfolder.
 
-[ServiceEndpointClient](./samples/ServiceEndpointClient) project demonstrates how to consume ServiceEndpoints.
+[ServiceEndpointClient](./samples/ServiceEndpointClient) project demonstrates a client application consuming remote ServiceEndpoints.
 
 [WeatherForecastWebApi](./samples/WeatherForecastWebApi) project demonstrates how GetWeatherForecast Minimal API in ASP.NET Core Web API project template can be written using MinimalEndpoints. Also demostrates API documentation with Scalar and OpenAPI.
 

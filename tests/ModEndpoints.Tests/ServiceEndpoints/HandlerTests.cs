@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
+using ModEndpoints.RemoteServices;
 using ModEndpoints.TestServer.Features.StoresWithServiceEndpoint;
 using ModResults;
 
@@ -70,5 +71,54 @@ public class HandlerTests
     Assert.NotNull(response);
     Assert.True(response.IsOk);
     Assert.False(response.IsFailed);
+  }
+
+  [Fact]
+  public async Task StreamingEndpointOfTRequestAndTResponse_Returns_SuccessAsync()
+  {
+    var endpointUri = $"{typeof(FilterAndStreamStoreListRequest).FullName}.Endpoint";
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/storesWithServiceEndpoint/{endpointUri}")
+    {
+      Content = JsonContent.Create(new FilterAndStreamStoreListRequest("Name 2"))
+    };
+
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
+
+    var response = await JsonSerializer.DeserializeAsync<List<StreamingResponseItem<FilterAndStreamStoreListResponse>>>(
+      await httpResponse.Content.ReadAsStreamAsync(),
+      _defaultJsonDeserializationOptions);
+
+    Assert.NotNull(response);
+    Assert.Single(response);
+    var store = response[0].Result.Value;
+    Assert.NotNull(store);
+    Assert.Equal("Name 2", store.Name);
+  }
+
+  [Fact]
+  public async Task StreamingEndpointOfTRequest_Returns_SuccessAsync()
+  {
+    var endpointUri = $"{typeof(StreamStoreStatusListRequest).FullName}.Endpoint";
+    var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/storesWithServiceEndpoint/{endpointUri}")
+    {
+      Content = JsonContent.Create(new StreamStoreStatusListRequest("Name"))
+    };
+
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
+
+    var response = await JsonSerializer.DeserializeAsync<List<StreamingResponseItem>>(
+      await httpResponse.Content.ReadAsStreamAsync(),
+      _defaultJsonDeserializationOptions);
+
+    Assert.NotNull(response);
+    Assert.Equal(2, response.Count);
+    Assert.True(response[0].Result.IsOk);
+    Assert.True(response[1].Result.IsOk);
   }
 }

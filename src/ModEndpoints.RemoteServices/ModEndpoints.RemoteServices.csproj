@@ -27,6 +27,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ModEndpoints.RemoteServices.Core\ModEndpoints.RemoteServices.Core.csproj" />
-  </ItemGroup>  
-
+  </ItemGroup>
 </Project>
