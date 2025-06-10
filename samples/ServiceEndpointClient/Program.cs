@@ -48,7 +48,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   //resolve service channel from DI
   var channel = provider.GetRequiredService<IServiceChannel>();
   List<ListStoresResponse> stores = new();
-  //send request over channel to remote ServiceResultEndpoint
+  //send request over channel to remote ServiceEndpoint
   await foreach (var listStoreItem in channel.SendAsync(
     new ListStoresRequest(),
     "v1/storesWithServiceEndpoint/",
@@ -71,7 +71,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   var id = stores.FirstOrDefault()?.Id;
   if (id is not null)
   {
-    //send request over channel to remote ServiceResultEndpoint
+    //send request over channel to remote ServiceEndpoint
     var getResult = await channel.SendAsync(
       new GetStoreByIdRequest(Id: id.Value),
       "v1/storesWithServiceEndpoint/",
@@ -88,7 +88,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     }
     Console.WriteLine("***********************");
 
-    //send request over channel to remote ServiceResultEndpoint
+    //send request over channel to remote ServiceEndpoint
     var deleteResult = await channel.SendAsync(
       new DeleteStoreRequest(Id: id.Value),
       "v1/storesWithServiceEndpoint/",
@@ -98,7 +98,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     Console.WriteLine(deleteResult.DumpMessages());
     Console.WriteLine("***********************");
 
-    //send request over channel to remote ServiceResultEndpoint
+    //send request over channel to remote ServiceEndpoint
     getResult = await channel.SendAsync(
       new GetStoreByIdRequest(Id: id.Value),
       "v1/storesWithServiceEndpoint/",
