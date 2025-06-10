@@ -1,5 +1,7 @@
 # WebResultEndpoint
 
+>**Package**: `ModEndpoints`
+
 A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to a Minimal API IResult depending on the business result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
 
 Request model (if any) defined for a WebResultEndpoint is bound with [AsParameters] attribute.

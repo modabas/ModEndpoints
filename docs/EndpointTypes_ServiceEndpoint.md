@@ -1,5 +1,7 @@
 # ServiceEndpoint
 
+>**Package**: `ModEndpoints`
+
 This is a very specialized endpoint which is intended to abstract away all HTTP client and request setup, consumption and response handling when used together with its client implementation. Aim is to enable developers to easily consume remote services with a strongly typed request and response model only by sharing said models between the service and client projects.
 
 Request model defined for a ServiceEndpoint is bound with [FromBody] attribute.

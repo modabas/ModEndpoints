@@ -1,5 +1,7 @@
 # BusinessResultEndpoint
 
+>**Package**: `ModEndpoints`
+
 A BusinessResultEndpoint implementation, after handling request, encapsulates the [business result](https://github.com/modabas/ModResults) of HandleAsync method in a HTTP 200 Minimal API IResult and sends to client. The [business result](https://github.com/modabas/ModResults) returned may be in Ok or Failed state. This behaviour makes BusinessResultEndpoints more suitable for cases where clients are aware of Result or Result&lt;TValue&gt; implementations.
 
 Request model (if any) defined for a BusinessResultEndpoint is bound with [AsParameters] attribute.
