@@ -226,9 +226,9 @@ internal class ListBooks(ServiceDbContext db)
 }
 ```
 
-### Further Reading  
+### Explore More Features
 
-For more examples, refer to the following:  
+For documents detailing other features and functionalities, refer to the following:
 
 - [Parameter Binding](./docs/ParameterBinding.md)  
 - [Request Validation](./docs/RequestValidation.md)
@@ -236,7 +236,11 @@ For more examples, refer to the following:
 - [Disabling Components](./docs/DisablingComponents.md)
 - [Open API Documentation](./docs/OpenApiDocumentation.md)
 - [Handling Files](./docs/HandlingFiles.md)
-- [Endpoint Types](./docs/EndpointTypes.md)
+- [Endpoint Types](./docs/EndpointTypes.md):
+     1. [MinimalEndpoint](./docs/EndpointTypes_MinimalEndpoint.md),
+     2. [WebResultEndpoint](./docs/EndpointTypes_WebResultEndpoint.md),
+     3. [BusinessResultEndpoint](./docs/EndpointTypes_BusinessResultEndpoint.md),
+     4. [ServiceEndpoint](./docs/EndpointTypes_ServiceEndpoint.md)
 - [Result Pattern Integration](./docs/ResultPatternIntegration.md)
 - [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
 - [WebResultEndpoint Response Mapping](./docs/WebResultEndpointResponseMapping.md)

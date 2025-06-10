@@ -1,5 +1,7 @@
 ﻿# ServiceEndpoint Clients
 
+>**Package**: `ModEndpoints.RemoteServices`
+
 A client application can consume ServiceEndpoints by utilizing a specialized message channel resolved from dependency injection. Only service's base address and endpoint's request/response model information are needed. No other client implementation or service specific knowledge is required.
 
 ## ⚙️ Workflow
