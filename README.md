@@ -57,7 +57,9 @@ Each endpoint must implement two virtual methods:
 
 2. **HandleAsync**: Contains the logic to handle incoming requests. Called after the request is validated (if applicable).
 
-> **Note**: `ServiceEndpoint` provides a default implementation for the `Configure` method, which can be overridden if necessary.
+> **Note**: Dependencies resolved from constructor are not available during configuration. To access a service from dependency injection in the configuration phase, use the `ServiceProvider` property of the configuration context parameter in the `Configure` method.
+
+> **Note**: `ServiceEndpoint` provides a default implementation for the `Configure` method, and only requires `HandleAsync` method implementation.
 
 ---
 

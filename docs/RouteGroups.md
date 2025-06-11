@@ -8,6 +8,8 @@ By default, all endpoints are mapped under root route group. It is possible to d
 
 Following sample creates a parent route group (FeaturesRouteGroup), a child route group under it (BooksV1RouteGroup) and maps an endpoint (CreateBook) to child route group. Group configuration methods used for this particular sample are all part of Minimal APIs ecosystem and are under [Asp.Versioning](https://github.com/dotnet/aspnet-api-versioning).
 
+> **Note**: Dependencies resolved from constructor are not available during configuration. To access a service from dependency injection in the configuration phase, use the `ServiceProvider` property of the configuration context parameter in the `Configure` method.
+
 ```csharp
 internal class FeaturesRouteGroup : RouteGroupConfigurator
 {

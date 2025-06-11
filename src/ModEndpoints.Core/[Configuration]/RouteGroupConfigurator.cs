@@ -7,10 +7,6 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 {
   private RouteGroupConfigurationBuilder? _configurationBuilder;
 
-  public virtual Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? EndpointConfigurationOverrides => null;
-
-  public virtual Action<RouteGroupBuilder, ConfigurationContext<RouteGroupConfigurationParameters>>? ConfigurationOverrides => null;
-
   /// <summary>
   /// Entry point for route group configuration. Called by DI.
   /// </summary>

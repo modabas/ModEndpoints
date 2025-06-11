@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,12 +64,14 @@ public static class DependencyInjectionExtensions
   {
     //Don't add RootRouteGroup, it's just a marker class to define root
     //Normally its assembly won't be loaded with this method anyway but just in case
-    var serviceDescriptors = assembly
+    var routeGroupTypes = assembly
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
         type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
         type != typeof(RootRouteGroup) &&
-        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any())
+        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
+
+    var serviceDescriptors = routeGroupTypes
       .Select(type => ServiceDescriptor.DescribeKeyed(
         typeof(IRouteGroupConfigurator),
         type,
@@ -77,6 +80,7 @@ public static class DependencyInjectionExtensions
       .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
+    ComponentRegistry.Instance.TryAddRouteGroups(routeGroupTypes);
 
     return services;
   }
@@ -162,6 +166,7 @@ public static class DependencyInjectionExtensions
       {
         services.TryAdd(descriptor);
       }
+      ComponentRegistry.Instance.TryAddEndpoint(requestType, endpointType);
     }
 
     static void AddEndpoint(
@@ -174,6 +179,7 @@ public static class DependencyInjectionExtensions
         endpointType,
         endpointType,
         options.EndpointLifetime));
+      ComponentRegistry.Instance.TryAddEndpoint(endpointType, endpointType);
     }
 
     static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
@@ -232,8 +238,8 @@ public static class DependencyInjectionExtensions
     IEndpointRouteBuilder builder = app;
     using (var scope = builder.ServiceProvider.CreateScope())
     {
-      var routeGroups = scope.ServiceProvider.GetKeyedServices<IRouteGroupConfigurator>(KeyedService.AnyKey);
-      var endpoints = scope.ServiceProvider.GetKeyedServices<IEndpointConfigurator>(KeyedService.AnyKey);
+      var routeGroups = ComponentRegistry.Instance.GetRouteGroups().Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator).Where(i => i is not null).Select(i => i!); ;
+      var endpoints = ComponentRegistry.Instance.GetEndpoints().Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator).Where(i => i is not null).Select(i => i!);
 
       //Items that don't have a membership to any route group or
       //items that have a membership to root route group (items at root)

@@ -2,7 +2,7 @@
 
 >**Package**: `ModEndpoints.Core`
 
-MinimalEndpoint within `ModEndpoints.Core` package is closest to barebones Minimal API. Request model (if any) defined for a MinimalEndpoint is bound with [AsParameters] attribute. Its 'HandleAsync' method supports the following types of return values:
+MinimalEndpoint is the endpoint type that is most close to a Minimal API. Request model (if any) defined for a MinimalEndpoint is bound with [AsParameters] attribute. Its 'HandleAsync' method supports the following types of return values:
 
 - string
 - T (Any other type)
