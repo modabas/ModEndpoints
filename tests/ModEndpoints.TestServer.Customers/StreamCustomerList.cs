@@ -1,8 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 using ModEndpoints.Core;
-using ModEndpoints.TestServer.Features.Customers.Configuration;
+using ModEndpoints.TestServer.Customers.Configuration;
 
-namespace ModEndpoints.TestServer.Features.Customers;
+namespace ModEndpoints.TestServer.Customers;
 
 public record StreamCustomerListResponse(
   Guid Id,

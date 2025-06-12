@@ -1,10 +1,11 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints.Core;
-using ModEndpoints.TestServer.Features.Customers.Configuration;
+using ModEndpoints.TestServer.Customers.Configuration;
 
-namespace ModEndpoints.TestServer.Features.Customers;
+namespace ModEndpoints.TestServer.Customers;
 public record CreateCustomerRequest([FromBody] CreateCustomerRequestBody Body);
 
 public record CreateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);

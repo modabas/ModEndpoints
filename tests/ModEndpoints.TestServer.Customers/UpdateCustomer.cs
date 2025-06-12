@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints.Core;
-using ModEndpoints.TestServer.Features.Customers.Configuration;
+using ModEndpoints.TestServer.Customers.Configuration;
 
-namespace ModEndpoints.TestServer.Features.Customers;
+namespace ModEndpoints.TestServer.Customers;
 public record UpdateCustomerRequest(Guid Id, [FromBody] UpdateCustomerRequestBody Body);
 
 public record UpdateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);

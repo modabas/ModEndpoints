@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
-using ModEndpoints.TestServer.Features.Customers;
+using ModEndpoints.TestServer.Customers;
 
 namespace ModEndpoints.Tests.MinimalEndpoints;
 
