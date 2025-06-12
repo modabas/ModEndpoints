@@ -24,13 +24,23 @@ internal class ComponentRegistry
   {
     foreach (var type in implementationTypes)
     {
-      _routeGroups[type] = type;
+      TryAddRouteGroup(type);
     }
+  }
+
+  private void TryAddRouteGroup(Type implementationType)
+  {
+    _routeGroups.TryAdd(implementationType, implementationType);
+  }
+
+  public void AddEndpoint(Type key, Type implementationType)
+  {
+    _endpoints[key] = implementationType;
   }
 
   public void TryAddEndpoint(Type key, Type implementationType)
   {
-    _endpoints[key] = implementationType;
+    _endpoints.TryAdd(key, implementationType);
   }
 
   public ICollection<Type> GetRouteGroups()

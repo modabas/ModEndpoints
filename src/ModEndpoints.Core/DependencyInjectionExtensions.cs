@@ -161,12 +161,13 @@ public static class DependencyInjectionExtensions
           }
         }
         services.Add(descriptor);
+        ComponentRegistry.Instance.AddEndpoint(requestType, endpointType);
       }
       else
       {
         services.TryAdd(descriptor);
+        ComponentRegistry.Instance.TryAddEndpoint(requestType, endpointType);
       }
-      ComponentRegistry.Instance.TryAddEndpoint(requestType, endpointType);
     }
 
     static void AddEndpoint(
@@ -238,8 +239,14 @@ public static class DependencyInjectionExtensions
     IEndpointRouteBuilder builder = app;
     using (var scope = builder.ServiceProvider.CreateScope())
     {
-      var routeGroups = ComponentRegistry.Instance.GetRouteGroups().Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator).Where(i => i is not null).Select(i => i!); ;
-      var endpoints = ComponentRegistry.Instance.GetEndpoints().Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator).Where(i => i is not null).Select(i => i!);
+      var routeGroups = ComponentRegistry.Instance.GetRouteGroups()
+        .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
+        .Where(i => i is not null)
+        .Select(i => i!);
+      var endpoints = ComponentRegistry.Instance.GetEndpoints()
+        .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator)
+        .Where(i => i is not null)
+        .Select(i => i!);
 
       //Items that don't have a membership to any route group or
       //items that have a membership to root route group (items at root)
