@@ -43,4 +43,12 @@ internal class ComponentRegistryAccessor
   private ComponentRegistryAccessor()
   {
   }
+
+  public void InitRegistry()
+  {
+    if (Registry is null)
+    {
+      Registry = new ComponentRegistry();
+    }
+  }
 }
