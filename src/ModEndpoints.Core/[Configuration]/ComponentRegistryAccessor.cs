@@ -44,7 +44,7 @@ internal class ComponentRegistryAccessor
   {
   }
 
-  public void InitRegistry()
+  public void Initialize()
   {
     if (Registry is null)
     {

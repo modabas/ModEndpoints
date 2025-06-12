@@ -52,7 +52,7 @@ public static class DependencyInjectionExtensions
 
     services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
-    ComponentRegistryAccessor.Instance.InitRegistry();
+    ComponentRegistryAccessor.Instance.Initialize();
 
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, options)
