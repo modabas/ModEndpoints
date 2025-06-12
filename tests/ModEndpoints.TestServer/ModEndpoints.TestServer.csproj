@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ModEndpoints\ModEndpoints.csproj" />
+    <ProjectReference Include="..\ModEndpoints.TestServer.Customers\ModEndpoints.TestServer.Customers.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Microsoft.AspNetCore.Http;
-using ModEndpoints.TestServer.Features.Customers;
+using ModEndpoints.TestServer.Customers;
 
 namespace ModEndpoints.Tests.MinimalEndpoints;
 

@@ -1,12 +1,15 @@
 ﻿using FluentValidation;
 using ModEndpoints;
-using ModEndpoints.TestServer.Features.Customers;
+using ModEndpoints.TestServer.Customers;
+using ModEndpoints.TestServer.Features.Books;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddModEndpointsFromAssemblyContaining<GetCustomerById>();
 builder.Services.AddValidatorsFromAssemblyContaining<GetCustomerByIdRequestValidator>(includeInternalTypes: true);
+builder.Services.AddModEndpointsFromAssemblyContaining<GetBookById>();
+builder.Services.AddValidatorsFromAssemblyContaining<GetBookByIdRequestValidator>(includeInternalTypes: true);
 
 var app = builder.Build();
 

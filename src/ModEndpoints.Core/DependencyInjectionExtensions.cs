@@ -52,6 +52,8 @@ public static class DependencyInjectionExtensions
 
     services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
+    ComponentRegistryAccessor.Instance.Initialize();
+
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, options)
       .AddEndpointsCoreFromAssembly(assembly, options);
@@ -80,7 +82,7 @@ public static class DependencyInjectionExtensions
       .ToArray();
 
     services.TryAddEnumerable(serviceDescriptors);
-    ComponentRegistry.Instance.TryAddRouteGroups(routeGroupTypes);
+    ComponentRegistryAccessor.Instance.Registry?.TryAddRouteGroups(routeGroupTypes);
 
     return services;
   }
@@ -161,12 +163,13 @@ public static class DependencyInjectionExtensions
           }
         }
         services.Add(descriptor);
+        ComponentRegistryAccessor.Instance.Registry?.AddEndpoint(requestType, endpointType);
       }
       else
       {
         services.TryAdd(descriptor);
+        ComponentRegistryAccessor.Instance.Registry?.TryAddEndpoint(requestType, endpointType);
       }
-      ComponentRegistry.Instance.TryAddEndpoint(requestType, endpointType);
     }
 
     static void AddEndpoint(
@@ -179,7 +182,7 @@ public static class DependencyInjectionExtensions
         endpointType,
         endpointType,
         options.EndpointLifetime));
-      ComponentRegistry.Instance.TryAddEndpoint(endpointType, endpointType);
+      ComponentRegistryAccessor.Instance.Registry?.TryAddEndpoint(endpointType, endpointType);
     }
 
     static Type[] GetGenericArgumentsOfBase(Type derivedType, Type baseType)
@@ -238,8 +241,14 @@ public static class DependencyInjectionExtensions
     IEndpointRouteBuilder builder = app;
     using (var scope = builder.ServiceProvider.CreateScope())
     {
-      var routeGroups = ComponentRegistry.Instance.GetRouteGroups().Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator).Where(i => i is not null).Select(i => i!); ;
-      var endpoints = ComponentRegistry.Instance.GetEndpoints().Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator).Where(i => i is not null).Select(i => i!);
+      var routeGroups = ComponentRegistryAccessor.Instance.Registry?.GetRouteGroups()
+        .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
+        .Where(i => i is not null)
+        .Select(i => i!) ?? [];
+      var endpoints = ComponentRegistryAccessor.Instance.Registry?.GetEndpoints()
+        .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator)
+        .Where(i => i is not null)
+        .Select(i => i!) ?? [];
 
       //Items that don't have a membership to any route group or
       //items that have a membership to root route group (items at root)

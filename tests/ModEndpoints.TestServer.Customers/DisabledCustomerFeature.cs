@@ -1,8 +1,9 @@
-﻿using ModEndpoints.Core;
+﻿using Microsoft.AspNetCore.Http;
+using ModEndpoints.Core;
 using ModEndpoints.RemoteServices.Core;
-using ModEndpoints.TestServer.Features.Customers.Configuration;
+using ModEndpoints.TestServer.Customers.Configuration;
 
-namespace ModEndpoints.TestServer.Features.Customers;
+namespace ModEndpoints.TestServer.Customers;
 
 [MapToGroup<CustomersRouteGroup>()]
 [DoNotRegister]
