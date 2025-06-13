@@ -45,7 +45,7 @@ internal class GetStreamingWeatherForecast
     foreach (var item in forecast)
     {
       yield return item;
-      await Task.Delay(1000, ct);
+      await Task.Delay(500, ct);
     }
   }
 

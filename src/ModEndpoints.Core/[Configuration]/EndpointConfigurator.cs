@@ -6,8 +6,6 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
 {
   protected abstract Delegate ExecuteDelegate { get; }
 
-  private EndpointConfigurationBuilder? _builder;
-
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
@@ -18,9 +16,9 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
     IEndpointRouteBuilder builder,
     ConfigurationContext<EndpointConfigurationParameters> configurationContext)
   {
-    _builder = new(builder, ExecuteDelegate);
-    Configure(_builder, configurationContext);
-    return _builder.HandlerBuilders.ToArray();
+    EndpointConfigurationBuilder configurationBuilder = new(builder, ExecuteDelegate);
+    Configure(configurationBuilder, configurationContext);
+    return configurationBuilder.HandlerBuilders.ToArray();
   }
 
   /// <summary>

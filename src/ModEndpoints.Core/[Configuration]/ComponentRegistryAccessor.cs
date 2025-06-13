@@ -4,7 +4,6 @@ internal class ComponentRegistryAccessor
 {
   private static readonly AsyncLocal<ComponentRegistryHolder> _registry = new();
 
-  /// <inheritdoc/>
   public ComponentRegistry? Registry
   {
     get
@@ -50,5 +49,10 @@ internal class ComponentRegistryAccessor
     {
       Registry = new ComponentRegistry();
     }
+  }
+
+  public void Clear()
+  {
+    Registry = null;
   }
 }

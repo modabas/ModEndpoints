@@ -267,6 +267,8 @@ public static class DependencyInjectionExtensions
         globalEndpointConfiguration,
         throwOnMissingConfiguration);
 
+      ComponentRegistryAccessor.Instance.Clear();
+
       return app;
     }
   }
