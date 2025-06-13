@@ -5,8 +5,6 @@ namespace ModEndpoints.Core;
 
 public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
 {
-  private RouteGroupConfigurationBuilder? _configurationBuilder;
-
   /// <summary>
   /// Entry point for route group configuration. Called by DI.
   /// </summary>
@@ -17,9 +15,9 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
     IEndpointRouteBuilder builder,
     ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
   {
-    _configurationBuilder = new(builder);
-    Configure(_configurationBuilder, configurationContext);
-    return _configurationBuilder.GroupBuilders.ToArray();
+    RouteGroupConfigurationBuilder configurationBuilder = new(builder);
+    Configure(configurationBuilder, configurationContext);
+    return configurationBuilder.GroupBuilders.ToArray();
   }
 
   /// <summary>
