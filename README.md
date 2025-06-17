@@ -4,18 +4,18 @@
 [![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
-**ModEndpoints** provides a structured approach to organizing ASP.NET Core Minimal APIs using the REPR (Request - Endpoint - Response) pattern. It enhances the Minimal API paradigm by introducing reusable, testable, and consistent components for request validation, handling, and response mapping.
+**ModEndpoints** provides various base endpoint types to organize ASP.NET Core Minimal APIs in the REPR (Request - Endpoint - Response) pattern. It shapes Minimal APIs into components encapsulating configuration, automatic request validation, request handling, and, depending on endpoint type, response mapping.
 
 ---
 
 ## ✨ Features
 
 - **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint and Response components.
-- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, filters, and more.
-- **Auto-Discovery and Registration**: Automatically discovers and registers endpoints.
+- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, endpoint filters, route groups, etc.
+- **Auto-Discovery and Registration**: Automatically discovers and registers endpoints and route groups.
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a validator is registered.
-- **Dependency Injection**: Supports constructor-based dependency injection in endpoint implementations.
-- **Type-Safe Responses**: Enforces response model type safety in request handlers.
+- **Dependency Injection**: Supports constructor-based dependency injection in endpoint implementation types.
+- **Type-Safe Responses**: Provides response type safety in request handlers.
 
 ---
 
@@ -24,7 +24,7 @@
 ### MinimalEndpoint  
 
 - **Purpose**: Enables full flexibility and capability of Minimal APIs within a structured approach.  
-- **Usage**: Suitable for implementing any Minimal API endpoint, from simple to complex scenarios, while benefiting from clear separation of concerns and all features available to Minimal APIs.
+- **Usage**: Suitable for implementing any Minimal API in endpoint format, from simple to complex scenarios.
 - **Package**: `ModEndpoints.Core`
 
 ### WebResultEndpoint
@@ -41,8 +41,8 @@
 
 ### ServiceEndpoint
 
-- **Purpose**: Designed for simplifying remote service consumption with strongly typed request and response models.
-- **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package to abstract HTTP plumbing on the client side.
+- **Purpose**: Designed for simplifying remote service consumption only with knowledge of remote service base address and request model.
+- **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package on client side to abstract HTTP plumbing while calling remote ServiceEndpoints.
 - **Package**: `ModEndpoints`
 
 > **Note**: For detailed information on each endpoint type, refer to the [Endpoint Types](./docs/EndpointTypes.md) documentation.
@@ -53,11 +53,11 @@
 
 Each endpoint must implement two virtual methods:
 
-1. **Configure**: Invoked during application startup to define the route and HTTP method for an endpoint. It begins with calling input parameter `builder`'s methods like `MapGet`, `MapPost`, etc., to specify the route pattern. The returned `RouteHandlerBuilder` from the Map[HttpVerb] method can then be used for further endpoint customization.
+1. **Configure**: Invoked during application startup to define the route and HTTP method along with any additional configuration endpoint requires. It begins with calling input parameter `builder`'s methods like `MapGet`, `MapPost`, etc., to specify the route pattern. The returned `RouteHandlerBuilder` from the Map[HttpVerb] method can then be used for further endpoint customization.
 
 2. **HandleAsync**: Contains the logic to handle incoming requests. Called after the request is validated (if applicable).
 
-> **Note**: Dependencies resolved from constructor are not available during configuration. To access a service from dependency injection in the configuration phase, use the `ServiceProvider` property of the configuration context parameter in the `Configure` method.
+> **Note**: Dependencies resolved from constructor are not available during configuration. To access a service from dependency injection in the configuration phase, use the `ServiceProvider` property of the configuration context parameter provided to the `Configure` method.
 
 > **Note**: `ServiceEndpoint` provides a default implementation for the `Configure` method, and only requires `HandleAsync` method implementation.
 
