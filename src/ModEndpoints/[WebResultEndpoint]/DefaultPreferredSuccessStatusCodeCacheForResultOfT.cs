@@ -40,7 +40,19 @@ public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSucc
         var producesList = endpoint
           .Metadata
           .GetOrderedMetadata<IProducesResponseTypeMetadata>();
-        if (producesList is null || producesList.Count == 0)
+#if NET9_0
+        // Exclude IResult responses with application/json content type for StatusCodes.Status200OK
+        // .NET 9.0 adds it by default, so we filter it out while determining preferred status code
+        // see https://github.com/dotnet/aspnetcore/issues/57801
+        producesList = producesList.Where(p =>
+          (p.StatusCode == StatusCodes.Status200OK &&
+          p.ContentTypes.Count() == 1 &&
+          p.ContentTypes.First() == "application/json" &&
+          p.Type == typeof(IResult)) == false)
+        .ToList()
+        .AsReadOnly();
+#endif
+        if (producesList.Count == 0)
         {
           return null;
         }
