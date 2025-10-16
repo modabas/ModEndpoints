@@ -7,19 +7,7 @@ namespace WeatherForecastWebApi;
 internal class GetStreamingWeatherForecast
   : MinimalEndpointWithStreamingResponse<WeatherForecast>
 {
-  private static readonly string[] _summaries =
-  [
-    "Freezing",
-    "Bracing",
-    "Chilly",
-    "Cool",
-    "Mild",
-    "Warm",
-    "Balmy",
-    "Hot",
-    "Sweltering",
-    "Scorching"
-  ];
+  private static readonly string[] _summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,

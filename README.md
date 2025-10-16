@@ -117,10 +117,7 @@ internal class HelloWorldRequestValidator : AbstractValidator<HelloWorldRequest>
 {
   public HelloWorldRequestValidator()
   {
-    RuleFor(x => x.Name)
-      .NotEmpty()
-      .MinimumLength(3)
-      .MaximumLength(50);
+    RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(50);
   }
 }
 
@@ -151,19 +148,7 @@ internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary
 
 internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
 {
-  private static readonly string[] _summaries =
-  [
-    "Freezing",
-    "Bracing",
-    "Chilly",
-    "Cool",
-    "Mild",
-    "Warm",
-    "Balmy",
-    "Hot",
-    "Sweltering",
-    "Scorching"
-  ];
+  private static readonly string[] _summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
