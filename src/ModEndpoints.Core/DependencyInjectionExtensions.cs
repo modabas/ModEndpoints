@@ -234,13 +234,12 @@ public static class DependencyInjectionExtensions
   /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
   /// <param name="throwOnMissingConfiguration"></param>
   /// <returns></returns>
-  public static WebApplication MapModEndpointsCore(
-    this WebApplication app,
+  public static IEndpointRouteBuilder MapModEndpointsCore(
+    this IEndpointRouteBuilder app,
     Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
-    IEndpointRouteBuilder builder = app;
-    using (var scope = builder.ServiceProvider.CreateScope())
+    using (var scope = app.ServiceProvider.CreateScope())
     {
       var routeGroups = ComponentRegistryAccessor.Instance.Registry?.GetRouteGroups()
         .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
@@ -259,7 +258,7 @@ public static class DependencyInjectionExtensions
 
       _ = MapComponents(
         scope.ServiceProvider,
-        builder,
+        app,
         typeIsNotMemberOfAnyRouteGroupPredicate,
         null, //we are at root, so no current route group
         null, //we are at root, so no current configuration context

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModEndpoints.Core;
@@ -81,8 +82,8 @@ public static class DependencyInjectionExtensions
   /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
   /// <param name="throwOnMissingConfiguration"></param>
   /// <returns></returns>
-  public static WebApplication MapModEndpoints(
-    this WebApplication app,
+  public static IEndpointRouteBuilder MapModEndpoints(
+    this IEndpointRouteBuilder app,
     Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
