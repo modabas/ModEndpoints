@@ -10,7 +10,7 @@ namespace ModEndpoints.Core;
 /// <param name="executeDelegate"></param>
 internal sealed class DefaultEndpointConfigurationBuilder(
   IEndpointRouteBuilder endpointRouteBuilder,
-  Delegate executeDelegate) 
+  Delegate executeDelegate)
   : EndpointConfigurationBuilder
 {
   /// <summary>

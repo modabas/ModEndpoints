@@ -9,7 +9,7 @@ namespace ModEndpoints.Core;
 /// </summary>
 /// <param name="endpointRouteBuilder"></param>
 internal sealed class DefaultRouteGroupConfigurationBuilder(
-  IEndpointRouteBuilder endpointRouteBuilder) 
+  IEndpointRouteBuilder endpointRouteBuilder)
   : RouteGroupConfigurationBuilder
 {
   /// <summary>
