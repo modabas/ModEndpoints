@@ -2,6 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints;
+
 public interface IResultToResponseMapper
 {
   ValueTask<IResult> ToResponseAsync(

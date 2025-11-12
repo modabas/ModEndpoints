@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
+
 public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
 {
   protected abstract Delegate ExecuteDelegate { get; }

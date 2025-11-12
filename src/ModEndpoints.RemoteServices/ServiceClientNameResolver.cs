@@ -1,6 +1,7 @@
 ﻿using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.RemoteServices;
+
 internal class ServiceClientNameResolver
 {
   private const string InvalidRequestType = "Request type should not be generic type parameter.";

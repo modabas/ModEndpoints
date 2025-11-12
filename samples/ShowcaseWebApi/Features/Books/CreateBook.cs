@@ -8,6 +8,7 @@ using ShowcaseWebApi.Features.Books.Configuration;
 using ShowcaseWebApi.Features.Books.Data;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record CreateBookRequest([FromBody] CreateBookRequestBody Body);
 
 public record CreateBookRequestBody(string Title, string Author, decimal Price);

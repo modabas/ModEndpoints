@@ -4,6 +4,7 @@ using ModEndpoints.TestServer.Features.Stores.Configuration;
 using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Stores;
+
 public record GetStoreByIdRequest(Guid Id);
 
 public record GetStoreByIdResponse(Guid Id, string Name);

@@ -7,6 +7,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Stores.Configuration;
 
 namespace ShowcaseWebApi.Features.Stores;
+
 public record DeleteStoreRequest(Guid Id);
 
 internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreRequest>

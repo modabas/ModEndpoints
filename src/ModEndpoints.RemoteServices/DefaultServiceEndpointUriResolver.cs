@@ -2,6 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
+
 public class DefaultServiceEndpointUriResolver : IServiceEndpointUriResolver
 {
   private const string CannotResolveServiceEndpointUri = "Cannot resolve request uri for service endpoint.";

@@ -8,6 +8,7 @@ using ShowcaseWebApi.Features.Stores.Configuration;
 using ShowcaseWebApi.Features.Stores.Data;
 
 namespace ShowcaseWebApi.Features.Stores;
+
 public record CreateStoreRequest([FromBody] CreateStoreRequestBody Body);
 public record CreateStoreRequestBody(string Name);
 public record CreateStoreResponse(Guid Id);

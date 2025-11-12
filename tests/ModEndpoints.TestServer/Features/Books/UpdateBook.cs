@@ -5,6 +5,7 @@ using ModEndpoints.TestServer.Features.Books.Configuration;
 using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
+
 public record UpdateBookRequest(Guid Id, [FromBody] UpdateBookRequestBody Body);
 
 public record UpdateBookRequestBody(string Title, string Author, decimal Price);

@@ -2,6 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints;
+
 public abstract class BusinessResultEndpointWithEmptyRequest<TResultValue>
   : BaseBusinessResultEndpoint<Result<TResultValue>>
   where TResultValue : notnull

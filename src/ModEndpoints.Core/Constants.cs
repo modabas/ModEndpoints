@@ -1,4 +1,5 @@
 ﻿namespace ModEndpoints.Core;
+
 internal static class Constants
 {
   public const string RouteBuilderIsNullForEndpointMessage =

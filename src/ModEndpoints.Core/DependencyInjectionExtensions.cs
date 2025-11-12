@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.Core;
+
 public static class DependencyInjectionExtensions
 {
   /// <summary>

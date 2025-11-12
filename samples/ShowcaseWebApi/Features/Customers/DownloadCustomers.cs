@@ -4,6 +4,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record DownloadCustomersRequest(string FileName);
 
 internal class DownloadCustomersRequestValidator : AbstractValidator<DownloadCustomersRequest>

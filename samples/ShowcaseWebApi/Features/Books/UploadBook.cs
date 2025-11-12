@@ -6,6 +6,7 @@ using ModResults;
 using ShowcaseWebApi.Features.Books.Configuration;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record UploadBookRequest(string Title, [FromForm] string Author, IFormFile BookFile);
 
 public record UploadBookResponse(string FileName, long FileSize);

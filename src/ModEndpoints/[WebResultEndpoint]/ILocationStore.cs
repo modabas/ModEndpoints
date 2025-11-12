@@ -1,4 +1,5 @@
 ﻿namespace ModEndpoints;
+
 public interface ILocationStore
 {
   ValueTask<string?> GetValueAsync(CancellationToken ct);

@@ -3,6 +3,7 @@ using ModEndpoints.Core;
 using ModResults;
 
 namespace ModEndpoints;
+
 public abstract class BusinessResultEndpoint<TRequest, TResultValue>
   : BaseBusinessResultEndpoint<TRequest, Result<TResultValue>>
   where TRequest : notnull

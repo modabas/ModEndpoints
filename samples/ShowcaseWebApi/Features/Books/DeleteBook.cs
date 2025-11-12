@@ -7,6 +7,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record DeleteBookRequest(Guid Id);
 
 internal class DeleteBookRequestValidator : AbstractValidator<DeleteBookRequest>

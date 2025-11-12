@@ -8,6 +8,7 @@ using ShowcaseWebApi.Features.Stores.Data;
 using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
 namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
+
 internal class CreateStoreRequestValidator : AbstractValidator<CreateStoreRequest>
 {
   public CreateStoreRequestValidator()

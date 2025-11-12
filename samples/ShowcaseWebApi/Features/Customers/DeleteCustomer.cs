@@ -5,6 +5,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record DeleteCustomerRequest(Guid Id);
 
 internal class DeleteCustomerRequestValidator : AbstractValidator<DeleteCustomerRequest>

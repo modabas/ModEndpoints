@@ -5,6 +5,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record UpdateCustomerRequest(Guid Id, [FromBody] UpdateCustomerRequestBody Body);
 
 public record UpdateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);

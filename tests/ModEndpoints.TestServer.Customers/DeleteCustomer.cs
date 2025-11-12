@@ -4,6 +4,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record DeleteCustomerRequest(Guid Id);
 
 internal class DeleteCustomerRequestValidator : AbstractValidator<DeleteCustomerRequest>

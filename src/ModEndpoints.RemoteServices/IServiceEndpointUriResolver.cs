@@ -2,6 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
+
 public interface IServiceEndpointUriResolver
 {
   Result<string> Resolve(IServiceRequestMarker req);

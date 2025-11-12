@@ -2,6 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints;
+
 public static class RequestValidationResultExtensions
 {
   /// <summary>

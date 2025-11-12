@@ -7,6 +7,7 @@ using ModEndpoints.RemoteServices;
 using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints;
+
 public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValue>
   : BaseServiceEndpointWithStreamingResponse<TRequest, StreamingResponseItem<TResultValue>>
   where TRequest : IServiceRequestWithStreamingResponse<TResultValue>

@@ -5,6 +5,7 @@ using ModEndpoints.TestServer.Features.Books.Configuration;
 using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
+
 public record CreateBookRequest([FromBody] CreateBookRequestBody Body);
 
 public record CreateBookRequestBody(string Title, string Author, decimal Price);

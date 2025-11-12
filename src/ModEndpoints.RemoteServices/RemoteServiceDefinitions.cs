@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 
 namespace ModEndpoints.RemoteServices;
+
 public static class RemoteServiceDefinitions
 {
   public const string DefaultUriResolverName = "DefaultServiceEndpointUriResolver";

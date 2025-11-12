@@ -6,6 +6,7 @@ using ModEndpoints.Core;
 using ModEndpoints.RemoteServices;
 
 namespace ModEndpoints;
+
 public static class DependencyInjectionExtensions
 {
   /// <summary>

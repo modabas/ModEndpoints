@@ -7,6 +7,7 @@ using ModEndpoints.RemoteServices.Core;
 using ModResults;
 
 namespace ModEndpoints;
+
 public abstract class ServiceEndpoint<TRequest, TResultValue>
   : BaseServiceEndpoint<TRequest, Result<TResultValue>>
   where TRequest : IServiceRequest<TResultValue>

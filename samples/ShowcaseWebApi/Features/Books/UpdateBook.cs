@@ -8,6 +8,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record UpdateBookRequest(Guid Id, [FromBody] UpdateBookRequestBody Body);
 
 public record UpdateBookRequestBody(string Title, string Author, decimal Price);

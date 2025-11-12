@@ -7,6 +7,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Stores.Configuration;
 
 namespace ShowcaseWebApi.Features.Stores;
+
 public record GetStoreByIdRequest(Guid Id);
 
 public record GetStoreByIdResponse(Guid Id, string Name);

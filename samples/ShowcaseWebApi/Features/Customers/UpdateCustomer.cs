@@ -6,6 +6,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record UpdateCustomerRequest(Guid Id, [FromBody] UpdateCustomerRequestBody Body);
 
 public record UpdateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);

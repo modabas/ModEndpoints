@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
+
 public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
   : EndpointConfigurator, IBusinessResultEndpoint
   where TRequest : notnull

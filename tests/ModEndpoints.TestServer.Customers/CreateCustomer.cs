@@ -6,6 +6,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record CreateCustomerRequest([FromBody] CreateCustomerRequestBody Body);
 
 public record CreateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);

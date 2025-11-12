@@ -8,6 +8,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Stores.Configuration;
 
 namespace ShowcaseWebApi.Features.Stores;
+
 public record UpdateStoreRequest(Guid Id, [FromBody] UpdateStoreRequestBody Body);
 
 public record UpdateStoreRequestBody(string Name);

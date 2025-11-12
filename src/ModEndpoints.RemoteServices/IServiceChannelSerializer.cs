@@ -2,6 +2,7 @@
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
+
 public interface IServiceChannelSerializer
 {
   Task<Result> DeserializeResultAsync(

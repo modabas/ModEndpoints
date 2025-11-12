@@ -1,4 +1,5 @@
 ﻿namespace ModEndpoints;
+
 public static class WebResultEndpointDefinitions
 {
   public const string DefaultResultToResponseMapperName = "DefaultResultToResponseMapper";

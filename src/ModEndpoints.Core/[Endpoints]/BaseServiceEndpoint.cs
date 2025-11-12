@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.Core;
+
 public abstract class BaseServiceEndpoint<TRequest, TResponse>
   : ServiceEndpointConfigurator, IServiceEndpoint
   where TRequest : IServiceRequestMarker

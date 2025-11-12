@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ModEndpoints.Core;
+
 public static class RequestValidationResultExtensions
 {
   public static IResult ToMinimalApiResult(this RequestValidationResult validationResult)

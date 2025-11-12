@@ -1,4 +1,5 @@
 ﻿namespace ModEndpoints.Core;
+
 public class RequestValidationResult
 {
   public bool IsFailed { get; set; } = false;
