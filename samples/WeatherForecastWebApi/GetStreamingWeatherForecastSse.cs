@@ -25,7 +25,7 @@ internal class GetStreamingWeatherForecastSse
     await Task.CompletedTask;
     return Results.ServerSentEvents<WeatherForecast>(GetForecast(ct));
 
-    async IAsyncEnumerable<WeatherForecast> GetForecast([EnumeratorCancellation] CancellationToken ct)
+    static async IAsyncEnumerable<WeatherForecast> GetForecast([EnumeratorCancellation] CancellationToken ct)
     {
       var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
