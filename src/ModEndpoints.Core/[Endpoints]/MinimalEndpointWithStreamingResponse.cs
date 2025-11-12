@@ -3,6 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for endpoints that return a streaming response of type <see cref="IAsyncEnumerable{TResponse}"/> from HandleAsync method.<br/>
+/// > **Note:** .Net 10 introduced `ServerSentEventsResult` IResult type to return streaming responses, which can be used as response type of a `MinimalEndpoint`.
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response type.</typeparam>
 public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
   : EndpointConfigurator, IMinimalEndpoint
   where TRequest : notnull
@@ -65,6 +71,11 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
   }
 }
 
+/// <summary>
+/// Abstract base class for endpoints that return a streaming response of type <see cref="IAsyncEnumerable{TResponse}"/> from HandleAsync method.<br/>
+/// > **Note:** .Net 10 introduced `ServerSentEventsResult` IResult type to return streaming responses, which can be used as response type of a `MinimalEndpoint`.
+/// </summary>
+/// <typeparam name="TResponse">Response type.</typeparam>
 public abstract class MinimalEndpointWithStreamingResponse<TResponse>
   : EndpointConfigurator, IMinimalEndpoint
 {

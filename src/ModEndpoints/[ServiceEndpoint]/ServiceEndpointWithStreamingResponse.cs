@@ -8,6 +8,13 @@ using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints;
 
+/// <summary>
+/// Abstract base class for service endpoints that return a streaming response of type <see cref="IAsyncEnumerable{T}"/> containing a <see cref="StreamingResponseItem{TResultValue}"/> which in turn contains business result from HandleAsync method wrapped in an HTTP 200 <see cref="IResult"/>.
+/// <para>Service endpoints use POST HTTP method by default, and the endpoint pattern is resolved using an <see cref="IServiceEndpointUriResolver"/>.</para>
+/// <para>This is a very specialized endpoint type which is intended to abstract away all HTTP client and request setup, consumption and response handling when used together with its client implementation.</para>
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResultValue">Type of the value contained by business result response.</typeparam>
 public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValue>
   : BaseServiceEndpointWithStreamingResponse<TRequest, StreamingResponseItem<TResultValue>>
   where TRequest : IServiceRequestWithStreamingResponse<TResultValue>
@@ -41,6 +48,12 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValu
   }
 }
 
+/// <summary>
+/// Abstract base class for service endpoints that return a streaming response of type <see cref="IAsyncEnumerable{T}"/> containing a <see cref="StreamingResponseItem"/> which in turn contains business result from HandleAsync method wrapped in an HTTP 200 <see cref="IResult"/>.
+/// <para>Service endpoints use POST HTTP method by default, and the endpoint pattern is resolved using an <see cref="IServiceEndpointUriResolver"/>.</para>
+/// <para>This is a very specialized endpoint type which is intended to abstract away all HTTP client and request setup, consumption and response handling when used together with its client implementation.</para>
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
 public abstract class ServiceEndpointWithStreamingResponse<TRequest>
   : BaseServiceEndpointWithStreamingResponse<TRequest, StreamingResponseItem>
   where TRequest : IServiceRequestWithStreamingResponse

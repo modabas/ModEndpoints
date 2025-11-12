@@ -3,6 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for endpoints that convert a business result returned from HandleAsync method to an <see cref="IResult"/> HTTP response, depending on the business result type, state and failure type (if any).
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="THandlerResult">Business result type.</typeparam>
 public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
   : EndpointConfigurator, IWebResultEndpoint
   where TRequest : notnull
@@ -73,6 +78,10 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
     CancellationToken ct);
 }
 
+/// <summary>
+/// Abstract base class for endpoints that convert a business result returned from HandleAsync method to an <see cref="IResult"/> HTTP response, depending on the business result type, state and failure type (if any).
+/// </summary>
+/// <typeparam name="THandlerResult">Business result type</typeparam>
 public abstract class BaseWebResultEndpoint<THandlerResult>
   : EndpointConfigurator, IWebResultEndpoint
 {

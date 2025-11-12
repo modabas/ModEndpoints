@@ -6,6 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for endpoints that return a response from HandleAsync method.
+/// Supports following response types:<br/>
+/// - string<br/>
+/// - T (Any other type)<br/>
+/// - <see cref="IResult"/> based (Including <see cref="TypedResults"/>)<br/>
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response type that will be used as strongly-type response of HandleAsync method.</typeparam>
 public abstract class MinimalEndpoint<TRequest, TResponse>
   : EndpointConfigurator, IMinimalEndpoint
   where TRequest : notnull
@@ -141,6 +150,14 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
   }
 }
 
+/// <summary>
+/// Abstract base class for endpoints that return a response from HandleAsync method.
+/// Supports following response types:<br/>
+/// - string<br/>
+/// - T (Any other type)<br/>
+/// - <see cref="IResult"/> based (Including <see cref="TypedResults"/>)<br/>
+/// </summary>
+/// <typeparam name="TResponse">Response type that will be used as strongly-type response of HandleAsync method.</typeparam>
 public abstract class MinimalEndpoint<TResponse>
   : EndpointConfigurator, IMinimalEndpoint
 {

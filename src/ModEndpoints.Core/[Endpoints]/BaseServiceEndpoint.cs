@@ -5,6 +5,11 @@ using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for service endpoints that return a business result from HandleAsync method wrapped in an HTTP 200 <see cref="IResult"/>.
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response business result type.</typeparam>
 public abstract class BaseServiceEndpoint<TRequest, TResponse>
   : ServiceEndpointConfigurator, IServiceEndpoint
   where TRequest : IServiceRequestMarker

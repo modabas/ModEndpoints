@@ -5,6 +5,11 @@ using ModEndpoints.RemoteServices.Core;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for service endpoints that return a streaming response of type <see cref="IAsyncEnumerable{TResponse}"/> from HandleAsync method.<br/>
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response type containing business result.</typeparam>
 public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
   : ServiceEndpointConfigurator, IServiceEndpoint
   where TRequest : IServiceRequestMarker

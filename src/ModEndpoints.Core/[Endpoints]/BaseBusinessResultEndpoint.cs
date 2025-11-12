@@ -3,6 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for endpoints that return a business result from HandleAsync method wrapped in an HTTP 200 <see cref="IResult"/>.
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response business result type.</typeparam>
 public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
   : EndpointConfigurator, IBusinessResultEndpoint
   where TRequest : notnull
@@ -56,6 +61,10 @@ public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
     CancellationToken ct);
 }
 
+/// <summary>
+/// Abstract base class for endpoints that return a business result from HandleAsync method wrapped in an HTTP 200 <see cref="IResult"/>.
+/// </summary>
+/// <typeparam name="TResponse">Response business result type.</typeparam>
 public abstract class BaseBusinessResultEndpoint<TResponse>
   : EndpointConfigurator, IBusinessResultEndpoint
 {
