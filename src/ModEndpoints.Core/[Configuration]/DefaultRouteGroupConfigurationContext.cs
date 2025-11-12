@@ -1,6 +1,9 @@
 ﻿namespace ModEndpoints.Core;
 
-public sealed class DefaultRouteGroupConfigurationContext : RouteGroupConfigurationContext
+/// <summary>
+/// Default implementation of <see cref="RouteGroupConfigurationContext"/>.
+/// </summary>
+internal sealed class DefaultRouteGroupConfigurationContext : RouteGroupConfigurationContext
 {
   public DefaultRouteGroupConfigurationContext(
     IServiceProvider serviceProvider,

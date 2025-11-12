@@ -10,8 +10,8 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// <summary>
   /// Entry point for endpoint configuration. Called by DI.
   /// </summary>
-  /// <param name="builder"></param>
-  /// <param name="configurationContext"></param>
+  /// <param name="builder">Endpoint builder.</param>
+  /// <param name="configurationContext">Configuration context.</param>
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder[] Configure(
     IEndpointRouteBuilder builder,
@@ -23,6 +23,12 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
     return [handlerBuilder];
   }
 
+  /// <summary>
+  /// Method to configure default service endpoint settings.
+  /// </summary>
+  /// <param name="builder">Endpoint builder.</param>
+  /// <param name="configurationContext">Configuration context.</param>
+  /// <returns></returns>
   protected abstract RouteHandlerBuilder? ConfigureDefaults(
     IEndpointRouteBuilder builder,
     EndpointConfigurationContext configurationContext);
@@ -32,8 +38,8 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   /// Runs after ConfigureDefaults method and can be overridden to further customize endpoint on top of default configuration.
   /// Use <see cref="RouteHandlerBuilder"/> parameter to chain additional configuration.
   /// </summary>
-  /// <param name="builder"></param>
-  /// <param name="configurationContext"></param>
+  /// <param name="builder">Endpoint builder.</param>
+  /// <param name="configurationContext">Configuration context.</param>
   protected virtual void Configure(
     RouteHandlerBuilder builder,
     EndpointConfigurationContext configurationContext)

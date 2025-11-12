@@ -17,17 +17,17 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
     IEndpointRouteBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    EndpointConfigurationBuilder configurationBuilder = new(builder, ExecuteDelegate);
+    DefaultEndpointConfigurationBuilder configurationBuilder = new(builder, ExecuteDelegate);
     Configure(configurationBuilder, configurationContext);
     return configurationBuilder.HandlerBuilders.ToArray();
   }
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
-  /// Start configuring endpoint by calling one of the Map[HttpVerb] methods and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
+  /// Start configuring endpoint by calling one of the Map[HttpVerb] methods of <see cref="EndpointConfigurationBuilder"/> parameter and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
   /// </summary>
-  /// <param name="builder"></param>
-  /// <param name="configurationContext"></param>
+  /// <param name="builder">Endpoint builder.</param>
+  /// <param name="configurationContext">Configuration context.</param>
   protected abstract void Configure(
     EndpointConfigurationBuilder builder,
     EndpointConfigurationContext configurationContext);

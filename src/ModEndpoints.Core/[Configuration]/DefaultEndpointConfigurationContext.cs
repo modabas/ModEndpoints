@@ -1,6 +1,9 @@
 ﻿namespace ModEndpoints.Core;
 
-public sealed class DefaultEndpointConfigurationContext : EndpointConfigurationContext
+/// <summary>
+/// Default implementation of <see cref="EndpointConfigurationContext"/>.
+/// </summary>
+internal sealed class DefaultEndpointConfigurationContext : EndpointConfigurationContext
 {
   public DefaultEndpointConfigurationContext(
     IServiceProvider serviceProvider,
