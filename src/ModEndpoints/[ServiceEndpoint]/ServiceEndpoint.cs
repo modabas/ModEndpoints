@@ -24,7 +24,7 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     var serviceProvider = configurationContext.ServiceProvider;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
@@ -55,7 +55,7 @@ public abstract class ServiceEndpoint<TRequest>
 
   protected sealed override RouteHandlerBuilder? ConfigureDefaults(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     var serviceProvider = configurationContext.ServiceProvider;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();

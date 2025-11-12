@@ -13,7 +13,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the route group.</returns>
   public RouteGroupBuilder[] Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
     RouteGroupConfigurationBuilder configurationBuilder = new(builder);
     Configure(configurationBuilder, configurationContext);
@@ -28,7 +28,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="configurationContext"></param>
   protected abstract void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext);
+    RouteGroupConfigurationContext configurationContext);
 
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
@@ -39,7 +39,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="configurationContext"></param>
   public virtual void PostConfigure(
     RouteGroupBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
     return;
   }
@@ -53,7 +53,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="configurationContext"></param>
   public virtual void EndpointPostConfigure(
     RouteHandlerBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     return;
   }

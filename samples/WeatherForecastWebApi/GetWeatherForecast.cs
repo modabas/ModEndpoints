@@ -13,7 +13,7 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/weatherforecast")
       .WithName("GetWeatherForecast")

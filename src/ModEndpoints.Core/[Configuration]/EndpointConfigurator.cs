@@ -15,7 +15,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder[] Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     EndpointConfigurationBuilder configurationBuilder = new(builder, ExecuteDelegate);
     Configure(configurationBuilder, configurationContext);
@@ -30,7 +30,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <param name="configurationContext"></param>
   protected abstract void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+    EndpointConfigurationContext configurationContext);
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
@@ -41,7 +41,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <param name="configurationContext"></param>
   public virtual void PostConfigure(
     RouteHandlerBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     return;
   }

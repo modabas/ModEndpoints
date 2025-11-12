@@ -12,7 +12,7 @@ internal class GetStreamingWeatherForecastTypedSse
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/streamingweatherforecasttypedsse")
       .WithName("GetStreamingWeatherForecastTypedSse")

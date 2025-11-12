@@ -27,7 +27,7 @@ internal class UpdateBook(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/books/{Id}")
       .Produces<UpdateBookResponse>();
@@ -82,7 +82,7 @@ internal class UploadBook
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/books/upload/{Title}")
       .DisableAntiforgery()

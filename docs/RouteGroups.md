@@ -15,7 +15,7 @@ internal class FeaturesRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
     var groupBuilder = builder.MapGroup("/api/v{version:apiVersion}");
     var apiVersionSet = groupBuilder.NewApiVersionSet()
@@ -32,7 +32,7 @@ internal class BooksV1RouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
     builder.MapGroup("/books")
       .MapToApiVersion(1)
@@ -46,7 +46,7 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);

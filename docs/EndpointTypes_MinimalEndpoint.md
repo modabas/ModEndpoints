@@ -34,7 +34,7 @@ internal class CreateCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/");
   }
@@ -68,7 +68,7 @@ internal class ListCustomers
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/");
   }
@@ -120,7 +120,7 @@ internal class FilterAndStreamCustomerList
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
   }
@@ -165,7 +165,7 @@ internal class StreamCustomerList
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapMethods("/stream-list", [HttpMethod.Get.Method]);
   }

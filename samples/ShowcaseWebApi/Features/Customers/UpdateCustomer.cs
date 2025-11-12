@@ -30,7 +30,7 @@ internal class UpdateCustomer(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}")
       .Produces<UpdateCustomerResponse>();

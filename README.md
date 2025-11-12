@@ -126,7 +126,7 @@ internal class HelloWorld
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("MinimalEndpoints/HelloWorld/{Name}")
       .Produces<string>();
@@ -152,7 +152,7 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/weatherforecast")
       .WithName("GetWeatherForecast")
@@ -191,7 +191,7 @@ internal class ListBooks(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/books")
       .Produces<ListBooksResponse>();

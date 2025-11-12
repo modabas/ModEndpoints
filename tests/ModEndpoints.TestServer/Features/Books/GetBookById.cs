@@ -24,7 +24,7 @@ internal class GetBookById
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/{Id}")
       .Produces<GetBookByIdResponse>();

@@ -1,14 +1,14 @@
 ﻿namespace ModEndpoints.Core;
 
-public class ConfigurationContext<T>
+public abstract class EndpointConfigurationContext
 {
   public IServiceProvider ServiceProvider { get; init; }
 
-  public T Parameters { get; init; }
+  public EndpointConfigurationParameters Parameters { get; init; }
 
-  public ConfigurationContext(
+  public EndpointConfigurationContext(
     IServiceProvider serviceProvider,
-    T parameters)
+    EndpointConfigurationParameters parameters)
   {
     ServiceProvider = serviceProvider;
     Parameters = parameters;

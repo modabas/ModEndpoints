@@ -236,7 +236,7 @@ public static class DependencyInjectionExtensions
   /// <returns></returns>
   public static WebApplication MapModEndpointsCore(
     this WebApplication app,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
     IEndpointRouteBuilder builder = app;
@@ -279,10 +279,10 @@ public static class DependencyInjectionExtensions
     IEndpointRouteBuilder builder,
     Func<Type, bool> filterPredicate,
     IRouteGroupConfigurator? currentRouteGroup,
-    ConfigurationContext<RouteGroupConfigurationParameters>? currentConfigurationContext,
+    RouteGroupConfigurationContext? currentConfigurationContext,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     //Process groups matching filter predicate
@@ -290,7 +290,7 @@ public static class DependencyInjectionExtensions
       x => filterPredicate(x.GetType())))
     {
       var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
-      ConfigurationContext<RouteGroupConfigurationParameters> childConfigurationContext = new(
+      DefaultRouteGroupConfigurationContext childConfigurationContext = new(
         serviceProvider,
         new(
           childRouteGroup,
@@ -359,10 +359,10 @@ public static class DependencyInjectionExtensions
     IServiceProvider serviceProvider,
     RouteGroupBuilder builder,
     IRouteGroupConfigurator parentRouteGroup,
-    ConfigurationContext<RouteGroupConfigurationParameters> parentConfigurationContext,
+    RouteGroupConfigurationContext parentConfigurationContext,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     //Items having membership to this route group
@@ -390,12 +390,12 @@ public static class DependencyInjectionExtensions
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup,
-    ConfigurationContext<RouteGroupConfigurationParameters>? parentConfigurationContext,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
+    RouteGroupConfigurationContext? parentConfigurationContext,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
-    ConfigurationContext<EndpointConfigurationParameters> endpointConfigurationContext = new(
+    DefaultEndpointConfigurationContext endpointConfigurationContext = new(
       serviceProvider,
       new(
         endpoint,

@@ -9,7 +9,7 @@ internal class BasicTest
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/WebResultEndpoints/BasicTest")
       .Produces<string>();

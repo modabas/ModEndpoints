@@ -7,7 +7,7 @@ public interface IEndpointConfiguratorMarker;
 
 public interface IEndpointConfigurator : IEndpointConfiguratorMarker
 {
-  RouteHandlerBuilder[] Configure(IEndpointRouteBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+  RouteHandlerBuilder[] Configure(IEndpointRouteBuilder builder, EndpointConfigurationContext configurationContext);
 
-  void PostConfigure(RouteHandlerBuilder builder, ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+  void PostConfigure(RouteHandlerBuilder builder, EndpointConfigurationContext configurationContext);
 }

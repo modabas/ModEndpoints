@@ -30,7 +30,7 @@ internal class FilterAndStreamCustomerList
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapMethods("/filter-and-stream-list", [HttpMethod.Post.Method]);
   }

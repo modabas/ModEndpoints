@@ -83,7 +83,7 @@ public static class DependencyInjectionExtensions
   /// <returns></returns>
   public static WebApplication MapModEndpoints(
     this WebApplication app,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
     return app.MapModEndpointsCore(
