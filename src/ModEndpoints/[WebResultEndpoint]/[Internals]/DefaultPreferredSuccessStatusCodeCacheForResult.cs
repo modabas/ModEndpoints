@@ -35,9 +35,9 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferr
     }
     return _cache.GetOrAdd(
       endpointString,
-      (_, endpoint) =>
+      (_, state) =>
       {
-        var producesList = endpoint
+        var producesList = state.Endpoint
           .Metadata
           .GetOrderedMetadata<IProducesResponseTypeMetadata>();
 #if NET9_0
@@ -56,7 +56,7 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferr
         {
           return null;
         }
-        return _successStatusCodePriorityList
+        return state.StatusCodes
           .Join(
             producesList,
             outer => outer,
@@ -64,6 +64,6 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferr
             (outer, inner) => outer)
           .FirstOrDefault();
       },
-      endpoint);
+      new { Endpoint = endpoint, StatusCodes = _successStatusCodePriorityList });
   }
 }
