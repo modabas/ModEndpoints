@@ -80,7 +80,8 @@ services.TryAddKeyedSingleton<IResultToResponseMapper, MyResultToResponseMapper>
   WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
 
 builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>();
-//Validation
+
+//Register validators (from FluentValidation.DependencyInjectionExtensions nuget package, not included)
 builder.Services.AddValidatorsFromAssemblyContaining<MyValidator>(includeInternalTypes: true);
 
 var app = builder.Build();
