@@ -5,7 +5,7 @@ using ModEndpoints.RemoteServices;
 
 namespace ModEndpoints;
 
-public class DefaultUriResolverProvider :
+internal sealed class DefaultUriResolverProvider :
   IUriResolverProvider
 {
   public IServiceEndpointUriResolver GetResolver(

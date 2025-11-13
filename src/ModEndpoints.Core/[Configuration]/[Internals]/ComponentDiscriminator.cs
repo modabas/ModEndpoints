@@ -2,7 +2,7 @@
 
 namespace ModEndpoints.Core;
 
-internal class ComponentDiscriminator : IComponentDiscriminator
+internal sealed class ComponentDiscriminator : IComponentDiscriminator
 {
   private readonly ConcurrentDictionary<Type, int> _registry = new();
 

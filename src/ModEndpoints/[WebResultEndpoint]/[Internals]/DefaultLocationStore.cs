@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints;
 
-public class DefaultLocationStore(IHttpContextAccessor contextAccessor) : ILocationStore
+internal sealed class DefaultLocationStore(IHttpContextAccessor contextAccessor) : ILocationStore
 {
   private string? _value;
 

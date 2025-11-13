@@ -6,7 +6,7 @@ using ModEndpoints.Core;
 
 namespace ModEndpoints;
 
-public class DefaultResultToResponseMapProvider :
+internal sealed class DefaultResultToResponseMapProvider :
   IResultToResponseMapProvider
 {
   private readonly ConcurrentDictionary<Type, string> _mapperNameCache = new();

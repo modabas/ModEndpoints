@@ -8,7 +8,7 @@ namespace ModEndpoints;
 /// <summary>
 /// Used to map result of Handler method to api response in Web Result Endpoints
 /// </summary>
-public class DefaultResultToResponseMapper : IResultToResponseMapper
+internal sealed class DefaultResultToResponseMapper : IResultToResponseMapper
 {
   public async ValueTask<IResult> ToResponseAsync(
     Result result,

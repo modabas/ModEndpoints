@@ -2,7 +2,8 @@
 
 public class RequestValidationResult
 {
-  public bool IsFailed { get; set; } = false;
+  public bool IsOk { get; set; } = true;
+  public bool IsFailed => !IsOk;
   public List<RequestValidationFailure> Errors { get; set; } = [];
 }
 

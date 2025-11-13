@@ -2,7 +2,7 @@
 
 namespace ModEndpoints.Core;
 
-internal class ComponentRegistry
+internal sealed class ComponentRegistry
 {
   private readonly ConcurrentDictionary<Type, Type> _routeGroups = new();
   private readonly ConcurrentDictionary<Type, Type> _endpoints = new();

@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
-public class FluentValidationRequestValidator : IRequestValidator
+internal sealed class FluentValidationRequestValidator : IRequestValidator
 {
   public async Task<RequestValidationResult> ValidateAsync<TRequest>(
     TRequest req,
@@ -20,7 +20,7 @@ public class FluentValidationRequestValidator : IRequestValidator
       {
         return new RequestValidationResult
         {
-          IsFailed = true,
+          IsOk = false,
           Errors = validationResult.Errors.Select(e => new RequestValidationFailure
           {
             PropertyName = e.PropertyName,
@@ -33,7 +33,7 @@ public class FluentValidationRequestValidator : IRequestValidator
     }
     return new RequestValidationResult
     {
-      IsFailed = false
+      IsOk = true
     };
   }
 }
