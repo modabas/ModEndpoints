@@ -9,18 +9,18 @@ namespace ModEndpoints.Core;
 public abstract class RouteGroupConfigurationBuilder
 {
   /// <summary>
-  /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
+  /// Creates a <see cref="RouteGroupBuilder"/>
   /// for defining endpoints, all prefixed with <paramref name="prefix"/>
   /// </summary>
-  /// <param name="prefix"></param>
+  /// <param name="prefix">The pattern that prefixes all routes in this group.</param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the group.</returns>
   public abstract RouteGroupBuilder MapGroup(RoutePattern prefix);
 
   /// <summary>
-  /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
+  /// Creates a <see cref="RouteGroupBuilder"/>
   /// for defining endpoints, all prefixed with <paramref name="prefix"/>
   /// </summary>
-  /// <param name="prefix"></param>
+  /// <param name="prefix">The pattern that prefixes all routes in this group.</param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the group.</returns>
   public abstract RouteGroupBuilder MapGroup(string prefix);
 }
