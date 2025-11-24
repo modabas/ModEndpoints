@@ -18,7 +18,7 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
 }
 
 [MapToGroup<BooksRouteGroup>()]
-[ResultToResponseMapper("DefaultResultToResponseMapper")]
+[ResultToResponseMapper("Default")]
 internal class GetBookById
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {

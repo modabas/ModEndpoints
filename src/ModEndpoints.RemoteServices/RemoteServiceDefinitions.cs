@@ -5,8 +5,8 @@ namespace ModEndpoints.RemoteServices;
 
 public static class RemoteServiceDefinitions
 {
-  public const string DefaultUriResolverName = "DefaultServiceEndpointUriResolver";
-  public const string DefaultSerializerName = "DefaultServiceChannelSerializer";
+  public const string DefaultUriResolverName = "Default";
+  public const string DefaultSerializerName = "Default";
 
   internal static readonly JsonSerializerOptions DefaultJsonDeserializationOptions = new()
   {

@@ -18,7 +18,7 @@ internal class GetStoreByIdRequestValidator : AbstractValidator<GetStoreByIdRequ
 }
 
 [MapToGroup<StoresWithServiceEndpointRouteGroup>()]
-[UriResolver("DefaultServiceEndpointUriResolver")]
+[UriResolver("Default")]
 internal class GetStoreById
   : ServiceEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
 {
