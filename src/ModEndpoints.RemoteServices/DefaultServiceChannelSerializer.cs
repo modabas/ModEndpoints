@@ -6,7 +6,7 @@ using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 
-public class DefaultServiceChannelSerializer(
+internal sealed class DefaultServiceChannelSerializer(
   ServiceChannelSerializerOptions options)
   : IServiceChannelSerializer
 {

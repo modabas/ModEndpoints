@@ -2,7 +2,7 @@
 
 namespace ModEndpoints.RemoteServices;
 
-internal class ServiceClientNameResolver
+internal sealed class ServiceClientNameResolver
 {
   private const string InvalidRequestType = "Request type should not be generic type parameter.";
   public static string GetDefaultName(IServiceRequestMarker request)

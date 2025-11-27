@@ -5,7 +5,7 @@ using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 
-public class DefaultServiceChannel(
+internal sealed class DefaultServiceChannel(
   IHttpClientFactory clientFactory,
   IServiceProvider serviceProvider)
   : IServiceChannel

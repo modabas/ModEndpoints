@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace ModEndpoints.RemoteServices;
 
-public class ServiceChannelRegistry
+internal sealed class ServiceChannelRegistry
 {
   private readonly ConcurrentDictionary<Type, string> _registry;
 
