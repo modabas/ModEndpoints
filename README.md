@@ -102,6 +102,20 @@ app.Run();
 ```
 
 > **Note**: If you are using the `ModEndpoints.Core` package, replace `AddModEndpointsFromAssemblyContaining` with `AddModEndpointsCoreFromAssemblyContaining` and `MapModEndpoints` with `MapModEndpointsCore`.
+``` csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>();
+
+//Register validators (from FluentValidation.DependencyInjectionExtensions nuget package, not included)
+builder.Services.AddValidatorsFromAssemblyContaining<MyValidator>(includeInternalTypes: true);
+
+var app = builder.Build();
+
+app.MapModEndpointsCore();
+
+app.Run();
+```
 
 ### Define a Minimal API in REPR format
 
@@ -112,16 +126,6 @@ Configuration of each endpoint implementation starts with calling one of the Map
 The request is processed in 'HandleAsync' method. Request is passed to handler method as parameter after validation (if a validator is registered for request model). Handler method returns a response model or a string or a Minimal API IResult based response.
 
 ``` csharp
-public record HelloWorldRequest(string Name);
-
-internal class HelloWorldRequestValidator : AbstractValidator<HelloWorldRequest>
-{
-  public HelloWorldRequestValidator()
-  {
-    RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(50);
-  }
-}
-
 internal class HelloWorld
   : MinimalEndpoint<HelloWorldRequest, IResult>
 {
@@ -138,15 +142,20 @@ internal class HelloWorld
     return Task.FromResult(Results.Ok($"Hello, {req.Name}."));
   }
 }
+
+public record HelloWorldRequest(string Name);
+
+internal class HelloWorldRequestValidator : AbstractValidator<HelloWorldRequest>
+{
+  public HelloWorldRequestValidator()
+  {
+    RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(50);
+  }
+}
 ```
 
 The GetWeatherForecast example from the .NET Core Web API project template can be rewritten using MinimalEndpoints in the REPR format as shown below:
 ``` csharp
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
 internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
 {
   private static readonly string[] _summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
@@ -174,6 +183,11 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
     return Task.FromResult(forecast);
   }
 }
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
 ```
 
 ### Integration with result pattern: A GET WebResultEndpoint with empty request
@@ -183,10 +197,6 @@ A `WebResultEndpoint` can be utilized to abstract the logic for converting busin
 This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal API IResult based response by WebResultEndpoint before being sent to client.
 
 ``` csharp
-public record ListBooksResponse(List<ListBooksResponseItem> Books);
-
-public record ListBooksResponseItem(Guid Id, string Title, string Author, decimal Price);
-
 internal class ListBooks(ServiceDbContext db)
   : WebResultEndpointWithEmptyRequest<ListBooksResponse>
 {
@@ -212,6 +222,10 @@ internal class ListBooks(ServiceDbContext db)
     return new ListBooksResponse(Books: books);
   }
 }
+
+public record ListBooksResponse(List<ListBooksResponseItem> Books);
+
+public record ListBooksResponseItem(Guid Id, string Title, string Author, decimal Price);
 ```
 
 ### Explore More Features
