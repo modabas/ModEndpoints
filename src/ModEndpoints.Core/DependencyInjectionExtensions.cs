@@ -295,8 +295,8 @@ public static class DependencyInjectionExtensions
           childRouteGroup,
           componentDiscriminator.GetDiscriminator(childRouteGroup),
           currentConfigurationContext?.Parameters));
-      var routeGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
-      if (routeGroupBuilders.Length == 0)
+      var childRouteGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
+      if (childRouteGroupBuilders.Length == 0)
       {
         if (throwOnMissingConfiguration)
         {
@@ -314,13 +314,12 @@ public static class DependencyInjectionExtensions
         }
       }
 
-      foreach (var routeGroupBuilder in routeGroupBuilders)
+      foreach (var childRouteGroupBuilder in childRouteGroupBuilders)
       {
         _ = MapRouteGroup(
           childRouteGroup,
           serviceProvider,
-          routeGroupBuilder,
-          childRouteGroup,
+          childRouteGroupBuilder,
           childConfigurationContext,
           routeGroups,
           endpoints,
@@ -328,7 +327,7 @@ public static class DependencyInjectionExtensions
           throwOnMissingConfiguration);
 
         childRouteGroup.PostConfigure(
-          routeGroupBuilder,
+          childRouteGroupBuilder,
           childConfigurationContext);
 
         childConfigurationContext.Parameters.SelfDiscriminator =
@@ -356,9 +355,8 @@ public static class DependencyInjectionExtensions
   private static RouteGroupBuilder MapRouteGroup(
     IRouteGroupConfigurator routeGroup,
     IServiceProvider serviceProvider,
-    RouteGroupBuilder builder,
-    IRouteGroupConfigurator parentRouteGroup,
-    RouteGroupConfigurationContext parentConfigurationContext,
+    RouteGroupBuilder routeGroupBuilder,
+    RouteGroupConfigurationContext routeGroupConfigurationContext,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
     Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
@@ -372,16 +370,16 @@ public static class DependencyInjectionExtensions
     //Pass this group as current route group
     _ = MapComponents(
       serviceProvider,
-      builder,
+      routeGroupBuilder,
       typeIsMemberOfCurrentGroupPredicate,
-      parentRouteGroup, //process items under this group's hierarchy
-      parentConfigurationContext, //process items under this group's hierarchy
+      routeGroup, //process items under this group's hierarchy
+      routeGroupConfigurationContext, //process items under this group's hierarchy
       routeGroups,
       endpoints,
       globalEndpointConfiguration,
       throwOnMissingConfiguration);
 
-    return builder;
+    return routeGroupBuilder;
   }
 
   private static RouteHandlerBuilder[] MapEndpoint(
