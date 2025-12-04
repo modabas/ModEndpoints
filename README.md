@@ -1,7 +1,6 @@
 ﻿# ModEndpoints
 
-[![Nuget downloads](https://img.shields.io/nuget/v/ModEndpoints.svg)](https://www.nuget.org/packages/ModEndpoints/)
-[![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
+[![Nuget](https://img.shields.io/nuget/v/ModEndpoints.svg)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
 **ModEndpoints** provides various base endpoint types to organize ASP.NET Core Minimal APIs in the REPR (Request - Endpoint - Response) pattern. It shapes Minimal APIs into components encapsulating configuration, automatic request validation, request handling, and, depending on endpoint type, response mapping.
