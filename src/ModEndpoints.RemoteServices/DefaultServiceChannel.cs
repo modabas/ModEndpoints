@@ -157,7 +157,6 @@ internal sealed class DefaultServiceChannel(
           }
           await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(httpResponse, ct))
           {
-            ct.ThrowIfCancellationRequested();
             yield return resultObject;
           }
         }
@@ -214,7 +213,6 @@ internal sealed class DefaultServiceChannel(
           }
           await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(httpResponse, ct))
           {
-            ct.ThrowIfCancellationRequested();
             yield return resultObject;
           }
         }

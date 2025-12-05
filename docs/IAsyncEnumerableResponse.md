@@ -50,7 +50,6 @@ internal class ListStores(ServiceDbContext db)
 
     await foreach (var store in stores.WithCancellation(ct))
     {
-      ct.ThrowIfCancellationRequested();
       yield return new StreamingResponseItem<ListStoresResponse>(store, "store");
       await Task.Delay(1000, ct);
     }

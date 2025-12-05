@@ -36,11 +36,15 @@ builder.Services.AddRemoteServicesWithNewClient(
 
 using IHost host = builder.Build();
 
-await CallRemoteServicesAsync(host.Services);
+using (CancellationTokenSource cts = new())
+{
+  cts.CancelAfter(TimeSpan.FromSeconds(10));
+  await CallRemoteServicesAsync(host.Services, cts.Token);
+}
 
 await host.RunAsync();
 
-static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
+static async Task CallRemoteServicesAsync(IServiceProvider hostProvider, CancellationToken ct)
 {
   using IServiceScope serviceScope = hostProvider.CreateScope();
   IServiceProvider provider = serviceScope.ServiceProvider;
@@ -52,7 +56,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
   await foreach (var listStoreItem in channel.SendAsync(
     new ListStoresRequest(),
     "v1/storesWithServiceEndpoint/",
-    default))
+    ct))
   {
     Console.WriteLine($"***Received streaming response item with ResponseType: {listStoreItem.ResponseType}");
     if (listStoreItem.Result.IsOk)
@@ -75,7 +79,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     var getResult = await channel.SendAsync(
       new GetStoreByIdRequest(Id: id.Value),
       "v1/storesWithServiceEndpoint/",
-      default);
+      ct);
     Console.WriteLine("***********************");
     Console.WriteLine("GetStoreById response BEFORE delete:");
     if (getResult.IsOk)
@@ -92,7 +96,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     var deleteResult = await channel.SendAsync(
       new DeleteStoreRequest(Id: id.Value),
       "v1/storesWithServiceEndpoint/",
-      default);
+      ct);
     Console.WriteLine("***********************");
     Console.WriteLine("DeleteStore response:");
     Console.WriteLine(deleteResult.DumpMessages());
@@ -102,7 +106,7 @@ static async Task CallRemoteServicesAsync(IServiceProvider hostProvider)
     getResult = await channel.SendAsync(
       new GetStoreByIdRequest(Id: id.Value),
       "v1/storesWithServiceEndpoint/",
-      default);
+      ct);
     Console.WriteLine("***********************");
     Console.WriteLine("GetStoreById response AFTER delete:");
     if (getResult.IsOk)
