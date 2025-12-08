@@ -27,7 +27,7 @@ public class EndpointConfigurationParameters
   /// </summary>
   public Dictionary<string, object?> PropertyBag { get; } = new();
 
-  public EndpointConfigurationParameters(
+  internal EndpointConfigurationParameters(
     IEndpointConfiguratorMarker currentEndpoint,
     int selfDiscriminator,
     RouteGroupConfigurationParameters? parentRouteGroupParameters)

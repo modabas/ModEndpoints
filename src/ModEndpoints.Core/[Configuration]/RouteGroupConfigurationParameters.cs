@@ -27,7 +27,7 @@ public class RouteGroupConfigurationParameters
   /// </summary>
   public Dictionary<string, object?> PropertyBag { get; } = new();
 
-  public RouteGroupConfigurationParameters(
+  internal RouteGroupConfigurationParameters(
     IRouteGroupConfiguratorMarker currentRouteGroup,
     int selfDiscriminator,
     RouteGroupConfigurationParameters? parentRouteGroupParameters)

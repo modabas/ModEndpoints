@@ -65,13 +65,10 @@ public static class DependencyInjectionExtensions
     Assembly assembly,
     ModEndpointsCoreOptions options)
   {
-    //Don't add RootRouteGroup, it's just a marker class to define root
-    //Normally its assembly won't be loaded with this method anyway but just in case
     var routeGroupTypes = assembly
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
         type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
-        type != typeof(RootRouteGroup) &&
         !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
     var serviceDescriptors = routeGroupTypes
@@ -254,7 +251,7 @@ public static class DependencyInjectionExtensions
       //items that have a membership to root route group (items at root)
       Func<Type, bool> typeIsNotMemberOfAnyRouteGroupPredicate =
         x => !x.GetCustomAttributes(typeof(MapToGroupAttribute<>)).Any() ||
-              x.GetCustomAttributes<MapToGroupAttribute<RootRouteGroup>>().Any();
+              x.GetCustomAttributes<MapToRootGroupAttribute>().Any();
 
       _ = MapComponents(
         scope.ServiceProvider,

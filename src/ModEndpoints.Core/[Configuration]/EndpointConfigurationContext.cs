@@ -6,7 +6,9 @@
 public abstract class EndpointConfigurationContext
 {
   /// <summary>
-  /// Scoped service provider that can be used during configuration step if necessary.
+  /// Service provider that can be used during configuration step if necessary.
+  /// Scope of this service provider is the whole configuration process and is disposed of once all endpoints and route groups have been mapped.
+  /// Therefore, any scoped service resolved from this provider will be same instance for all endpoints and route groups being configured unless a sub-scope is created manually within the configuration step.
   /// </summary>
   public IServiceProvider ServiceProvider { get; init; }
 
