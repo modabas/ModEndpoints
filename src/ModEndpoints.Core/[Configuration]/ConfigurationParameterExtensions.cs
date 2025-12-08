@@ -31,7 +31,7 @@ public static class ConfigurationParameterExtensions
   /// <param name="parameters">The endpoint configuration parameters from which to traverse parent route groups. Cannot be null.</param>
   /// <returns>The deepest parent route group configuration parameters, or null if no parent route groups exist.</returns>
   public static RouteGroupConfigurationParameters? GetRootRouteGroupParameters(this EndpointConfigurationParameters parameters)
-  {     
+  {
     return parameters.ParentRouteGroupParameters?.GetRootRouteGroupParameters();
   }
 

@@ -5,10 +5,15 @@
 /// </summary>
 internal sealed class DefaultRouteGroupConfigurationContext : RouteGroupConfigurationContext
 {
+  public override IServiceProvider ServiceProvider { get; }
+
+  public override RouteGroupConfigurationParameters Parameters { get; }
+
   public DefaultRouteGroupConfigurationContext(
     IServiceProvider serviceProvider,
     RouteGroupConfigurationParameters parameters)
-    : base(serviceProvider, parameters)
   {
+    ServiceProvider = serviceProvider;
+    Parameters = parameters;
   }
 }

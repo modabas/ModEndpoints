@@ -5,10 +5,15 @@
 /// </summary>
 internal sealed class DefaultEndpointConfigurationContext : EndpointConfigurationContext
 {
+  public override IServiceProvider ServiceProvider { get; }
+
+  public override EndpointConfigurationParameters Parameters { get; }
+
   public DefaultEndpointConfigurationContext(
     IServiceProvider serviceProvider,
     EndpointConfigurationParameters parameters)
-    : base(serviceProvider, parameters)
   {
+    ServiceProvider = serviceProvider;
+    Parameters = parameters;
   }
 }

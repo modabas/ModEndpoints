@@ -6,20 +6,14 @@
 public abstract class RouteGroupConfigurationContext
 {
   /// <summary>
-  /// Scoped service provider that can be used during configuration step if necessary.
+  /// Service provider that can be used during configuration step if necessary.
+  /// Scope of this service provider is the whole configuration process and is disposed of once all endpoints and route groups have been mapped.
+  /// Therefore, any scoped service resolved from this provider will be same instance for all endpoints and route groups being configured unless a sub-scope is created manually within the configuration step.
   /// </summary>
-  public IServiceProvider ServiceProvider { get; init; }
+  public abstract IServiceProvider ServiceProvider { get; }
 
   /// <summary>
   /// Route group configuration parameters.
   /// </summary>
-  public RouteGroupConfigurationParameters Parameters { get; init; }
-
-  public RouteGroupConfigurationContext(
-    IServiceProvider serviceProvider,
-    RouteGroupConfigurationParameters parameters)
-  {
-    ServiceProvider = serviceProvider;
-    Parameters = parameters;
-  }
+  public abstract RouteGroupConfigurationParameters Parameters { get; }
 }

@@ -288,7 +288,7 @@ public static class DependencyInjectionExtensions
       var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
       DefaultRouteGroupConfigurationContext childConfigurationContext = new(
         serviceProvider,
-        new(
+        new DefaultRouteGroupConfigurationParameters(
           childRouteGroup,
           componentDiscriminator.GetDiscriminator(childRouteGroup),
           currentConfigurationContext?.Parameters));
@@ -391,7 +391,7 @@ public static class DependencyInjectionExtensions
     var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
     DefaultEndpointConfigurationContext endpointConfigurationContext = new(
       serviceProvider,
-      new(
+      new DefaultEndpointConfigurationParameters(
         endpoint,
         componentDiscriminator.GetDiscriminator(endpoint),
         parentConfigurationContext?.Parameters));

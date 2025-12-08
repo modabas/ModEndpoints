@@ -1,11 +1,9 @@
-﻿using System.Collections.Concurrent;
-
-namespace ModEndpoints.Core;
+﻿namespace ModEndpoints.Core;
 
 internal sealed class ComponentRegistry
 {
-  private readonly ConcurrentDictionary<Type, Type> _routeGroups = new();
-  private readonly ConcurrentDictionary<Type, Type> _endpoints = new();
+  private readonly Dictionary<Type, Type> _routeGroups = new();
+  private readonly Dictionary<Type, Type> _endpoints = new();
 
   public void TryAddRouteGroups(IEnumerable<Type> implementationTypes)
   {
