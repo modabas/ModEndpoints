@@ -34,7 +34,7 @@ public static class WebResults
   /// <typeparam name="TValue">The type of the value to be wrapped in the result. Must be non-null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>
   /// <returns>A <see cref="WebResult{TValue}"/> instance containing the specified value as a successful result.</returns>
-  public static WebResult<TValue> FromResult<TValue>(TValue value)
+  public static WebResult<TValue> FromValue<TValue>(TValue value)
     where TValue : notnull
   {
     return new WebResult<TValue>(value);
