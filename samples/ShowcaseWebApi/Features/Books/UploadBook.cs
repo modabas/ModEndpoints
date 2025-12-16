@@ -34,12 +34,12 @@ internal class UploadBook
       .Produces<UploadBookResponse>();
   }
 
-  protected override Task<Result<UploadBookResponse>> HandleAsync(
+  protected override async Task<WebResult<UploadBookResponse>> HandleAsync(
     UploadBookRequest req,
     CancellationToken ct)
   {
-    return Task.FromResult(Result.Ok(new UploadBookResponse(
+    return new UploadBookResponse(
       req.BookFile.FileName,
-      req.BookFile.Length)));
+      req.BookFile.Length);
   }
 }

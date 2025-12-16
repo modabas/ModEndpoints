@@ -32,10 +32,10 @@ internal class UpdateBook
     builder.MapPut("/{Id}");
   }
 
-  protected override Task<Result> HandleAsync(
+  protected override Task<WebResult> HandleAsync(
     UpdateBookRequest req,
     CancellationToken ct)
   {
-    return Task.FromResult(Result.Ok());
+    return Task.FromResult(Result.Ok().ToWebResult());
   }
 }

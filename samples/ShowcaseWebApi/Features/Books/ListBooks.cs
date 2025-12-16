@@ -22,7 +22,7 @@ internal class ListBooks(ServiceDbContext db)
       .Produces<ListBooksResponse>();
   }
 
-  protected override async Task<Result<ListBooksResponse>> HandleAsync(
+  protected override async Task<WebResult<ListBooksResponse>> HandleAsync(
     CancellationToken ct)
   {
     var books = await db.Books

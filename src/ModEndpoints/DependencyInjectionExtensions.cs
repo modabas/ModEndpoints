@@ -46,14 +46,10 @@ public static class DependencyInjectionExtensions
     configure?.Invoke(options);
 
     //WebResultEndpoint components
-    services.TryAddKeyedSingleton<IResultToResponseMapper, DefaultResultToResponseMapper>(
-      WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
     services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResult>(
       WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResult);
     services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResultOfT>(
       WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResultOfT);
-    services.TryAddScoped<ILocationStore, DefaultLocationStore>();
-    services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
 
     //ServiceEndpoint components
     services.TryAddKeyedSingleton<IServiceEndpointUriResolver, DefaultServiceEndpointUriResolver>(

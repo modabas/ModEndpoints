@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.Core;
 using ModResults;
 
@@ -11,27 +10,25 @@ namespace ModEndpoints;
 /// <typeparam name="TRequest">Request type.</typeparam>
 /// <typeparam name="TResponse">Type of the value contained by business result response.</typeparam>
 public abstract class WebResultEndpoint<TRequest, TResponse>
-  : BaseWebResultEndpoint<TRequest, Result<TResponse>>
+  : BaseWebResultEndpoint<TRequest, WebResult<TResponse>>
   where TRequest : notnull
   where TResponse : notnull
 {
-  protected override async ValueTask<IResult> ConvertResultToResponseAsync(
-    Result<TResponse> result,
+  protected override ValueTask<IResult> ConvertResultToResponseAsync(
+    WebResult<TResponse> result,
     HttpContext context,
     CancellationToken ct)
   {
-    var mapProvider = context.RequestServices.GetRequiredService<IResultToResponseMapProvider>();
-    var mapper = await mapProvider.GetMapperAsync(this, context, ct);
-    return await mapper.ToResponseAsync(result, context, ct);
+    return result.ExecuteAsync(context, ct);
   }
 
-  protected override async ValueTask<IResult> HandleInvalidValidationResultAsync(
+  protected override ValueTask<IResult> HandleInvalidValidationResultAsync(
     RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
     var invalidResult = validationResult.ToInvalidResult<TResponse>();
-    return await ConvertResultToResponseAsync(invalidResult, context, ct);
+    return ConvertResultToResponseAsync(invalidResult, context, ct);
   }
 }
 
@@ -40,25 +37,23 @@ public abstract class WebResultEndpoint<TRequest, TResponse>
 /// </summary>
 /// <typeparam name="TRequest">Request type.</typeparam>
 public abstract class WebResultEndpoint<TRequest>
-  : BaseWebResultEndpoint<TRequest, Result>
+  : BaseWebResultEndpoint<TRequest, WebResult>
   where TRequest : notnull
 {
-  protected override async ValueTask<IResult> ConvertResultToResponseAsync(
-    Result result,
+  protected override ValueTask<IResult> ConvertResultToResponseAsync(
+    WebResult result,
     HttpContext context,
     CancellationToken ct)
   {
-    var mapProvider = context.RequestServices.GetRequiredService<IResultToResponseMapProvider>();
-    var mapper = await mapProvider.GetMapperAsync(this, context, ct);
-    return await mapper.ToResponseAsync(result, context, ct);
+    return result.ExecuteAsync(context, ct);
   }
 
-  protected override async ValueTask<IResult> HandleInvalidValidationResultAsync(
+  protected override ValueTask<IResult> HandleInvalidValidationResultAsync(
     RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
   {
     var invalidResult = validationResult.ToInvalidResult();
-    return await ConvertResultToResponseAsync(invalidResult, context, ct);
+    return ConvertResultToResponseAsync(invalidResult, context, ct);
   }
 }

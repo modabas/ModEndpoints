@@ -38,7 +38,7 @@ internal class UpdateBook(ServiceDbContext db)
       .Produces<UpdateBookResponse>();
   }
 
-  protected override async Task<Result<UpdateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<UpdateBookResponse>> HandleAsync(
     UpdateBookRequest req,
     CancellationToken ct)
   {

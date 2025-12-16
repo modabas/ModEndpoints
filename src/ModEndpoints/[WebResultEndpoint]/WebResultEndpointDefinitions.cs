@@ -2,10 +2,8 @@
 
 public static class WebResultEndpointDefinitions
 {
-  public const string DefaultResultToResponseMapperName = "Default";
   public const string DefaultPreferredSuccessStatusCodeCacheNameForResult = "DefaultForResult";
   public const string DefaultPreferredSuccessStatusCodeCacheNameForResultOfT = "DefaultForResultOfT";
 
   public const string InvalidRouteMessage = "No route matches the supplied values.";
-  public const string HttpContextIsInvalidMessage = "Http context resolved from dependency injection is invalid.";
 }

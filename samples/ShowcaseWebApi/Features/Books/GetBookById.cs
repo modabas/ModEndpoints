@@ -32,7 +32,7 @@ internal class GetBookById(ServiceDbContext db)
       .Produces<GetBookByIdResponse>();
   }
 
-  protected override async Task<Result<GetBookByIdResponse>> HandleAsync(
+  protected override async Task<WebResult<GetBookByIdResponse>> HandleAsync(
     GetBookByIdRequest req,
     CancellationToken ct)
   {

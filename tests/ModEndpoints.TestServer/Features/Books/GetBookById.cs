@@ -18,7 +18,6 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
 }
 
 [MapToGroup<BooksRouteGroup>()]
-[ResultToResponseMapper("Default")]
 internal class GetBookById
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {
@@ -30,7 +29,7 @@ internal class GetBookById
       .Produces<GetBookByIdResponse>();
   }
 
-  protected override async Task<Result<GetBookByIdResponse>> HandleAsync(
+  protected override async Task<WebResult<GetBookByIdResponse>> HandleAsync(
     GetBookByIdRequest req,
     CancellationToken ct)
   {

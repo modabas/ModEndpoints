@@ -15,8 +15,8 @@ internal class FailureEndpointWithResponseModel
     builder.MapPost("/failure/withResponseModel");
   }
 
-  protected override Task<Result<FailureEndpointWithoutResponseModelResponse>> HandleAsync(CancellationToken ct)
+  protected override async Task<WebResult<FailureEndpointWithoutResponseModelResponse>> HandleAsync(CancellationToken ct)
   {
-    return Task.FromResult(Result<FailureEndpointWithoutResponseModelResponse>.NotFound("Item not found."));
+    return Result<FailureEndpointWithoutResponseModelResponse>.NotFound("Item not found.");
   }
 }

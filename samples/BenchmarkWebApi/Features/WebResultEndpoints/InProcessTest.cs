@@ -33,7 +33,7 @@ internal class InProcessTest(IGetMeAStringService svc)
       .Produces<InProcessTestResponse>();
   }
 
-  protected override async Task<Result<InProcessTestResponse>> HandleAsync(
+  protected override async Task<WebResult<InProcessTestResponse>> HandleAsync(
     InProcessTestRequest req,
     CancellationToken ct)
   {

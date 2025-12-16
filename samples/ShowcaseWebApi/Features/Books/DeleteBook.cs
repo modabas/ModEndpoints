@@ -29,7 +29,7 @@ internal class DeleteBook(ServiceDbContext db)
     builder.MapDelete("/{Id}");
   }
 
-  protected override async Task<Result> HandleAsync(
+  protected override async Task<WebResult> HandleAsync(
     DeleteBookRequest req,
     CancellationToken ct)
   {

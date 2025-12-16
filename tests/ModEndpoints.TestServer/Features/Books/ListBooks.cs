@@ -19,7 +19,7 @@ internal class ListBooks
       .Produces<ListBooksResponse>();
   }
 
-  protected override async Task<Result<ListBooksResponse>> HandleAsync(
+  protected override async Task<WebResult<ListBooksResponse>> HandleAsync(
     CancellationToken ct)
   {
     await Task.CompletedTask; // Simulate async work

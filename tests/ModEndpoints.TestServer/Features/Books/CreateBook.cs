@@ -23,7 +23,7 @@ internal class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
 }
 
 [MapToGroup<BooksRouteGroup>()]
-internal class CreateBook(ILocationStore location)
+internal class CreateBook
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {
   protected override void Configure(
@@ -33,16 +33,15 @@ internal class CreateBook(ILocationStore location)
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
-  protected override async Task<Result<CreateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<CreateBookResponse>> HandleAsync(
     CreateBookRequest req,
     CancellationToken ct)
   {
     var bookId = Guid.NewGuid();
 
-    await location.SetValueAsync(
+    return WebResults.AtRouteOnOk(
+      new CreateBookResponse(bookId),
       typeof(GetBookById).FullName,
-      new { id = bookId },
-      ct);
-    return Result.Ok(new CreateBookResponse(bookId));
+      new { id = bookId });
   }
 }
