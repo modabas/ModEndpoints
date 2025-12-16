@@ -7,6 +7,9 @@ namespace ModEndpoints;
 
 public class WebResult
 {
+  /// <summary>
+  /// Gets the result of the operation.
+  /// </summary>
   public Result Result => _result;
   private readonly Result _result;
 
@@ -20,6 +23,15 @@ public class WebResult
     return result.ToWebResult();
   }
 
+  /// <summary>
+  /// Executes the result operation asynchronously and returns the appropriate HTTP response.
+  /// </summary>
+  /// <remarks>The response status code is determined based on the preferred success status code configured in
+  /// the request's service provider. If the result indicates failure, an error response is returned.</remarks>
+  /// <param name="context">The HTTP context for the current request. Provides access to request and response information.</param>
+  /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
+  /// <returns>A task that represents the asynchronous execution operation. The task result contains an <see cref="IResult"/>
+  /// representing the HTTP response to be sent.</returns>
   public virtual ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
     if (_result.IsFailed)
@@ -48,6 +60,9 @@ public class WebResult
 public class WebResult<TValue>
   where TValue : notnull
 {
+  /// <summary>
+  /// Gets the result of the operation.
+  /// </summary>
   public Result<TValue> Result => _result;
   private readonly Result<TValue> _result;
   public WebResult(Result<TValue> result)
@@ -70,6 +85,15 @@ public class WebResult<TValue>
     return webResult.ToWebResult();
   }
 
+  /// <summary>
+  /// Executes the result operation asynchronously and returns the appropriate HTTP response.
+  /// </summary>
+  /// <remarks>The response status code is determined based on the preferred success status code configured in
+  /// the request's service provider. If the result indicates failure, an error response is returned.</remarks>
+  /// <param name="context">The HTTP context for the current request. Provides access to request and response information.</param>
+  /// <param name="ct">A cancellation token that can be used to cancel the asynchronous operation.</param>
+  /// <returns>A task that represents the asynchronous execution operation. The task result contains an <see cref="IResult"/>
+  /// representing the HTTP response to be sent.</returns>
   public virtual ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
     if (_result.IsFailed)

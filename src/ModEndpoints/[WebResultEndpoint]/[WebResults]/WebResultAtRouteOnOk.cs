@@ -6,7 +6,7 @@ using ModResults.MinimalApis;
 
 namespace ModEndpoints;
 
-public class WebResultAtRouteOnOk : WebResult
+public sealed class WebResultAtRouteOnOk : WebResult
 {
   private readonly string? _routeName;
   private readonly RouteValueDictionary? _routeValues;
@@ -66,7 +66,7 @@ public class WebResultAtRouteOnOk : WebResult
 }
 
 
-public class WebResultAtRouteOnOk<TValue> : WebResult<TValue> where TValue : notnull
+public sealed class WebResultAtRouteOnOk<TValue> : WebResult<TValue> where TValue : notnull
 {
   private readonly string? _routeName;
   private readonly RouteValueDictionary? _routeValues;

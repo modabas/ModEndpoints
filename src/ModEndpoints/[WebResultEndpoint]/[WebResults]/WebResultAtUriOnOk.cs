@@ -5,7 +5,7 @@ using ModResults.MinimalApis;
 
 namespace ModEndpoints;
 
-public class WebResultAtUriOnOk : WebResult
+public sealed class WebResultAtUriOnOk : WebResult
 {
   private readonly string? _location;
   public string? Location => _location;
@@ -55,7 +55,7 @@ public class WebResultAtUriOnOk : WebResult
   }
 }
 
-public class WebResultAtUriOnOk<TValue> : WebResult<TValue> where TValue : notnull
+public sealed class WebResultAtUriOnOk<TValue> : WebResult<TValue> where TValue : notnull
 {
   private readonly string? _location;
   public string? Location => _location;
