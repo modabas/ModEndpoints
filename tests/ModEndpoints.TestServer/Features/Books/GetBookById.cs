@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using ModEndpoints.Core;
 using ModEndpoints.TestServer.Features.Books.Configuration;
-using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
 

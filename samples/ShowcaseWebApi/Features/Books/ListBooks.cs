@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
-using ModResults;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 

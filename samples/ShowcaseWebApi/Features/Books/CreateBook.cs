@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints;
 using ModEndpoints.Core;
-using ModResults;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 using ShowcaseWebApi.Features.Books.Data;
