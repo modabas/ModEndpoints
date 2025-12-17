@@ -11,7 +11,7 @@ public sealed class DefaultWebResult : WebResult
 
   public override ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
-    return this.ExecuteInternalAsync(context, null);
+    return ValueTask.FromResult(this.ExecuteInternal(context, null));
   }
 }
 
@@ -24,6 +24,6 @@ public sealed class DefaultWebResult<TValue> : WebResult<TValue>
 
   public override ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
-    return this.ExecuteInternalAsync(context, null);
+    return ValueTask.FromResult(this.ExecuteInternal(context, null));
   }
 }

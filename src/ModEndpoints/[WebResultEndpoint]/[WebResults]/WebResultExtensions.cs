@@ -8,11 +8,11 @@ public static class WebResultExtensions
 {
   extension(WebResult webResult)
   {
-    internal ValueTask<IResult> ExecuteInternalAsync(HttpContext context, string? location)
+    internal IResult ExecuteInternal(HttpContext context, string? location)
     {
       if (webResult.Result.IsFailed)
       {
-        return ValueTask.FromResult(webResult.Result.ToErrorResponse());
+        return webResult.Result.ToErrorResponse();
       }
 
       var preferredSuccessStatusCodeCache = context.RequestServices
@@ -23,12 +23,12 @@ public static class WebResultExtensions
 
       return preferredSuccessCode switch
       {
-        StatusCodes.Status204NoContent => ValueTask.FromResult(webResult.Result.ToResponse()),
-        StatusCodes.Status200OK => ValueTask.FromResult(webResult.Result.ToResponse(SuccessfulResponseType.Ok)),
-        StatusCodes.Status201Created => ValueTask.FromResult(webResult.Result.ToCreatedOrErrorResponse(location)),
-        StatusCodes.Status202Accepted => ValueTask.FromResult(webResult.Result.ToAcceptedOrErrorResponse(location)),
-        StatusCodes.Status205ResetContent => ValueTask.FromResult(webResult.Result.ToResponse(SuccessfulResponseType.ResetContent)),
-        _ => ValueTask.FromResult(webResult.Result.ToResponse()),
+        StatusCodes.Status204NoContent => webResult.Result.ToResponse(),
+        StatusCodes.Status200OK => webResult.Result.ToResponse(SuccessfulResponseType.Ok),
+        StatusCodes.Status201Created => webResult.Result.ToCreatedOrErrorResponse(location),
+        StatusCodes.Status202Accepted => webResult.Result.ToAcceptedOrErrorResponse(location),
+        StatusCodes.Status205ResetContent => webResult.Result.ToResponse(SuccessfulResponseType.ResetContent),
+        _ => webResult.Result.ToResponse(),
       };
     }
   }
@@ -41,11 +41,11 @@ public static class WebResultExtensions
       return webResult.Result.ToWebResult();
     }
 
-    internal ValueTask<IResult> ExecuteInternalAsync(HttpContext context, string? location)
+    internal IResult ExecuteInternal(HttpContext context, string? location)
     {
       if (webResult.Result.IsFailed)
       {
-        return ValueTask.FromResult(webResult.Result.ToErrorResponse());
+        return webResult.Result.ToErrorResponse();
       }
 
       var preferredSuccessStatusCodeCache = context.RequestServices
@@ -56,12 +56,12 @@ public static class WebResultExtensions
 
       return preferredSuccessCode switch
       {
-        StatusCodes.Status200OK => ValueTask.FromResult(webResult.Result.ToResponse()),
-        StatusCodes.Status201Created => ValueTask.FromResult(webResult.Result.ToCreatedOrErrorResponse(location)),
-        StatusCodes.Status202Accepted => ValueTask.FromResult(webResult.Result.ToAcceptedOrErrorResponse(location)),
-        StatusCodes.Status204NoContent => ValueTask.FromResult(webResult.Result.ToResponse(SuccessfulResponseType.NoContent)),
-        StatusCodes.Status205ResetContent => ValueTask.FromResult(webResult.Result.ToResponse(SuccessfulResponseType.ResetContent)),
-        _ => ValueTask.FromResult(webResult.Result.ToResponse()),
+        StatusCodes.Status200OK => webResult.Result.ToResponse(),
+        StatusCodes.Status201Created => webResult.Result.ToCreatedOrErrorResponse(location),
+        StatusCodes.Status202Accepted => webResult.Result.ToAcceptedOrErrorResponse(location),
+        StatusCodes.Status204NoContent => webResult.Result.ToResponse(SuccessfulResponseType.NoContent),
+        StatusCodes.Status205ResetContent => webResult.Result.ToResponse(SuccessfulResponseType.ResetContent),
+        _ => webResult.Result.ToResponse(),
       };
     }
   }

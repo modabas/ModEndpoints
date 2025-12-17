@@ -5,7 +5,7 @@ using ModResults;
 
 namespace ModEndpoints;
 
-static file class WebResultWithLocationRouteOnSuccessExtensions
+internal static class WebResultWithLocationRouteOnSuccessExtensions
 {
   extension(WebResultWithLocationRouteOnSuccess)
   {
@@ -47,7 +47,12 @@ public sealed class WebResultWithLocationRouteOnSuccess : WebResult
 
   public override ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
-    return this.ExecuteInternalAsync(context, WebResultWithLocationRouteOnSuccess.GetLocation(context, _routeName, _routeValues));
+    return ValueTask.FromResult(this.ExecuteInternal(
+      context,
+      WebResultWithLocationRouteOnSuccess.GetLocation(
+        context,
+        _routeName,
+        _routeValues)));
   }
 }
 
@@ -72,6 +77,11 @@ public sealed class WebResultWithLocationRouteOnSuccess<TValue> : WebResult<TVal
 
   public override ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
-    return this.ExecuteInternalAsync(context, WebResultWithLocationRouteOnSuccess.GetLocation(context, _routeName, _routeValues));
+    return ValueTask.FromResult(this.ExecuteInternal(
+      context,
+      WebResultWithLocationRouteOnSuccess.GetLocation(
+        context,
+        _routeName,
+        _routeValues)));
   }
 }

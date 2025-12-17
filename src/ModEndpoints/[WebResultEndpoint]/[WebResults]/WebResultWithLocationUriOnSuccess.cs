@@ -3,7 +3,7 @@ using ModResults;
 
 namespace ModEndpoints;
 
-static file class WebResultWithLocationUriOnSuccessExtensions
+internal static class WebResultWithLocationUriOnSuccessExtensions
 {
   extension(WebResultWithLocationUriOnSuccess)
   {
@@ -37,12 +37,12 @@ public sealed class WebResultWithLocationUriOnSuccess : WebResult
 
   internal WebResultWithLocationUriOnSuccess(Result result, Uri? uri) : base(result)
   {
-    WebResultWithLocationUriOnSuccess.ParseUri(uri);
+    _location = WebResultWithLocationUriOnSuccess.ParseUri(uri);
   }
 
   public override ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
-    return this.ExecuteInternalAsync(context, Location);
+    return ValueTask.FromResult(this.ExecuteInternal(context, Location));
   }
 }
 
@@ -58,11 +58,11 @@ public sealed class WebResultWithLocationUriOnSuccess<TValue> : WebResult<TValue
 
   internal WebResultWithLocationUriOnSuccess(Result<TValue> result, Uri? uri) : base(result)
   {
-    WebResultWithLocationUriOnSuccess.ParseUri(uri);
+    _location = WebResultWithLocationUriOnSuccess.ParseUri(uri);
   }
 
   public override ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct)
   {
-    return this.ExecuteInternalAsync(context, Location);
+    return ValueTask.FromResult(this.ExecuteInternal(context, Location));
   }
 }
