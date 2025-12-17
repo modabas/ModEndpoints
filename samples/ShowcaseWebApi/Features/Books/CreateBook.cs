@@ -50,7 +50,7 @@ internal class CreateBook(ServiceDbContext db)
     db.Books.Add(book);
     await db.SaveChangesAsync(ct);
 
-    return WebResults.AtRouteOnOk(
+    return WebResults.WithLocationRouteOnSuccess(
       new CreateBookResponse(book.Id),
       typeof(GetBookById).FullName,
       new { id = book.Id });

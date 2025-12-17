@@ -38,7 +38,7 @@ internal class CreateBook
   {
     var bookId = Guid.NewGuid();
 
-    return WebResults.AtRouteOnOk(
+    return WebResults.WithLocationRouteOnSuccess(
       new CreateBookResponse(bookId),
       typeof(GetBookById).FullName,
       new { id = bookId });

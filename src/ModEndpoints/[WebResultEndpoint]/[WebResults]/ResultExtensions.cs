@@ -9,12 +9,12 @@ public static partial class ResultExtensions
   {
     public WebResult ToWebResult()
     {
-      return new WebResult(result.ToResult());
+      return new DefaultWebResult(result.ToResult());
     }
 
     public WebResult<TValue> ToWebResultOfTValue()
     {
-      return new WebResult<TValue>(result);
+      return new DefaultWebResult<TValue>(result);
     }
   }
 
@@ -22,7 +22,7 @@ public static partial class ResultExtensions
   {
     public WebResult ToWebResult()
     {
-      return new WebResult(result);
+      return new DefaultWebResult(result);
     }
   }
 }
