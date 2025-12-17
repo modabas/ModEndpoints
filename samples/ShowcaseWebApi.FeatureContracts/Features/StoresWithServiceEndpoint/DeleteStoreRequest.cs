@@ -1,4 +1,4 @@
-﻿using ModEndpoints.RemoteServices.Core;
+﻿using ModEndpoints.RemoteServices.Shared;
 
 namespace ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 

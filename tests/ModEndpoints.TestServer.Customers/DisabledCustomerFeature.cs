@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ModEndpoints.Core;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Shared;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;

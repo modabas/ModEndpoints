@@ -29,4 +29,4 @@ WebResultEndpoints, BusinessResultEndpoints, and ServiceEndpoints structure ASP.
 - **Purpose**: Designed for simplifying remote service consumption with strongly typed request and response models.
 - **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package to abstract HTTP plumbing on the client side.
 
->**Note**: `ModEndpoints.RemoteServices` package enables clients to consume remote `ServiceEndpoints` with the knowledge of strongly typed request and response models shared between server and client projects. `ModEndpoints.RemoteServices.Core` package contains the interfaces required for ServiceEndpoint request models.
+>**Note**: `ModEndpoints.RemoteServices` package enables clients to consume remote `ServiceEndpoints` with the knowledge of strongly typed request and response models shared between server and client projects. `ModEndpoints.RemoteServices.Shared` package contains the interfaces required for ServiceEndpoint request models.

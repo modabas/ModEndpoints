@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using ModEndpoints.Core;
 using ModEndpoints.RemoteServices;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Shared;
 using ModResults;
 
 namespace ModEndpoints;

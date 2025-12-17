@@ -1,4 +1,4 @@
-﻿namespace ModEndpoints.RemoteServices.Core;
+﻿namespace ModEndpoints.RemoteServices.Shared;
 
 public interface IServiceRequest<TResponse> : IServiceRequestMarker;
 

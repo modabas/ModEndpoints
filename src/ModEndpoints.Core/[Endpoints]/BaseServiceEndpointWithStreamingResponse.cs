@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Shared;
 
 namespace ModEndpoints.Core;
 

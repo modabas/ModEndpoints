@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModEndpoints.RemoteServices;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Shared;
 using ModResults;
 using NSubstitute;
 

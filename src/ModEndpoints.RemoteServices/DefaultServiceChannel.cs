@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Shared;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;

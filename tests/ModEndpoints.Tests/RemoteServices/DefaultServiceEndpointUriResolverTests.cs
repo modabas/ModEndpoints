@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using ModEndpoints.RemoteServices;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Shared;
 using ModResults;
 
 namespace ModEndpoints.Tests.RemoteServices;

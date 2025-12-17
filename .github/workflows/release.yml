@@ -7,7 +7,7 @@ on:
 env:
   COREPROJECTNAME: "ModEndpoints.Core"
   ENDPOINTSPROJECTNAME: "ModEndpoints"
-  REMOTESERVICESCOREPROJECTNAME: "ModEndpoints.RemoteServices.Core"
+  REMOTESERVICESCOREPROJECTNAME: "ModEndpoints.RemoteServices.Shared"
   REMOTESERVICESPROJECTNAME: "ModEndpoints.RemoteServices"
 
   ENDPOINTSTESTPROJECTNAME: "ModEndpoints.Tests"

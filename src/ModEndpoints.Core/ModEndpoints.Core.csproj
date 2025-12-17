@@ -29,6 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModEndpoints.RemoteServices.Core\ModEndpoints.RemoteServices.Core.csproj" />
+    <ProjectReference Include="..\ModEndpoints.RemoteServices.Shared\ModEndpoints.RemoteServices.Shared.csproj" />
   </ItemGroup>
 </Project>
