@@ -51,7 +51,7 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
-  protected override async Task<Result<CreateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<CreateBookResponse>> HandleAsync(
     CreateBookRequest req,
     CancellationToken ct)
   {

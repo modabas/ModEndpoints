@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints;
 using ModEndpoints.Core;
+using ModResults;
 using ShowcaseWebApi.Features.Books.Configuration;
 
 namespace ShowcaseWebApi.Features.Books;
@@ -33,12 +34,15 @@ internal class UploadBook
       .Produces<UploadBookResponse>();
   }
 
-  protected override async Task<WebResult<UploadBookResponse>> HandleAsync(
+  protected override Task<WebResult<UploadBookResponse>> HandleAsync(
     UploadBookRequest req,
     CancellationToken ct)
   {
-    return new UploadBookResponse(
-      req.BookFile.FileName,
-      req.BookFile.Length);
+    return Task.FromResult(
+      WebResults.GetDefault(
+        new UploadBookResponse(
+          req.BookFile.FileName,
+          req.BookFile.Length))
+      .AsBase());
   }
 }

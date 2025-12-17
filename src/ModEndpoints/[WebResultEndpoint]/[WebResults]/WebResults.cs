@@ -5,13 +5,13 @@ namespace ModEndpoints;
 
 public static class WebResults
 {
-  #region "ToDefault"
+  #region "GetDefault"
   /// <summary>
   /// Creates a new instance of the <see cref="DefaultWebResult"/> class from the specified Result object.
   /// </summary>
   /// <param name="result">The Result object to wrap in a WebResult. Cannot be null.</param>
   /// <returns>A <see cref="DefaultWebResult"/> instance that encapsulates the specified Result object.</returns>
-  public static DefaultWebResult ToDefault(Result result)
+  public static DefaultWebResult GetDefault(Result result)
   {
     return new DefaultWebResult(result);
   }
@@ -22,19 +22,19 @@ public static class WebResults
   /// <typeparam name="TValue">The type of the value contained in the result. Must not be null.</typeparam>
   /// <param name="result">The result to wrap in a <see cref="WebResult{TValue}"/>. Cannot be null.</param>
   /// <returns>A <see cref="DefaultWebResult{TValue}"/> that encapsulates the specified result.</returns>
-  public static DefaultWebResult<TValue> ToDefault<TValue>(Result<TValue> result)
+  public static DefaultWebResult<TValue> GetDefault<TValue>(Result<TValue> result)
     where TValue : notnull
   {
     return new DefaultWebResult<TValue>(result);
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResult{TValue}"/> that represents a successful result containing the specified value.
+  /// Creates a new <see cref="DefaultWebResult{TValue}"/> that represents a successful result containing the specified value.
   /// </summary>
   /// <typeparam name="TValue">The type of the value to be wrapped in the result. Must be non-null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>
-  /// <returns>A <see cref="WebResult{TValue}"/> instance containing the specified value as a successful result.</returns>
-  public static DefaultWebResult<TValue> ToDefault<TValue>(TValue value)
+  /// <returns>A <see cref="DefaultWebResult{TValue}"/> instance containing the specified value as a successful result.</returns>
+  public static DefaultWebResult<TValue> GetDefault<TValue>(TValue value)
     where TValue : notnull
   {
     return new DefaultWebResult<TValue>(value);

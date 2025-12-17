@@ -6,6 +6,9 @@ namespace ModEndpoints;
 public abstract class WebResult
 {
   private readonly Result _result;
+  /// <summary>
+  /// Get the encapsulated <see cref="Result"/> instance.
+  /// </summary>
   public Result Result => _result;
   protected WebResult(Result result)
   {
@@ -25,7 +28,7 @@ public abstract class WebResult
 
   public static implicit operator WebResult(Result result)
   {
-    return result.ToWebResult();
+    return new DefaultWebResult(result);
   }
 }
 
@@ -33,13 +36,15 @@ public abstract class WebResult<TValue>
   where TValue : notnull
 {
   private readonly Result<TValue> _result;
+  /// <summary>
+  /// Get the encapsulated <see cref="Result{TValue}"/> instance.
+  /// </summary>
   public Result<TValue> Result => _result;
   protected WebResult(Result<TValue> result)
   {
     _result = result;
   }
   public abstract ValueTask<IResult> ExecuteAsync(HttpContext context, CancellationToken ct);
-
 
   public static implicit operator WebResult<TValue>(TValue value)
   {
@@ -48,7 +53,7 @@ public abstract class WebResult<TValue>
 
   public static implicit operator WebResult<TValue>(Result<TValue> result)
   {
-    return result.ToWebResultOfTValue();
+    return new DefaultWebResult<TValue>(result);
   }
 
   public static implicit operator WebResult(WebResult<TValue> webResult)

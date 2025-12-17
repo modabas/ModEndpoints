@@ -56,10 +56,10 @@ internal class UpdateBook(ServiceDbContext db)
     var updated = await db.SaveChangesAsync(ct);
     return updated > 0 ?
       Result.Ok(new UpdateBookResponse(
-      Id: req.Id,
-      Title: req.Body.Title,
-      Author: req.Body.Author,
-      Price: req.Body.Price))
+        Id: req.Id,
+        Title: req.Body.Title,
+        Author: req.Body.Author,
+        Price: req.Body.Price))
       : Result<UpdateBookResponse>.NotFound();
   }
 }

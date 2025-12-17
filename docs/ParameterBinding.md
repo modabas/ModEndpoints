@@ -33,7 +33,7 @@ internal class UpdateBook(ServiceDbContext db)
       .Produces<UpdateBookResponse>();
   }
 
-  protected override async Task<Result<UpdateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<UpdateBookResponse>> HandleAsync(
     UpdateBookRequest req,
     CancellationToken ct)
   {
@@ -51,10 +51,10 @@ internal class UpdateBook(ServiceDbContext db)
     var updated = await db.SaveChangesAsync(ct);
     return updated > 0 ?
       Result.Ok(new UpdateBookResponse(
-      Id: req.Id,
-      Title: req.Body.Title,
-      Author: req.Body.Author,
-      Price: req.Body.Price))
+        Id: req.Id,
+        Title: req.Body.Title,
+        Author: req.Body.Author,
+        Price: req.Body.Price))
       : Result<UpdateBookResponse>.NotFound();
   }
 }
@@ -89,13 +89,16 @@ internal class UploadBook
       .Produces<UploadBookResponse>();
   }
 
-  protected override Task<Result<UploadBookResponse>> HandleAsync(
+  protected override Task<WebResult<UploadBookResponse>> HandleAsync(
     UploadBookRequest req,
     CancellationToken ct)
   {
-    return Task.FromResult(Result.Ok(new UploadBookResponse(
-      req.BookFile.FileName,
-      req.BookFile.Length)));
+    return Task.FromResult(
+      WebResults.GetDefault(
+        new UploadBookResponse(
+          req.BookFile.FileName,
+          req.BookFile.Length))
+      .AsBase());
   }
 }
 ```
