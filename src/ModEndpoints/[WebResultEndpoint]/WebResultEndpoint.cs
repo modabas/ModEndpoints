@@ -48,7 +48,7 @@ public abstract class WebResultEndpoint<TRequest, TResponse>
     CancellationToken ct)
   {
     var invalidResult = validationResult.ToInvalidResult<TResponse>();
-    return ValueTask.FromResult(WebResults.GetDefault(invalidResult).AsBase());
+    return ValueTask.FromResult(WebResults.FromResult(invalidResult).AsBase());
   }
 }
 
@@ -94,6 +94,6 @@ public abstract class WebResultEndpoint<TRequest>
     CancellationToken ct)
   {
     var invalidResult = validationResult.ToInvalidResult();
-    return ValueTask.FromResult(WebResults.GetDefault(invalidResult).AsBase());
+    return ValueTask.FromResult(WebResults.FromResult(invalidResult).AsBase());
   }
 }

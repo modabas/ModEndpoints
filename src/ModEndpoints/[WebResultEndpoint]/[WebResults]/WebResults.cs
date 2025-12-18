@@ -5,13 +5,13 @@ namespace ModEndpoints;
 
 public static class WebResults
 {
-  #region "GetDefault"
+  #region "FromResult"
   /// <summary>
   /// Creates a new instance of the <see cref="DefaultWebResult"/> class from the specified Result object.
   /// </summary>
   /// <param name="result">The Result object to wrap in a WebResult. Cannot be null.</param>
   /// <returns>A <see cref="DefaultWebResult"/> instance that encapsulates the specified Result object.</returns>
-  public static DefaultWebResult GetDefault(Result result)
+  public static DefaultWebResult FromResult(Result result)
   {
     return new DefaultWebResult(result);
   }
@@ -22,7 +22,7 @@ public static class WebResults
   /// <typeparam name="TValue">The type of the value contained in the result. Must not be null.</typeparam>
   /// <param name="result">The result to wrap in a <see cref="WebResult{TValue}"/>. Cannot be null.</param>
   /// <returns>A <see cref="DefaultWebResult{TValue}"/> that encapsulates the specified result.</returns>
-  public static DefaultWebResult<TValue> GetDefault<TValue>(Result<TValue> result)
+  public static DefaultWebResult<TValue> FromResult<TValue>(Result<TValue> result)
     where TValue : notnull
   {
     return new DefaultWebResult<TValue>(result);
@@ -34,7 +34,7 @@ public static class WebResults
   /// <typeparam name="TValue">The type of the value to be wrapped in the result. Must be non-null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>
   /// <returns>A <see cref="DefaultWebResult{TValue}"/> instance containing the specified value as a successful result.</returns>
-  public static DefaultWebResult<TValue> GetDefault<TValue>(TValue value)
+  public static DefaultWebResult<TValue> FromResult<TValue>(TValue value)
     where TValue : notnull
   {
     return new DefaultWebResult<TValue>(value);
