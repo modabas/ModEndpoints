@@ -16,7 +16,7 @@
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a request validator is registered.
 - **Dependency Injection**: Supports constructor-based dependency injection for handling requests at runtime.
 - **Type-Safe Responses**: Provides response type safety in request handlers.
-- **Performance Optimized**: ([Almost](#Performance)) as fast as native Minimal APIs.
+- **Performant**: ([Almost](#Performance)) as fast as native Minimal APIs.
 
 ---
 

@@ -37,11 +37,11 @@ public static class RequestValidationResultExtensions
   /// <returns></returns>
   public static IEnumerable<Error> GetValidationErrors(this RequestValidationResult validationResult)
   {
-    return validationResult.Errors
+    return validationResult.Errors?
       .Select(
         e => new Error(
           errorMessage: e.ErrorMessage,
           code: e.ErrorCode,
-          propertyName: e.PropertyName));
+          propertyName: e.PropertyName)) ?? [];
   }
 }

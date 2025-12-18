@@ -18,22 +18,25 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
     [AsParameters] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as BaseWebResultEndpoint<TRequest, THandlerResult>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as BaseWebResultEndpoint<TRequest, THandlerResult>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validator = context.RequestServices.GetService<IRequestValidatorService>();
+      if (validator is not null)
       {
-        return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+        var validationResult = await validator.ValidateAsync(req, context, ct);
+        if (validationResult.IsFailed)
+        {
+          return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+        }
       }
     }
-
     //Handler
     var result = await handler.HandleAsync(req, ct);
     //Post handler mapping
@@ -90,8 +93,10 @@ public abstract class BaseWebResultEndpoint<THandlerResult>
   private async Task<IResult> ExecuteAsync(
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as BaseWebResultEndpoint<THandlerResult>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as BaseWebResultEndpoint<THandlerResult>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 

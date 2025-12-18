@@ -20,23 +20,26 @@ public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TRespon
     [FromBody] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), typeof(TRequest));
-    var handler = baseHandler as BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        typeof(TRequest))
+      as BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validator = context.RequestServices.GetService<IRequestValidatorService>();
+      if (validator is not null)
       {
-        yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
-        yield break;
+        var validationResult = await validator.ValidateAsync(req, context, ct);
+        if (validationResult.IsFailed)
+        {
+          yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+          yield break;
+        }
       }
     }
-
     //Handler
     await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
     {

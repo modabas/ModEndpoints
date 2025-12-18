@@ -19,23 +19,26 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     [AsParameters] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as MinimalEndpointWithStreamingResponse<TRequest, TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as MinimalEndpointWithStreamingResponse<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validator = context.RequestServices.GetService<IRequestValidatorService>();
+      if (validator is not null)
       {
-        yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
-        yield break;
+        var validationResult = await validator.ValidateAsync(req, context, ct);
+        if (validationResult.IsFailed)
+        {
+          yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+          yield break;
+        }
       }
     }
-
     //Handler
     await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
     {
@@ -67,7 +70,7 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     HttpContext context,
     CancellationToken ct)
   {
-    throw new RequestValidationException(validationResult.Errors);
+    throw new RequestValidationException(validationResult.Errors ?? []);
   }
 }
 
@@ -84,9 +87,12 @@ public abstract class MinimalEndpointWithStreamingResponse<TResponse>
   private async IAsyncEnumerable<TResponse> ExecuteAsync(
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as MinimalEndpointWithStreamingResponse<TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as MinimalEndpointWithStreamingResponse<TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
+
     var ct = context.RequestAborted;
 
     //Handler
