@@ -1,4 +1,4 @@
-﻿namespace ModEndpoints.RemoteServices.Shared;
+﻿namespace ModEndpoints.RemoteServices.Contracts;
 
 public interface IServiceRequest<TResponse> : IServiceRequestMarker;
 

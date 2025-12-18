@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using ModEndpoints.RemoteServices.Shared;
+using ModEndpoints.RemoteServices.Contracts;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;

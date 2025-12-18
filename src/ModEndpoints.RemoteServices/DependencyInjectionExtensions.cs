@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ModEndpoints.RemoteServices.Shared;
+using ModEndpoints.RemoteServices.Contracts;
 
 namespace ModEndpoints.RemoteServices;
 

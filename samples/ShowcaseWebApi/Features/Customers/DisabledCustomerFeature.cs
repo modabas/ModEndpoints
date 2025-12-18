@@ -1,5 +1,5 @@
 ﻿using ModEndpoints.Core;
-using ModEndpoints.RemoteServices.Shared;
+using ModEndpoints.RemoteServices.Contracts;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;

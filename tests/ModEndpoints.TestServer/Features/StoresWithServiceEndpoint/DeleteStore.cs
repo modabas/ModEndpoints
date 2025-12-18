@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using ModEndpoints.Core;
-using ModEndpoints.RemoteServices.Shared;
+using ModEndpoints.RemoteServices.Contracts;
 using ModEndpoints.TestServer.Features.StoresWithServiceEndpoint.Configuration;
 using ModResults;
 

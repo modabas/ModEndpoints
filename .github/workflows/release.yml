@@ -5,10 +5,10 @@ on:
     types: [published]
 
 env:
-  COREPROJECTNAME: "ModEndpoints.Core"
-  ENDPOINTSPROJECTNAME: "ModEndpoints"
-  REMOTESERVICESCOREPROJECTNAME: "ModEndpoints.RemoteServices.Shared"
-  REMOTESERVICESPROJECTNAME: "ModEndpoints.RemoteServices"
+  COREENDPOINTS_PROJECTNAME: "ModEndpoints.Core"
+  ENDPOINTS_PROJECTNAME: "ModEndpoints"
+  REMOTESERVICES_CONTRACTS_PROJECTNAME: "ModEndpoints.RemoteServices.Contracts"
+  REMOTESERVICES_PROJECTNAME: "ModEndpoints.RemoteServices"
 
   ENDPOINTSTESTPROJECTNAME: "ModEndpoints.Tests"
   
@@ -31,16 +31,16 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build ${{ env.REMOTESERVICESCOREPROJECTNAME }} --configuration Release --no-restore
+      run: dotnet build ${{ env.REMOTESERVICES_CONTRACTS_PROJECTNAME }} --configuration Release --no-restore
       working-directory: src
     - name: Build
-      run: dotnet build ${{ env.REMOTESERVICESPROJECTNAME }} --configuration Release --no-restore
+      run: dotnet build ${{ env.REMOTESERVICES_PROJECTNAME }} --configuration Release --no-restore
       working-directory: src
     - name: Build
-      run: dotnet build ${{ env.COREPROJECTNAME }} --configuration Release --no-restore
+      run: dotnet build ${{ env.COREENDPOINTS_PROJECTNAME }} --configuration Release --no-restore
       working-directory: src
     - name: Build
-      run: dotnet build ${{ env.ENDPOINTSPROJECTNAME }} --configuration Release --no-restore
+      run: dotnet build ${{ env.ENDPOINTS_PROJECTNAME }} --configuration Release --no-restore
       working-directory: src
 
     - name: Test
@@ -48,16 +48,16 @@ jobs:
       working-directory: tests
 
     - name: Package nuget remote services core
-      run: dotnet pack ${{ env.REMOTESERVICESCOREPROJECTNAME }} --configuration Release --no-build -o:package
+      run: dotnet pack ${{ env.REMOTESERVICES_CONTRACTS_PROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
     - name: Package nuget remote services
-      run: dotnet pack ${{ env.REMOTESERVICESPROJECTNAME }} --configuration Release --no-build -o:package
+      run: dotnet pack ${{ env.REMOTESERVICES_PROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
     - name: Package nuget endpoints core
-      run: dotnet pack ${{ env.COREPROJECTNAME }} --configuration Release --no-build -o:package
+      run: dotnet pack ${{ env.COREENDPOINTS_PROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
     - name: Package nuget endpoints
-      run: dotnet pack ${{ env.ENDPOINTSPROJECTNAME }} --configuration Release --no-build -o:package
+      run: dotnet pack ${{ env.ENDPOINTS_PROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
     - name: Push to NuGet
       run: dotnet nuget push ./package/*.nupkg --api-key ${{secrets.nuget_api_key}} --source https://api.nuget.org/v3/index.json

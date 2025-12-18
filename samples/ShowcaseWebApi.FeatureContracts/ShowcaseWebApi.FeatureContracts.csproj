@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ModEndpoints.RemoteServices.Shared\ModEndpoints.RemoteServices.Shared.csproj" />
+    <ProjectReference Include="..\..\src\ModEndpoints.RemoteServices.Contracts\ModEndpoints.RemoteServices.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

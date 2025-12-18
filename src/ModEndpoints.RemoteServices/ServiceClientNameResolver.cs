@@ -1,4 +1,4 @@
-﻿using ModEndpoints.RemoteServices.Shared;
+﻿using ModEndpoints.RemoteServices.Contracts;
 
 namespace ModEndpoints.RemoteServices;
 

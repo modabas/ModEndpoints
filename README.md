@@ -68,7 +68,7 @@ Each endpoint must implement two virtual methods:
 - **ModEndpoints.Core**: Provides `MinimalEndpoint` structure and contains the base implementations for organizing Minimal APIs in the REPR format.
 - **ModEndpoints**: Provides `WebResultEndpoint`, `BusinessResultEndpoint`, and `ServiceEndpoint` structures.
 - **ModEndpoints.RemoteServices**: Offers client implementations for `ServiceEndpoint` to facilitate remote service consumption.
-- **ModEndpoints.RemoteServices.Shared**: Contains classes and interfaces shared accross ModEndpoints and ModEndpoints.Core server side packages and ModEndpoints.RemoteServices client side package.
+- **ModEndpoints.RemoteServices.Contracts**: Contains classes and interfaces shared accross ModEndpoints and ModEndpoints.Core server side packages and ModEndpoints.RemoteServices client side package.
 
 ---
 
