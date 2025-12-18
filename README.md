@@ -16,6 +16,7 @@
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a request validator is registered.
 - **Dependency Injection**: Supports constructor-based dependency injection for handling requests at runtime.
 - **Type-Safe Responses**: Provides response type safety in request handlers.
+- **Performance Optimized**: ([Almost](#Performance)) as fast as native Minimal APIs.
 
 ---
 
@@ -264,13 +265,13 @@ For documents detailing other features and functionalities, refer to the followi
 
 ---
 
-## 📊 Performance
+## 📊 Performance {#Performance}
 
 Under load tests with 100 virtual users:  
 - MinimalEndpoints perform nearly the same (~1-2%) as Minimal APIs,
 - WebResultEndpoints introduce a slight overhead (~2-3%) compared to Minimal APIs in terms of requests per second.
 
-The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
+Test web apis perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
 See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/1.3.1/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 
