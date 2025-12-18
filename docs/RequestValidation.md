@@ -11,19 +11,9 @@ You can customize this behavior for individual endpoints by overriding the `Hand
 
 >**Note**: If request validation fails, the endpoint handler method `HandleAsync` will not be called.
 
+>**Note**: `WebResultEndpoint` implementations have to override `HandleValidationFailureAsync` method instead to customize the behavior when request validation fails.
+
 ```csharp
-public record GetBookByIdRequest(Guid Id);
-
-public record GetBookByIdResponse(Guid Id, string Title, string Author, decimal Price);
-
-internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdRequest>
-{
-  public GetBookByIdRequestValidator()
-  {
-    RuleFor(x => x.Id).NotEmpty();
-  }
-}
-
 internal class GetBookById(ServiceDbContext db)
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {
@@ -35,7 +25,7 @@ internal class GetBookById(ServiceDbContext db)
       .Produces<GetBookByIdResponse>();
   }
 
-  protected override ValueTask<IResult> HandleInvalidValidationResultAsync(
+  protected override ValueTask<WebResult<GetBookByIdResponse>> HandleValidationFailureAsync(
     RequestValidationResult validationResult,
     HttpContext context,
     CancellationToken ct)
@@ -50,6 +40,18 @@ internal class GetBookById(ServiceDbContext db)
   {
     //implement the endpoint logic here
 
+  }
+}
+
+public record GetBookByIdRequest(Guid Id);
+
+public record GetBookByIdResponse(Guid Id, string Title, string Author, decimal Price);
+
+internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdRequest>
+{
+  public GetBookByIdRequestValidator()
+  {
+    RuleFor(x => x.Id).NotEmpty();
   }
 }
 ```
