@@ -94,7 +94,7 @@ internal class UploadBook
     CancellationToken ct)
   {
     return Task.FromResult(
-      WebResults.GetDefault(
+      WebResults.FromResult(
         new UploadBookResponse(
           req.BookFile.FileName,
           req.BookFile.Length))

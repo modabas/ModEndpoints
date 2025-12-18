@@ -39,7 +39,7 @@ internal class UploadBook
     //
 
     return Task.FromResult(
-      WebResults.GetDefault(
+      WebResults.FromResult(
         new UploadBookResponse(
           req.BookFile.FileName,
           req.BookFile.Length))
