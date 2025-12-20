@@ -41,7 +41,6 @@ internal class UploadBook
       WebResults.FromResult(
         new UploadBookResponse(
           req.BookFile.FileName,
-          req.BookFile.Length))
-      .AsBase());
+          req.BookFile.Length)));
   }
 }

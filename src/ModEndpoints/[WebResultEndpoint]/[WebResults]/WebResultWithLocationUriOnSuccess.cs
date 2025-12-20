@@ -25,7 +25,7 @@ internal static class WebResultWithLocationUriOnSuccessExtensions
   }
 }
 
-public sealed class WebResultWithLocationUriOnSuccess : WebResult
+internal sealed class WebResultWithLocationUriOnSuccess : WebResult
 {
   private readonly string? _location;
   public string? Location => _location;
@@ -46,7 +46,7 @@ public sealed class WebResultWithLocationUriOnSuccess : WebResult
   }
 }
 
-public sealed class WebResultWithLocationUriOnSuccess<TValue> : WebResult<TValue> where TValue : notnull
+internal sealed class WebResultWithLocationUriOnSuccess<TValue> : WebResult<TValue> where TValue : notnull
 {
   private readonly string? _location;
   public string? Location => _location;

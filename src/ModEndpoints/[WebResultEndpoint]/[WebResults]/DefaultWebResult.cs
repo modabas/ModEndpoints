@@ -3,7 +3,7 @@ using ModResults;
 
 namespace ModEndpoints;
 
-public sealed class DefaultWebResult : WebResult
+internal sealed class DefaultWebResult : WebResult
 {
   internal DefaultWebResult(Result result) : base(result)
   {
@@ -15,7 +15,7 @@ public sealed class DefaultWebResult : WebResult
   }
 }
 
-public sealed class DefaultWebResult<TValue> : WebResult<TValue>
+internal sealed class DefaultWebResult<TValue> : WebResult<TValue>
   where TValue : notnull
 {
   internal DefaultWebResult(Result<TValue> result) : base(result)

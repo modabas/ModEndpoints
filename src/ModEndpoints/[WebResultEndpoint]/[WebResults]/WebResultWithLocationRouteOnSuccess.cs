@@ -27,7 +27,7 @@ internal static class WebResultWithLocationRouteOnSuccessExtensions
   }
 }
 
-public sealed class WebResultWithLocationRouteOnSuccess : WebResult
+internal sealed class WebResultWithLocationRouteOnSuccess : WebResult
 {
   private readonly string? _routeName;
   private readonly RouteValueDictionary? _routeValues;
@@ -57,7 +57,7 @@ public sealed class WebResultWithLocationRouteOnSuccess : WebResult
 }
 
 
-public sealed class WebResultWithLocationRouteOnSuccess<TValue> : WebResult<TValue> where TValue : notnull
+internal sealed class WebResultWithLocationRouteOnSuccess<TValue> : WebResult<TValue> where TValue : notnull
 {
   private readonly string? _routeName;
   private readonly RouteValueDictionary? _routeValues;
