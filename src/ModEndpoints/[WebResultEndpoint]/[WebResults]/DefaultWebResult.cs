@@ -5,7 +5,7 @@ namespace ModEndpoints;
 
 internal sealed class DefaultWebResult : WebResult
 {
-  internal DefaultWebResult(Result result) : base(result)
+  public DefaultWebResult(Result result) : base(result)
   {
   }
 
@@ -18,7 +18,7 @@ internal sealed class DefaultWebResult : WebResult
 internal sealed class DefaultWebResult<TValue> : WebResult<TValue>
   where TValue : notnull
 {
-  internal DefaultWebResult(Result<TValue> result) : base(result)
+  public DefaultWebResult(Result<TValue> result) : base(result)
   {
   }
 

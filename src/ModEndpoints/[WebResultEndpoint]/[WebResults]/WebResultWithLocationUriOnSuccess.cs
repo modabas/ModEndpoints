@@ -30,12 +30,12 @@ internal sealed class WebResultWithLocationUriOnSuccess : WebResult
   private readonly string? _location;
   public string? Location => _location;
 
-  internal WebResultWithLocationUriOnSuccess(Result result, string? uri) : base(result)
+  public WebResultWithLocationUriOnSuccess(Result result, string? uri) : base(result)
   {
     _location = uri;
   }
 
-  internal WebResultWithLocationUriOnSuccess(Result result, Uri? uri) : base(result)
+  public WebResultWithLocationUriOnSuccess(Result result, Uri? uri) : base(result)
   {
     _location = WebResultWithLocationUriOnSuccess.ParseUri(uri);
   }
@@ -51,12 +51,12 @@ internal sealed class WebResultWithLocationUriOnSuccess<TValue> : WebResult<TVal
   private readonly string? _location;
   public string? Location => _location;
 
-  internal WebResultWithLocationUriOnSuccess(Result<TValue> result, string? uri) : base(result)
+  public WebResultWithLocationUriOnSuccess(Result<TValue> result, string? uri) : base(result)
   {
     _location = uri;
   }
 
-  internal WebResultWithLocationUriOnSuccess(Result<TValue> result, Uri? uri) : base(result)
+  public WebResultWithLocationUriOnSuccess(Result<TValue> result, Uri? uri) : base(result)
   {
     _location = WebResultWithLocationUriOnSuccess.ParseUri(uri);
   }

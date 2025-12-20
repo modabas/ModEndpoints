@@ -34,12 +34,13 @@ internal sealed class WebResultWithLocationRouteOnSuccess : WebResult
   public string? RouteName => _routeName;
   public RouteValueDictionary? RouteValues => _routeValues;
 
-  internal WebResultWithLocationRouteOnSuccess(Result result, string? routeName, object? routeValues) : base(result)
+  public WebResultWithLocationRouteOnSuccess(Result result, string? routeName, object? routeValues) : base(result)
   {
     _routeName = routeName;
     _routeValues = new RouteValueDictionary(routeValues);
   }
-  internal WebResultWithLocationRouteOnSuccess(Result result, string? routeName, RouteValueDictionary? routeValues) : base(result)
+
+  public WebResultWithLocationRouteOnSuccess(Result result, string? routeName, RouteValueDictionary? routeValues) : base(result)
   {
     _routeName = routeName;
     _routeValues = routeValues;
@@ -64,12 +65,13 @@ internal sealed class WebResultWithLocationRouteOnSuccess<TValue> : WebResult<TV
   public string? RouteName => _routeName;
   public RouteValueDictionary? RouteValues => _routeValues;
 
-  internal WebResultWithLocationRouteOnSuccess(Result<TValue> result, string? routeName, object? routeValues) : base(result)
+  public WebResultWithLocationRouteOnSuccess(Result<TValue> result, string? routeName, object? routeValues) : base(result)
   {
     _routeName = routeName;
     _routeValues = new RouteValueDictionary(routeValues);
   }
-  internal WebResultWithLocationRouteOnSuccess(Result<TValue> result, string? routeName, RouteValueDictionary? routeValues) : base(result)
+
+  public WebResultWithLocationRouteOnSuccess(Result<TValue> result, string? routeName, RouteValueDictionary? routeValues) : base(result)
   {
     _routeName = routeName;
     _routeValues = routeValues;
