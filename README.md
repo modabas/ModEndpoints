@@ -247,6 +247,7 @@ For documents detailing other features and functionalities, refer to the followi
 - [Result Pattern Integration](./docs/ResultPatternIntegration.md)
 - [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
 - [WebResultEndpoint Response Mapping](./docs/WebResultEndpointResponseMapping.md)
+- [WebResultEndpoint Implicit Operators and QoL Features](./docs/WebResultEndpointImplicitOperators.md)
 - [ServiceEndpoint Clients](./docs/ServiceEndpointClients.md)
 
 ---
