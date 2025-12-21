@@ -6,8 +6,12 @@ There are several ways to customize how responses are mapped:
 
 - One way is to implement a custom class inheriting abstract `WebResult`, where you override `ExecuteAsync` method to provide your custom mapping logic. Then return an instance of the custom `WebResult` class from the endpoint handler method,
 
-- Another way to customize response mapping is by overriding the ConvertResultToResponseAsync method. This method is invoked after HandleAsync to transform the business result into an HTTP response. By default, it just calls the ExecuteAsync method of the returned WebResult object, but you can override it to implement your own mapping logic.
+- Another way to customize response mapping is by overriding the `ConvertResultToResponseAsync` method. This method is invoked 
+  1. after `HandleAsync` to transform the business result into an HTTP response. 
+  2. or after `HandleValidationFailureAsync` if request validation fails.
 
+By default, `ConvertResultToResponseAsync` method just calls the ExecuteAsync method of the input parameter `WebResult` object, but you can override it to implement your own mapping logic.
+ 
 ``` csharp
 internal class GetBookById(ServiceDbContext db)
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
