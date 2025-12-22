@@ -44,8 +44,9 @@ public static class WebResults
   #region "WithLocationUriOnSuccess"
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess"/> instance that returns
+  /// a `Location` header set to provided Uri when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult"/>.
   /// </summary>
   /// <param name="result">The result to be encapsulated in the response. Represents the outcome of the operation.</param>
   /// <param name="uri">The URI to associate with the response if the operation is successful. Can be null if no URI should be set.</param>
@@ -56,8 +57,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess"/> instance that returns
+  /// a `Location` header set to provided Uri when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult"/>.
   /// </summary>
   /// <param name="result">The result to be encapsulated in the response. Represents the outcome of the operation.</param>
   /// <param name="uri">The URI to associate with the response if the operation is successful. Can be null if no URI should be set.</param>
@@ -68,8 +70,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header set to provided Uri when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue"></typeparam>
   /// <param name="result">The result to be encapsulated in the response. Represents the outcome of the operation.</param>
@@ -82,8 +85,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header set to provided Uri when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue"></typeparam>
   /// <param name="result">The result to be encapsulated in the response. Represents the outcome of the operation.</param>
@@ -96,8 +100,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> that represents a successful result containing the specified value and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header set to provided Uri when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue">The type of the value to include in the response. Must not be null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>
@@ -110,8 +115,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> that represents a successful result containing the specified value and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationUriOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header set to provided Uri when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue">The type of the value to include in the response. Must not be null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>
@@ -127,8 +133,9 @@ public static class WebResults
   #region "WithLocationRouteOnSuccess"
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess"/> instance that returns
+  /// a `Location` header based on a named route when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult"/>.
   /// </summary>
   /// <param name="result">The result containing the value to include in the response. Must not be null.</param>
   /// <param name="routeName">The name of the route to use for generating the Location header.</param>
@@ -140,8 +147,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess"/> instance that returns
+  /// a `Location` header based on a named route when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult"/>.
   /// </summary>
   /// <param name="result">The result containing the value to include in the response. Must not be null.</param>
   /// <param name="routeName">The name of the route to use for generating the Location header.</param>
@@ -153,8 +161,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header based on a named route when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue">The type of the value contained in the result. Must be non-null.</typeparam>
   /// <param name="result">The result containing the value to include in the response. Must not be null.</param>
@@ -168,8 +177,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header based on a named route when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue">The type of the value contained in the result. Must be non-null.</typeparam>
   /// <param name="result">The result containing the value to include in the response. Must not be null.</param>
@@ -183,8 +193,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header based on a named route when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue">The type of the value contained in the result. Must be non-null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>
@@ -198,8 +209,9 @@ public static class WebResults
   }
 
   /// <summary>
-  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that represents the specified result and associates it
-  /// with a URI to be used when the operation is successful.
+  /// Creates a new <see cref="WebResultWithLocationRouteOnSuccess{TValue}"/> instance that returns
+  /// a `Location` header based on a named route when mapped HTTP response is either `201 Created` or `202 Accepted`.
+  /// Otherwise, it behaves like <see cref="DefaultWebResult{TValue}"/>.
   /// </summary>
   /// <typeparam name="TValue">The type of the value contained in the result. Must be non-null.</typeparam>
   /// <param name="value">The value to include in the successful result. Cannot be null.</param>

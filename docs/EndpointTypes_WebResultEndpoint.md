@@ -4,7 +4,9 @@
 
 A WebResultEndpoint implementation is designed to map a [business result](https://github.com/modabas/ModResults) instance generated within business logic to a Minimal API IResult depending on the business result type, state and failure type (if any). Mapping uses an intermediary abstract class `WebResult`, which encapsulates business result and each implementation of `WebResult` has its own mapping logic within `ExecuteAsync` method.
 
-Use the `WebResults` static factory class to create instances of `WebResult` implementations within WebResultEndpoint handler methods.
+Since encapsulated business result may be in Ok or Failed state with any one of the Failure types, `ExecuteAsync` method is responsible for mapping all different business result states to corresponding HTTP responses.
+
+`WebResults` static class provides factory methods to create various `WebResult` implementations for common scenarios. Check [WebResultEndpoint Response Mapping](./WebResultEndpointResponseMapping.md) documentation for more information.
 
 Request model (if any) defined for a WebResultEndpoint is bound with [AsParameters] attribute.
 Use one of the following `WebResultEndpoint` base classes depending on whether your endpoint has a request model and/or a response model:
