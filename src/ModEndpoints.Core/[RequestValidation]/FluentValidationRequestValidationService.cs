@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
-internal sealed class FluentValidationRequestValidatorService : IRequestValidatorService
+internal sealed class FluentValidationRequestValidationService : IRequestValidationService
 {
   public async Task<RequestValidationResult> ValidateAsync<TRequest>(
     TRequest req,

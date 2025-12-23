@@ -46,12 +46,13 @@ public static class DependencyInjectionExtensions
     ModEndpointsCoreOptions options = new();
     configure?.Invoke(options);
 
-    if (options.AddDefaultRequestValidatorService)
+    if (options.EnableRequestValidation)
     {
-      services.TryAddSingleton<IRequestValidatorService, FluentValidationRequestValidatorService>();
+      services.AddSingleton<IRequestValidationController, RequestValidationController>();
     }
 
-    services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
+    services.AddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(RequestValidationDefinitions.DefaultServiceName);
+    services.AddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
     ComponentRegistryAccessor.Instance.Initialize();
 

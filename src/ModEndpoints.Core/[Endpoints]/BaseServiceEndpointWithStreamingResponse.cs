@@ -29,10 +29,10 @@ public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TRespon
 
     //Request validation
     {
-      var validator = context.RequestServices.GetService<IRequestValidatorService>();
-      if (validator is not null)
+      var validationController = context.RequestServices.GetService<IRequestValidationController>();
+      if (validationController is not null)
       {
-        var validationResult = await validator.ValidateAsync(req, context, ct);
+        var validationResult = await validationController.ValidateAsync(req, context, ct);
         if (validationResult.IsFailed)
         {
           yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);

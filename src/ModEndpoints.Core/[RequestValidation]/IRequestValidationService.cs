@@ -2,7 +2,7 @@
 
 namespace ModEndpoints.Core;
 
-public interface IRequestValidatorService
+public interface IRequestValidationService
 {
   Task<RequestValidationResult> ValidateAsync<TRequest>(
     TRequest req,

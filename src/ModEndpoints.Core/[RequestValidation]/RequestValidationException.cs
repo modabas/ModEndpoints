@@ -12,9 +12,13 @@ public class RequestValidationException : Exception
   public IEnumerable<RequestValidationFailure> Errors { get; private set; }
 
   /// <summary>
-  /// Creates a new ValidationException
+  /// Initializes a new instance of the RequestValidationException class with the specified collection of validation
+  /// failures.
   /// </summary>
-  /// <param name="errors"></param>
+  /// <remarks>Use this constructor to create an exception that encapsulates multiple validation errors encountered
+  /// during a request. The provided errors are accessible through the Errors property.</remarks>
+  /// <param name="errors">A collection of RequestValidationFailure objects that describe the validation errors that caused the exception.
+  /// Cannot be null.</param>
   public RequestValidationException(IEnumerable<RequestValidationFailure> errors) : base(BuildErrorMessage(errors))
   {
     Errors = errors;

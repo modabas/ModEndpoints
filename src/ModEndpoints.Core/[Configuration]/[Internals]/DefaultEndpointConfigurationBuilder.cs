@@ -21,42 +21,42 @@ internal sealed class DefaultEndpointConfigurationBuilder(
 
   public override RouteHandlerBuilder MapGet(string pattern)
   {
-    var handlerBuilder = endpointRouteBuilder.MapGet(pattern, executeDelegate);
+    var handlerBuilder = endpointRouteBuilder.MapGet(pattern, executeDelegate).AddConfigurationMetadata();
     HandlerBuilders.Add(handlerBuilder);
     return handlerBuilder;
   }
 
   public override RouteHandlerBuilder MapPost(string pattern)
   {
-    var handlerBuilder = endpointRouteBuilder.MapPost(pattern, executeDelegate);
+    var handlerBuilder = endpointRouteBuilder.MapPost(pattern, executeDelegate).AddConfigurationMetadata();
     HandlerBuilders.Add(handlerBuilder);
     return handlerBuilder;
   }
 
   public override RouteHandlerBuilder MapDelete(string pattern)
   {
-    var handlerBuilder = endpointRouteBuilder.MapDelete(pattern, executeDelegate);
+    var handlerBuilder = endpointRouteBuilder.MapDelete(pattern, executeDelegate).AddConfigurationMetadata();
     HandlerBuilders.Add(handlerBuilder);
     return handlerBuilder;
   }
 
   public override RouteHandlerBuilder MapPut(string pattern)
   {
-    var handlerBuilder = endpointRouteBuilder.MapPut(pattern, executeDelegate);
+    var handlerBuilder = endpointRouteBuilder.MapPut(pattern, executeDelegate).AddConfigurationMetadata();
     HandlerBuilders.Add(handlerBuilder);
     return handlerBuilder;
   }
 
   public override RouteHandlerBuilder MapPatch(string pattern)
   {
-    var handlerBuilder = endpointRouteBuilder.MapPatch(pattern, executeDelegate);
+    var handlerBuilder = endpointRouteBuilder.MapPatch(pattern, executeDelegate).AddConfigurationMetadata();
     HandlerBuilders.Add(handlerBuilder);
     return handlerBuilder;
   }
 
   public override RouteHandlerBuilder MapMethods(string pattern, IEnumerable<string> httpMethods)
   {
-    var handlerBuilder = endpointRouteBuilder.MapMethods(pattern, httpMethods, executeDelegate);
+    var handlerBuilder = endpointRouteBuilder.MapMethods(pattern, httpMethods, executeDelegate).AddConfigurationMetadata();
     HandlerBuilders.Add(handlerBuilder);
     return handlerBuilder;
   }

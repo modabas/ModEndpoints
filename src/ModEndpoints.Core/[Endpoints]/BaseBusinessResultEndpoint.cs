@@ -27,10 +27,10 @@ public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
 
     //Request validation
     {
-      var validator = context.RequestServices.GetService<IRequestValidatorService>();
-      if (validator is not null)
+      var validationController = context.RequestServices.GetService<IRequestValidationController>();
+      if (validationController is not null)
       {
-        var validationResult = await validator.ValidateAsync(req, context, ct);
+        var validationResult = await validationController.ValidateAsync(req, context, ct);
         if (validationResult.IsFailed)
         {
           return await HandleInvalidValidationResultAsync(validationResult, context, ct);

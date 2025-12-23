@@ -65,6 +65,6 @@ public abstract class ServiceEndpointConfigurator : IEndpointConfigurator
   {
     return handlerBuilder is null
       ? throw new InvalidOperationException(string.Format(Constants.RouteBuilderIsNullForEndpointMessage, GetType()))
-      : handlerBuilder;
+      : handlerBuilder.AddConfigurationMetadata();
   }
 }
