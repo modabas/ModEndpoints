@@ -27,14 +27,10 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
 
     //Request validation
     {
-      var validationController = context.RequestServices.GetService<IRequestValidationController>();
-      if (validationController is not null)
+      var validationResult = await RequestValidationDefinitions.ValidateAsync(req, context, ct);
+      if (validationResult.IsFailed)
       {
-        var validationResult = await validationController.ValidateAsync(req, context, ct);
-        if (validationResult.IsFailed)
-        {
-          return await HandleInvalidValidationResultAsync(validationResult, context, ct);
-        }
+        return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }
     }
     //Handler

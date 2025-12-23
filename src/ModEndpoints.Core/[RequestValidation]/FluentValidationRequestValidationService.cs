@@ -18,22 +18,17 @@ internal sealed class FluentValidationRequestValidationService : IRequestValidat
       var validationResult = await validator.ValidateAsync(req, ct);
       if (!validationResult.IsValid)
       {
-        return new RequestValidationResult
-        {
-          IsOk = false,
-          Errors = validationResult.Errors.Select(e => new RequestValidationFailure
+        return new RequestValidationResult(
+          false,
+          validationResult.Errors.Select(e => new RequestValidationFailure
           {
             PropertyName = e.PropertyName,
             ErrorMessage = e.ErrorMessage,
             ErrorCode = e.ErrorCode,
             AttemptedValue = e.AttemptedValue
-          }).ToList()
-        };
+          }).ToList());
       }
     }
-    return new RequestValidationResult
-    {
-      IsOk = true
-    };
+    return RequestValidationDefinitions.SuccessfulValidationResult;
   }
 }
