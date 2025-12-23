@@ -39,10 +39,10 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPref
     if (string.IsNullOrWhiteSpace(endpointName))
     {
       endpointName = endpoint.ToString();
-    }
-    if (string.IsNullOrWhiteSpace(endpointName))
-    {
-      return null;
+      if (string.IsNullOrWhiteSpace(endpointName))
+      {
+        return null;
+      }
     }
     return _cache.GetOrAdd(
       endpointName,

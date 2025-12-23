@@ -26,10 +26,10 @@ internal sealed class RequestValidationController : IRequestValidationController
   //  if (string.IsNullOrWhiteSpace(endpointName))
   //  {
   //    endpointName = endpoint.ToString();
-  //  }
-  //  if (string.IsNullOrWhiteSpace(endpointName))
-  //  {
-  //    return RequestValidationDefinitions.DefaultMetadata;
+  //    if (string.IsNullOrWhiteSpace(endpointName))
+  //    {
+  //      return RequestValidationDefinitions.DefaultMetadata;
+  //    }
   //  }
   //  return _endpointMetadataCache.GetOrAdd(
   //    endpointName,
