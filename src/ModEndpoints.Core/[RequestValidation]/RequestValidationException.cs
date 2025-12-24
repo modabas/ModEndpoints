@@ -32,7 +32,7 @@ public class RequestValidationException : Exception
   /// <param name="message">The message that describes the error.</param>
   public RequestValidationException(string message) : base(message)
   {
-    
+
   }
 
   private static string BuildErrorMessage(IEnumerable<RequestValidationFailure> errors)
