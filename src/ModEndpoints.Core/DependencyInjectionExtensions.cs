@@ -53,7 +53,7 @@ public static class DependencyInjectionExtensions
       config.DefaultServiceName = options.DefaultRequestValidationServiceName;
     });
     services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(
-      RequestValidationDefinitions.DefaultServiceName);
+      RequestValidation.DefaultServiceName);
 
     //Component registration
     services.AddScoped<IComponentDiscriminator, ComponentDiscriminator>();

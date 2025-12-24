@@ -27,7 +27,7 @@ public abstract class BaseBusinessResultEndpoint<TRequest, TResponse>
 
     //Request validation
     {
-      var validationResult = await RequestValidationDefinitions.ValidateAsync(req, context, ct);
+      var validationResult = await RequestValidation.ValidateAsync(req, context, ct);
       if (validationResult?.IsFailed == true)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);

@@ -4,15 +4,15 @@ using Microsoft.Extensions.Options;
 
 namespace ModEndpoints.Core;
 
-public static class RequestValidationDefinitions
+public static class RequestValidation
 {
   public const string DefaultServiceName = "Default";
 
-  internal static readonly RequestValidationMetadata DefaultMetadata = new();
+  private static readonly RequestValidationMetadata DefaultMetadata = new();
 
   internal static readonly RequestValidationResult SuccessfulValidationResult = new(true, null);
 
-  internal const string ServiceNotRegistered =
+  private const string ServiceNotRegistered =
     "Request validation service with name '{0}' is not registered.";
 
   internal static async Task<RequestValidationResult?> ValidateAsync<TRequest>(
@@ -26,7 +26,7 @@ public static class RequestValidationDefinitions
     {
       var validationMetadata =
         context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationMetadata>()
-        ?? RequestValidationDefinitions.DefaultMetadata;
+        ?? RequestValidation.DefaultMetadata;
       if (validationMetadata.IsEnabled)
       {
         var validationServiceName = validationMetadata.ServiceName ?? options.Value.DefaultServiceName;
@@ -34,7 +34,7 @@ public static class RequestValidationDefinitions
         if (validationService is null)
         {
           throw new RequestValidationException(string.Format(
-            RequestValidationDefinitions.ServiceNotRegistered, validationServiceName));
+            RequestValidation.ServiceNotRegistered, validationServiceName));
         }
         return await validationService.ValidateAsync(req, context, ct);
       }
