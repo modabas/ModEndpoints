@@ -2,4 +2,4 @@
 
 internal record RequestValidationMetadata(
   bool IsEnabled = true,
-  string ServiceName = RequestValidationDefinitions.DefaultServiceName);
+  string? ServiceName = null);

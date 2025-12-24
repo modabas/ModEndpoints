@@ -15,7 +15,7 @@ public static partial class EndpointConventionBuilderExtensions
     /// <param name="validationServiceName">The name of the validation service to use for request validation. If not specified, the default validation
     /// service is used.</param>
     /// <returns>The current builder instance with request validation enabled.</returns>
-    public TBuilder EnableRequestValidation(string validationServiceName = RequestValidationDefinitions.DefaultServiceName)
+    public TBuilder EnableRequestValidation(string? validationServiceName = null)
     {
       builder.WithMetadata(new RequestValidationMetadata(IsEnabled: true, ServiceName: validationServiceName));
       return builder;

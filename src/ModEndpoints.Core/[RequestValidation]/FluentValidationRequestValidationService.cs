@@ -6,7 +6,7 @@ namespace ModEndpoints.Core;
 
 internal sealed class FluentValidationRequestValidationService : IRequestValidationService
 {
-  public async Task<RequestValidationResult> ValidateAsync<TRequest>(
+  public async Task<RequestValidationResult?> ValidateAsync<TRequest>(
     TRequest req,
     HttpContext context,
     CancellationToken ct)
@@ -16,19 +16,21 @@ internal sealed class FluentValidationRequestValidationService : IRequestValidat
     if (validator is not null)
     {
       var validationResult = await validator.ValidateAsync(req, ct);
-      if (!validationResult.IsValid)
+      if (validationResult.IsValid)
+      {
+        return RequestValidationDefinitions.SuccessfulValidationResult;
+      }
+      else
       {
         return new RequestValidationResult(
-          false,
-          validationResult.Errors.Select(e => new RequestValidationFailure
-          {
-            PropertyName = e.PropertyName,
-            ErrorMessage = e.ErrorMessage,
-            ErrorCode = e.ErrorCode,
-            AttemptedValue = e.AttemptedValue
-          }).ToList());
+          IsOk: false,
+          Errors: validationResult.Errors.Select(e => new RequestValidationFailure(
+            PropertyName: e.PropertyName,
+            ErrorMessage: e.ErrorMessage,
+            ErrorCode: e.ErrorCode,
+            AttemptedValue: e.AttemptedValue)).ToList());
       }
     }
-    return RequestValidationDefinitions.SuccessfulValidationResult;
+    return null;
   }
 }

@@ -29,7 +29,7 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     //Request validation
     {
       var validationResult = await RequestValidationDefinitions.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      if (validationResult?.IsFailed == true)
       {
         yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
         yield break;

@@ -30,7 +30,7 @@ public abstract class BaseServiceEndpoint<TRequest, TResponse>
     //Request validation
     {
       var validationResult = await RequestValidationDefinitions.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      if (validationResult?.IsFailed == true)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }

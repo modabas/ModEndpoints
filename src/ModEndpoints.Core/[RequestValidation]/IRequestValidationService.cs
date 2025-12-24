@@ -4,7 +4,7 @@ namespace ModEndpoints.Core;
 
 public interface IRequestValidationService
 {
-  Task<RequestValidationResult> ValidateAsync<TRequest>(
+  Task<RequestValidationResult?> ValidateAsync<TRequest>(
     TRequest req,
     HttpContext context,
     CancellationToken ct)

@@ -1,4 +1,6 @@
-﻿namespace ModEndpoints.Core;
+﻿using System.Collections.ObjectModel;
+
+namespace ModEndpoints.Core;
 
 /// <summary>
 /// An exception that represents failed validation
@@ -9,7 +11,7 @@ public class RequestValidationException : Exception
   /// <summary>
   /// Validation errors
   /// </summary>
-  public IEnumerable<RequestValidationFailure> Errors { get; private set; }
+  public ReadOnlyCollection<RequestValidationFailure>? Errors { get; private set; }
 
   /// <summary>
   /// Initializes a new instance of the RequestValidationException class with the specified collection of validation
@@ -21,7 +23,16 @@ public class RequestValidationException : Exception
   /// Cannot be null.</param>
   public RequestValidationException(IEnumerable<RequestValidationFailure> errors) : base(BuildErrorMessage(errors))
   {
-    Errors = errors;
+    Errors = errors.ToList().AsReadOnly();
+  }
+
+  /// <summary>
+  /// Initializes a new instance of the RequestValidationException class with a specified error message.
+  /// </summary>
+  /// <param name="message">The message that describes the error.</param>
+  public RequestValidationException(string message) : base(message)
+  {
+    
   }
 
   private static string BuildErrorMessage(IEnumerable<RequestValidationFailure> errors)
