@@ -11,11 +11,11 @@ public static partial class EndpointConventionBuilderExtensions
     /// </summary>
     /// <remarks>Use this method to require that incoming requests to the endpoint are validated according to
     /// the rules defined by the specified validation service. This can help ensure that requests meet expected criteria
-    /// before further processing.</remarks>
+    /// before further processing. Has no effect if request validation is globally turned off.</remarks>
     /// <param name="validationServiceName">The name of the validation service to use for request validation. If not specified, the default validation
     /// service is used.</param>
     /// <returns>The current builder instance with request validation enabled.</returns>
-    public TBuilder EnableRequestValidation(string? validationServiceName = null)
+    public TBuilder ValidateRequestWithOptions(string? validationServiceName = null)
     {
       builder.WithMetadata(new RequestValidationMetadata(IsEnabled: true, ServiceName: validationServiceName));
       return builder;

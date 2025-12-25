@@ -8,9 +8,9 @@ public static class RequestValidation
 {
   public const string DefaultServiceName = "Default";
 
-  private static readonly RequestValidationMetadata DefaultMetadata = new();
+  private static readonly RequestValidationMetadata _defaultMetadata = new();
 
-  internal static readonly RequestValidationResult SuccessfulValidationResult = new(true, null);
+  internal static readonly RequestValidationResult SuccessfulValidationResult = new(IsOk: true, Errors: null);
 
   private const string ServiceNotRegistered =
     "Request validation service with name '{0}' is not registered.";
@@ -26,7 +26,7 @@ public static class RequestValidation
     {
       var validationMetadata =
         context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationMetadata>()
-        ?? RequestValidation.DefaultMetadata;
+        ?? RequestValidation._defaultMetadata;
       if (validationMetadata.IsEnabled)
       {
         var validationServiceName = validationMetadata.ServiceName ?? options.Value.DefaultServiceName;
