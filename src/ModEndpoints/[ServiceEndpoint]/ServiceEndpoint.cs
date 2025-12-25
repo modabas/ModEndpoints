@@ -34,7 +34,7 @@ public abstract class ServiceEndpoint<TRequest, TResultValue>
     IEndpointRouteBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    var serviceProvider = configurationContext.ServiceProvider;
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
@@ -71,7 +71,7 @@ public abstract class ServiceEndpoint<TRequest>
     IEndpointRouteBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    var serviceProvider = configurationContext.ServiceProvider;
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,

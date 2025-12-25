@@ -5,7 +5,7 @@
 /// </summary>
 internal sealed class DefaultEndpointConfigurationContext : EndpointConfigurationContext
 {
-  public override IServiceProvider ServiceProvider { get; }
+  public override IServiceProvider ConfigurationServices { get; }
 
   public override EndpointConfigurationParameters Parameters { get; }
 
@@ -13,7 +13,7 @@ internal sealed class DefaultEndpointConfigurationContext : EndpointConfiguratio
     IServiceProvider serviceProvider,
     EndpointConfigurationParameters parameters)
   {
-    ServiceProvider = serviceProvider;
+    ConfigurationServices = serviceProvider;
     Parameters = parameters;
   }
 }

@@ -34,7 +34,7 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValu
     IEndpointRouteBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    var serviceProvider = configurationContext.ServiceProvider;
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
@@ -72,7 +72,7 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest>
     IEndpointRouteBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    var serviceProvider = configurationContext.ServiceProvider;
+    var serviceProvider = configurationContext.ConfigurationServices;
     var uriResolverProvider = serviceProvider.GetRequiredService<IUriResolverProvider>();
     var uriResolver = uriResolverProvider.GetResolver(
       serviceProvider,
