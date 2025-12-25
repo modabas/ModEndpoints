@@ -46,8 +46,6 @@ public static class DependencyInjectionExtensions
     ModEndpointsCoreOptions options = new();
     configure?.Invoke(options);
 
-    services.TryAddSingleton<IEndpointNameResolver, DefaultEndpointNameResolver>();
-
     //Request validation
     services.Configure<RequestValidationOptions>(config =>
     {

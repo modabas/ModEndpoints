@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using ModEndpoints.Core;
 
-namespace ModEndpoints.Core;
+namespace ModEndpoints;
 
 internal sealed class DefaultEndpointNameResolver : IEndpointNameResolver
 {

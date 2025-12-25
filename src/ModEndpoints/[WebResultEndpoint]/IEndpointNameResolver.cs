@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace ModEndpoints.Core;
+namespace ModEndpoints;
 
-public interface IEndpointNameResolver
+internal interface IEndpointNameResolver
 {
   string? GetName(Endpoint endpoint);
 }
