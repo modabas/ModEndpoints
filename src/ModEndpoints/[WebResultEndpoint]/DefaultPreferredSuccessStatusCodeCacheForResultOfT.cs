@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
+using Microsoft.Extensions.Options;
 using ModEndpoints.Core;
 
 namespace ModEndpoints;
@@ -20,6 +21,13 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPref
   ];
 
   private readonly ConcurrentDictionary<string, int?> _cache = new();
+  private readonly IEndpointNameResolver _endpointNameResolver;
+
+  public DefaultPreferredSuccessStatusCodeCacheForResultOfT(
+    IEndpointNameResolver endpointNameResolver)
+  {
+    _endpointNameResolver = endpointNameResolver;
+  }
 
   public int? GetStatusCode(
     HttpContext context)
@@ -29,20 +37,10 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPref
     {
       return null;
     }
-    string? endpointName = null;
-    //FirstOrDefault to get the first added metadata (in case of multiple)
-    var list = endpoint.Metadata.GetOrderedMetadata<EndpointConfigurationMetadata>();
-    if (list is not null && list.Count > 0)
-    {
-      endpointName = list[0].EndpointUniqueName;
-    }
+    var endpointName = _endpointNameResolver.GetName(endpoint);
     if (string.IsNullOrWhiteSpace(endpointName))
     {
-      endpointName = endpoint.ToString();
-      if (string.IsNullOrWhiteSpace(endpointName))
-      {
-        return null;
-      }
+      return null;
     }
     return _cache.GetOrAdd(
       endpointName,
