@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
-using Microsoft.Extensions.Options;
 using ModEndpoints.Core;
 
 namespace ModEndpoints;
