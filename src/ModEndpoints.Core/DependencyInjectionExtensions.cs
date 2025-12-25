@@ -56,7 +56,7 @@ public static class DependencyInjectionExtensions
     });
     services.AddSingleton<IRequestValidationController, RequestValidationController>();
     services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(
-      RequestValidation.DefaultServiceName);
+      RequestValidationDefinitions.DefaultServiceName);
 
     //Component registration
     services.AddScoped<IComponentDiscriminator, ComponentDiscriminator>();
