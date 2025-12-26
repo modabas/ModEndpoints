@@ -1,6 +1,7 @@
 ﻿using ModResults;
 
 namespace BenchmarkWebApi.Services;
+
 internal class GetMeAStringService : IGetMeAStringService
 {
   /// <summary>

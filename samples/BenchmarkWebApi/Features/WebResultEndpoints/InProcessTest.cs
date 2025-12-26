@@ -27,13 +27,13 @@ internal class InProcessTest(IGetMeAStringService svc)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/WebResultEndpoints/InProcessTest/{Id}")
       .Produces<InProcessTestResponse>();
   }
 
-  protected override async Task<Result<InProcessTestResponse>> HandleAsync(
+  protected override async Task<WebResult<InProcessTestResponse>> HandleAsync(
     InProcessTestRequest req,
     CancellationToken ct)
   {

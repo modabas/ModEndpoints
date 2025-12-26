@@ -16,7 +16,7 @@ internal class ListCustomers
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapMethods("/", [HttpMethod.Get.Method]);
   }

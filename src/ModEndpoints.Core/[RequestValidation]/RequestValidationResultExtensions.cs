@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ModEndpoints.Core;
+
 public static class RequestValidationResultExtensions
 {
   public static IResult ToMinimalApiResult(this RequestValidationResult validationResult)
@@ -33,9 +34,9 @@ public static class RequestValidationResultExtensions
 
   private static Dictionary<string, string[]> GetErrors(RequestValidationResult validationResult)
   {
-    return validationResult.Errors
+    return validationResult.Errors?
       .GroupBy(e => e.PropertyName)
       .Select(g => new { g.Key, Values = g.Select(e => e.ErrorMessage).ToArray() })
-      .ToDictionary(pair => pair.Key, pair => pair.Values);
+      .ToDictionary(pair => pair.Key, pair => pair.Values) ?? [];
   }
 }

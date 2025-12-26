@@ -3,6 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for endpoints that return a streaming response of type <see cref="IAsyncEnumerable{TResponse}"/> from HandleAsync method.<br/>
+/// > **Note:** .Net 10 introduced `ServerSentEventsResult` IResult type to return streaming responses, which can be used as response type of a `MinimalEndpoint`.
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response type.</typeparam>
 public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
   : EndpointConfigurator, IMinimalEndpoint
   where TRequest : notnull
@@ -13,23 +19,23 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     [AsParameters] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as MinimalEndpointWithStreamingResponse<TRequest, TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as MinimalEndpointWithStreamingResponse<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validationController = context.RequestServices.GetRequiredService<IRequestValidationController>();
+      var validationResult = await validationController.ValidateAsync(req, context, ct);
+      if (validationResult?.IsFailed == true)
       {
         yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
         yield break;
       }
     }
-
     //Handler
     await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
     {
@@ -61,10 +67,15 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
     HttpContext context,
     CancellationToken ct)
   {
-    throw new RequestValidationException(validationResult.Errors);
+    throw new RequestValidationException(validationResult.Errors?.AsEnumerable() ?? []);
   }
 }
 
+/// <summary>
+/// Abstract base class for endpoints that return a streaming response of type <see cref="IAsyncEnumerable{TResponse}"/> from HandleAsync method.<br/>
+/// > **Note:** .Net 10 introduced `ServerSentEventsResult` IResult type to return streaming responses, which can be used as response type of a `MinimalEndpoint`.
+/// </summary>
+/// <typeparam name="TResponse">Response type.</typeparam>
 public abstract class MinimalEndpointWithStreamingResponse<TResponse>
   : EndpointConfigurator, IMinimalEndpoint
 {
@@ -73,9 +84,12 @@ public abstract class MinimalEndpointWithStreamingResponse<TResponse>
   private async IAsyncEnumerable<TResponse> ExecuteAsync(
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as MinimalEndpointWithStreamingResponse<TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as MinimalEndpointWithStreamingResponse<TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
+
     var ct = context.RequestAborted;
 
     //Handler

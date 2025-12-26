@@ -1,6 +1,5 @@
 ﻿using ModEndpoints.Core;
 using ModEndpoints.TestServer.Features.Books.Configuration;
-using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
 
@@ -13,13 +12,13 @@ internal class ListBooks
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/")
       .Produces<ListBooksResponse>();
   }
 
-  protected override async Task<Result<ListBooksResponse>> HandleAsync(
+  protected override async Task<WebResult<ListBooksResponse>> HandleAsync(
     CancellationToken ct)
   {
     await Task.CompletedTask; // Simulate async work

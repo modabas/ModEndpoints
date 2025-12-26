@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using ModEndpoints.Core;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 using ModEndpoints.TestServer.Features.StoresWithServiceEndpoint.Configuration;
 using ModResults;
 
@@ -18,7 +18,7 @@ internal class GetStoreByIdRequestValidator : AbstractValidator<GetStoreByIdRequ
 }
 
 [MapToGroup<StoresWithServiceEndpointRouteGroup>()]
-[UriResolver("DefaultServiceEndpointUriResolver")]
+[UriResolver("Default")]
 internal class GetStoreById
   : ServiceEndpoint<GetStoreByIdRequest, GetStoreByIdResponse>
 {

@@ -7,11 +7,42 @@ Each endpoint type has its own default behavior when request validation fails:
 - `WebResultEndpoint` will return an IResult with a 400 Bad Request response if validation fails.
 - `BusinessResultEndpoint` and `ServiceEndpoint` will return a business result indicating failure with an invalid status if validation does not pass.
 
-You can customize this behavior for individual endpoints by overriding the `HandleInvalidValidationResultAsync` method. This method is invoked by the internals of the endpoint implementation when request validation fails and receives a failed `RequestValidationResult` containing errors and the `HttpContext` as parameters. Response type varies depending on the endpoint type and/or response model.
+You can customize invalid request responses for individual endpoints by overriding the `HandleInvalidValidationResultAsync` method. This method is invoked by the internals of the endpoint implementation when request validation fails and receives a failed `RequestValidationResult` containing errors and the `HttpContext` as parameters. Response type varies depending on the endpoint type and/or response model.
 
 >**Note**: If request validation fails, the endpoint handler method `HandleAsync` will not be called.
 
+>**Note**: `WebResultEndpoint` implementations have to override `HandleValidationFailureAsync` method instead to customize the behavior when request validation fails.
+
 ```csharp
+internal class GetBookById(ServiceDbContext db)
+  : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
+{
+  protected override void Configure(
+    EndpointConfigurationBuilder builder,
+    EndpointConfigurationContext configurationContext)
+  {
+    builder.MapGet("/{Id}")
+      .Produces<GetBookByIdResponse>();
+  }
+
+  protected override ValueTask<WebResult<GetBookByIdResponse>> HandleValidationFailureAsync(
+    RequestValidationResult validationResult,
+    HttpContext context,
+    CancellationToken ct)
+  {
+    // change the default behavior of the endpoint when request validation has failed
+
+  }
+
+  protected override async Task<WebResult<GetBookByIdResponse>> HandleAsync(
+    GetBookByIdRequest req,
+    CancellationToken ct)
+  {
+    //implement the endpoint logic here
+
+  }
+}
+
 public record GetBookByIdRequest(Guid Id);
 
 public record GetBookByIdResponse(Guid Id, string Title, string Author, decimal Price);
@@ -23,48 +54,28 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
     RuleFor(x => x.Id).NotEmpty();
   }
 }
-
-internal class GetBookById(ServiceDbContext db)
-  : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
-{
-  protected override void Configure(
-    EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
-  {
-    builder.MapGet("/{Id}")
-      .Produces<GetBookByIdResponse>();
-  }
-
-  protected override ValueTask<IResult> HandleInvalidValidationResultAsync(
-    RequestValidationResult validationResult,
-    HttpContext context,
-    CancellationToken ct)
-  {
-    // change the default behavior of the endpoint when request validation has failed
-
-  }
-
-  protected override async Task<Result<GetBookByIdResponse>> HandleAsync(
-    GetBookByIdRequest req,
-    CancellationToken ct)
-  {
-    //implement the endpoint logic here
-
-  }
-}
 ```
 
-## Disabling Default Request Validation
-You can opt out of default request validation by setting AddDefaultRequestValidatorService to false. This can be useful if you want to implement your own request validation logic or if you want to use a different validation library.
+## Customizing Request Validation Behavior Globally
+
+Global request validation behavior can be customized during application startup. Default values for these settings make use of built-in FluentValidation request validation service.
+- `EnableRequestValidation` property (default value: true) turns on/off request validation globally for all endpoints, 
+- `RequestValidationServiceName` property changes the service used for request validation for all endpoints. 
+
+By implementing your own request validation service that adheres to `IRequestValidationService` interface, you can register it in the DI container with a custom service name and set `RequestValidationServiceName` to that name, so that all endpoints will use your custom request validation service by default.
 
 If you are using `ModEndpoints.Core` package:
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddKeyedSingleton<IRequestValidationService, MyValidationService>(
+  "MyValidationServiceName");
+
 builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.AddDefaultRequestValidatorService = false;
+  conf.DefaultRequestValidationServiceName = "MyValidationServiceName";
 });
 
 // ... add other services
@@ -75,10 +86,16 @@ If you are using `ModEndpoints` package:
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddKeyedSingleton<IRequestValidationService, MyValidationService>(
+  "MyValidationServiceName");
+
 builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.CoreOptions.AddDefaultRequestValidatorService = false;
+  conf.CoreOptions.DefaultRequestValidationServiceName = "MyValidationServiceName";
 });
 
 // ... add other services
 ```
+
+>**Note:** You can invoke any version of the `AddModEndpoints()` methods multiple times to register components from various assemblies. If you specify different request validation option parameters in these calls, a warning will be logged at application startup, and only the parameters from the first call will be applied.

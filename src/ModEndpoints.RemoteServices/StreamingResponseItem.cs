@@ -13,12 +13,12 @@ public record StreamingResponseItem(
 /// <summary>
 /// Represents a streaming service endpoint response item.
 /// </summary>
-/// <typeparam name="TResponse">Specifies the type of data payload in the response.</typeparam>
-public record StreamingResponseItem<TResponse>(
-  Result<TResponse> Result,
+/// <typeparam name="TResultType">Specifies the type of data payload in the response.</typeparam>
+public record StreamingResponseItem<TResultType>(
+  Result<TResultType> Result,
   string? ResponseType = StreamingResponseItemDefinitions.DefaultResponseType,
   string? ResponseId = null)
-  where TResponse : notnull
+  where TResultType : notnull
 {
   public StreamingResponseItem ToItem()
     => new(
@@ -26,6 +26,6 @@ public record StreamingResponseItem<TResponse>(
       ResponseType: ResponseType,
       ResponseId: ResponseId);
 
-  public static implicit operator StreamingResponseItem(StreamingResponseItem<TResponse> itemOfTResponse)
+  public static implicit operator StreamingResponseItem(StreamingResponseItem<TResultType> itemOfTResponse)
     => itemOfTResponse.ToItem();
 }

@@ -8,6 +8,7 @@ using ShowcaseWebApi.FeatureContracts.Features.StoresWithServiceEndpoint;
 using ShowcaseWebApi.Features.StoresWithServiceEndpoint.Configuration;
 
 namespace ShowcaseWebApi.Features.StoresWithServiceEndpoint;
+
 internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreRequest>
 {
   public DeleteStoreRequestValidator()

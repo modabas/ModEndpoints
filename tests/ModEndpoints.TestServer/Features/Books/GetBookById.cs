@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using ModEndpoints.Core;
 using ModEndpoints.TestServer.Features.Books.Configuration;
-using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
 
@@ -18,19 +17,18 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
 }
 
 [MapToGroup<BooksRouteGroup>()]
-[ResultToResponseMapper("DefaultResultToResponseMapper")]
 internal class GetBookById
   : WebResultEndpoint<GetBookByIdRequest, GetBookByIdResponse>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/{Id}")
       .Produces<GetBookByIdResponse>();
   }
 
-  protected override async Task<Result<GetBookByIdResponse>> HandleAsync(
+  protected override async Task<WebResult<GetBookByIdResponse>> HandleAsync(
     GetBookByIdRequest req,
     CancellationToken ct)
   {

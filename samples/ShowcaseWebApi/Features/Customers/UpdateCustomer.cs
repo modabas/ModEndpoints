@@ -6,6 +6,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record UpdateCustomerRequest(Guid Id, [FromBody] UpdateCustomerRequestBody Body);
 
 public record UpdateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);
@@ -29,7 +30,7 @@ internal class UpdateCustomer(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}")
       .Produces<UpdateCustomerResponse>();

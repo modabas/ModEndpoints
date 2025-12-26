@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 
 namespace ModEndpoints.RemoteServices;
+
 public static class DependencyInjectionExtensions
 {
   private const string ClientAlreadyExists = "A client with name {0} already exists.";

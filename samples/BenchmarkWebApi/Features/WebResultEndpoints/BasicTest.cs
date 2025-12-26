@@ -9,16 +9,16 @@ internal class BasicTest
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/WebResultEndpoints/BasicTest")
       .Produces<string>();
   }
 
-  protected override Task<Result<string>> HandleAsync(
+  protected override async Task<WebResult<string>> HandleAsync(
     CancellationToken ct)
   {
-    return Task.FromResult(Result.Ok("Hello World"));
+    return Result.Ok("Hello World");
   }
 }
 

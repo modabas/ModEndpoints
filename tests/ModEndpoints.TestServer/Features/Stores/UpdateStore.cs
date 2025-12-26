@@ -5,6 +5,7 @@ using ModEndpoints.TestServer.Features.Stores.Configuration;
 using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Stores;
+
 public record UpdateStoreRequest(Guid Id, [FromBody] UpdateStoreRequestBody Body);
 
 public record UpdateStoreRequestBody(string Name);
@@ -24,7 +25,7 @@ internal class UpdateStore
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}");
   }

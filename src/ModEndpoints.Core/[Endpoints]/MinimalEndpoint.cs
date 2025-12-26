@@ -6,6 +6,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ModEndpoints.Core;
 
+/// <summary>
+/// Abstract base class for endpoints that return a response from HandleAsync method.
+/// Supports following response types:<br/>
+/// - string<br/>
+/// - T (Any other type)<br/>
+/// - <see cref="IResult"/> based (Including <see cref="TypedResults"/>)<br/>
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response type that will be used as strongly-type response of HandleAsync method.</typeparam>
 public abstract class MinimalEndpoint<TRequest, TResponse>
   : EndpointConfigurator, IMinimalEndpoint
   where TRequest : notnull
@@ -16,22 +25,22 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     [AsParameters] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as MinimalEndpoint<TRequest, TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as MinimalEndpoint<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validationController = context.RequestServices.GetRequiredService<IRequestValidationController>();
+      var validationResult = await validationController.ValidateAsync(req, context, ct);
+      if (validationResult?.IsFailed == true)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }
     }
-
     //Handler
     return await handler.HandleAsync(req, ct);
   }
@@ -115,7 +124,7 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     }
     else
     {
-      throw new RequestValidationException(validationResult.Errors);
+      throw new RequestValidationException(validationResult.Errors?.AsEnumerable() ?? []);
     }
   }
 
@@ -141,6 +150,14 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
   }
 }
 
+/// <summary>
+/// Abstract base class for endpoints that return a response from HandleAsync method.
+/// Supports following response types:<br/>
+/// - string<br/>
+/// - T (Any other type)<br/>
+/// - <see cref="IResult"/> based (Including <see cref="TypedResults"/>)<br/>
+/// </summary>
+/// <typeparam name="TResponse">Response type that will be used as strongly-type response of HandleAsync method.</typeparam>
 public abstract class MinimalEndpoint<TResponse>
   : EndpointConfigurator, IMinimalEndpoint
 {
@@ -149,8 +166,10 @@ public abstract class MinimalEndpoint<TResponse>
   private async Task<TResponse> ExecuteAsync(
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), GetType());
-    var handler = baseHandler as MinimalEndpoint<TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        GetType())
+      as MinimalEndpoint<TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 

@@ -12,7 +12,7 @@ internal class ListCustomers(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/");
   }
@@ -50,7 +50,6 @@ internal class ListStores(ServiceDbContext db)
 
     await foreach (var store in stores.WithCancellation(ct))
     {
-      ct.ThrowIfCancellationRequested();
       yield return new StreamingResponseItem<ListStoresResponse>(store, "store");
       await Task.Delay(1000, ct);
     }
@@ -69,7 +68,7 @@ internal class GetStreamingWeatherForecastSse
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/streamingweatherforecastsse")
       .WithName("GetStreamingWeatherForecastSse")
@@ -112,7 +111,7 @@ internal class GetStreamingWeatherForecastTypedSse
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/streamingweatherforecasttypedsse")
       .WithName("GetStreamingWeatherForecastTypedSse")

@@ -2,9 +2,14 @@
 
 >**Package**: `ModEndpoints`
 
-A WebResultEndpoint implementation, after handling request, maps the [business result](https://github.com/modabas/ModResults) of HandleAsync method to a Minimal API IResult depending on the business result type, state and failure type (if any). Mapping behaviour can be modified or replaced with a custom one.
+A WebResultEndpoint implementation is designed to map a [business result](https://github.com/modabas/ModResults) instance generated within business logic to a Minimal API IResult depending on the business result type, state and failure type (if any). Mapping uses an intermediary abstract class `WebResult`, which encapsulates business result and each implementation of `WebResult` has its own mapping logic within `ExecuteAsync` method.
+
+Since encapsulated business result may be in Ok or Failed state with any one of the Failure types, `ExecuteAsync` method is responsible for mapping all different business result states to corresponding HTTP responses.
+
+`WebResults` static class provides factory methods to create various `WebResult` implementations for common scenarios. Check [WebResultEndpoint Response Mapping](./WebResultEndpointResponseMapping.md) documentation for more information.
 
 Request model (if any) defined for a WebResultEndpoint is bound with [AsParameters] attribute.
+Use one of the following `WebResultEndpoint` base classes depending on whether your endpoint has a request model and/or a response model:
 
 - **WebResultEndpoint&lt;TRequest, TResponse&gt;**: Has a request model, supports request validation and returns a response model as body of Minimal API IResult if successful.
 ``` csharp
@@ -24,18 +29,18 @@ internal class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
   }
 }
 
-internal class CreateBook(ServiceDbContext db, ILocationStore location)
+internal class CreateBook(ServiceDbContext db)
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
 
-  protected override async Task<Result<CreateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<CreateBookResponse>> HandleAsync(
     CreateBookRequest req,
     CancellationToken ct)
   {
@@ -49,11 +54,10 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
     db.Books.Add(book);
     await db.SaveChangesAsync(ct);
 
-    await location.SetValueAsync(
+    return WebResults.WithLocationRouteOnSuccess(
+      new CreateBookResponse(book.Id),
       typeof(GetBookById).FullName,
-      new { id = book.Id },
-      ct);
-    return Result.Ok(new CreateBookResponse(book.Id));
+      new { id = book.Id });
   }
 }
 ```
@@ -80,12 +84,12 @@ internal class UpdateBook
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}");
   }
 
-  protected override Task<Result> HandleAsync(
+  protected override Task<WebResult> HandleAsync(
     UpdateBookRequest req,
     CancellationToken ct)
   {
@@ -104,13 +108,13 @@ internal class ListBooks
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/")
       .Produces<ListBooksResponse>();
   }
 
-  protected override async Task<Result<ListBooksResponse>> HandleAsync(
+  protected override async Task<WebResult<ListBooksResponse>> HandleAsync(
     CancellationToken ct)
   {
     await Task.CompletedTask; // Simulate async work
@@ -132,12 +136,12 @@ internal class ResultEndpointWithEmptyRequest
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapDelete("/").Produces(StatusCodes.Status204NoContent);
   }
 
-  protected override async Task<Result> HandleAsync(
+  protected override async Task<WebResult> HandleAsync(
     CancellationToken ct)
   {
     await Task.CompletedTask; // Simulate async work
@@ -146,7 +150,7 @@ internal class ResultEndpointWithEmptyRequest
 }
 ```
 
-When result returned from handler method is in Ok state, default WebResultEndpoint response mapping behaviour is:
+When result returned from handler method is in Ok state, `DefaultWebResult` response mapping behaviour is:
 - For an [endpoint without a response model](../samples/ShowcaseWebApi/Features/Books/DeleteBook.cs), return HTTP 204 No Content.
 - For an endpoint with a response model, return HTTP 200 OK with response model as body.
 
@@ -160,6 +164,5 @@ Response HTTP success status code can be configured by [calling 'Produces' exten
 When result returned from handler method is in Failed state, default WebResultEndpoint response mapping will create a Minimal API IResult with a 4XX or 5XX HTTP Status Code depending on the FailureType of [business result](https://github.com/modabas/ModResults).
 
 It is also possible to implement a custom response mapping behaviour for a WebResultEndpoint. To do so:
-- Create an IResultToResponseMapper implementation,
-- Add it to dependency injection service collection with a string key during app startup,
-- Apply ResultToResponseMapper attribute to endpoint classes that will be using custom mapper. Use service registration string key as Name property of attribute.
+- Implement a custom class inheriting abstract `WebResult`, where you override `ExecuteAsync` method to provide your custom mapping logic,
+- Return an instance of the custom `WebResult` class from the endpoint handler method,

@@ -13,22 +13,22 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the route group.</returns>
   public RouteGroupBuilder[] Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
-    RouteGroupConfigurationBuilder configurationBuilder = new(builder);
+    DefaultRouteGroupConfigurationBuilder configurationBuilder = new(builder);
     Configure(configurationBuilder, configurationContext);
     return configurationBuilder.GroupBuilders.ToArray();
   }
 
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
-  /// Start configuring route group by calling the MapGroup method and chain additional configuration on top of returned <see cref="RouteGroupBuilder"/>.
+  /// Start configuring route group by calling the MapGroup method of <see cref="RouteGroupConfigurationBuilder"/> parameter and chain additional configuration on top of returned <see cref="RouteGroupBuilder"/>.
   /// </summary>
-  /// <param name="builder"></param>
-  /// <param name="configurationContext"></param>
+  /// <param name="builder">Route group builder.</param>
+  /// <param name="configurationContext">Configuration context.</param>
   protected abstract void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext);
+    RouteGroupConfigurationContext configurationContext);
 
   /// <summary>
   /// Called during application startup, while registering and configuring groups.
@@ -39,7 +39,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="configurationContext"></param>
   public virtual void PostConfigure(
     RouteGroupBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
     return;
   }
@@ -53,7 +53,7 @@ public abstract class RouteGroupConfigurator : IRouteGroupConfigurator
   /// <param name="configurationContext"></param>
   public virtual void EndpointPostConfigure(
     RouteHandlerBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     return;
   }

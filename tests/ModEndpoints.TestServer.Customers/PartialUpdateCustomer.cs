@@ -5,6 +5,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record PartialUpdateCustomerRequest(Guid Id, [FromBody] PartialUpdateCustomerRequestBody Body);
 
 public record PartialUpdateCustomerRequestBody(string FirstName);
@@ -26,7 +27,7 @@ internal class PartialUpdateCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPatch("/{Id}")
       .Produces<PartialUpdateCustomerResponse>();

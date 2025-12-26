@@ -1,5 +1,5 @@
 ﻿using ModEndpoints.Core;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
@@ -11,7 +11,7 @@ internal class DisabledCustomerFeature
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/disabled/");
   }

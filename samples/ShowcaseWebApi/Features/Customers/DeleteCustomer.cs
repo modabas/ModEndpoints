@@ -5,6 +5,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record DeleteCustomerRequest(Guid Id);
 
 internal class DeleteCustomerRequestValidator : AbstractValidator<DeleteCustomerRequest>
@@ -21,7 +22,7 @@ internal class DeleteCustomer(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapDelete("/{Id}")
       .Produces(StatusCodes.Status204NoContent);

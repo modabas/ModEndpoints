@@ -8,6 +8,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Stores.Configuration;
 
 namespace ShowcaseWebApi.Features.Stores;
+
 public record UpdateStoreRequest(Guid Id, [FromBody] UpdateStoreRequestBody Body);
 
 public record UpdateStoreRequestBody(string Name);
@@ -29,7 +30,7 @@ internal class UpdateStore(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}");
   }

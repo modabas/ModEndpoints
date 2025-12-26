@@ -4,6 +4,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record DeleteCustomerRequest(Guid Id);
 
 internal class DeleteCustomerRequestValidator : AbstractValidator<DeleteCustomerRequest>
@@ -20,7 +21,7 @@ internal class DeleteCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapDelete("/{Id}")
       .Produces(StatusCodes.Status204NoContent);

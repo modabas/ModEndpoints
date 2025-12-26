@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints;
 using ModEndpoints.Core;
-using ModResults;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 using ShowcaseWebApi.Features.Books.Data;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record CreateBookRequest([FromBody] CreateBookRequestBody Body);
 
 public record CreateBookRequestBody(string Title, string Author, decimal Price);
@@ -25,18 +25,18 @@ internal class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
 }
 
 [MapToGroup<BooksV1RouteGroup>()]
-internal class CreateBook(ServiceDbContext db, ILocationStore location)
+internal class CreateBook(ServiceDbContext db)
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
 
-  protected override async Task<Result<CreateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<CreateBookResponse>> HandleAsync(
     CreateBookRequest req,
     CancellationToken ct)
   {
@@ -50,10 +50,9 @@ internal class CreateBook(ServiceDbContext db, ILocationStore location)
     db.Books.Add(book);
     await db.SaveChangesAsync(ct);
 
-    await location.SetValueAsync(
+    return WebResults.WithLocationRouteOnSuccess(
+      new CreateBookResponse(book.Id),
       typeof(GetBookById).FullName,
-      new { id = book.Id },
-      ct);
-    return Result.Ok(new CreateBookResponse(book.Id));
+      new { id = book.Id });
   }
 }

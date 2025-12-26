@@ -7,6 +7,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Stores.Configuration;
 
 namespace ShowcaseWebApi.Features.Stores;
+
 public record DeleteStoreRequest(Guid Id);
 
 internal class DeleteStoreRequestValidator : AbstractValidator<DeleteStoreRequest>
@@ -23,7 +24,7 @@ internal class DeleteStore(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapDelete("/{Id}");
   }

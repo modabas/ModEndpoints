@@ -5,6 +5,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record UpdateCustomerRequest(Guid Id, [FromBody] UpdateCustomerRequestBody Body);
 
 public record UpdateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);
@@ -28,7 +29,7 @@ internal class UpdateCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}")
       .Produces<UpdateCustomerResponse>();

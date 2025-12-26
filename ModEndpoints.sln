@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35521.163
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "__SolutionItems", "__SolutionItems", "{CF48E8EB-5AA5-45E8-8AB7-418077F56E76}"
 	ProjectSection(SolutionItems) = preProject
@@ -29,8 +29,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModEndpoints.Core", "src\ModEndpoints.Core\ModEndpoints.Core.csproj", "{3AE2AB1C-C9CE-4F1D-8D73-2BD13864F0D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModEndpoints", "src\ModEndpoints\ModEndpoints.csproj", "{0F89CC73-32D4-4347-B284-41804A8A54A9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModEndpoints.RemoteServices.Core", "src\ModEndpoints.RemoteServices.Core\ModEndpoints.RemoteServices.Core.csproj", "{80C3DA6D-EDBE-47A5-BC6B-93BC334BEF67}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModEndpoints.RemoteServices", "src\ModEndpoints.RemoteServices\ModEndpoints.RemoteServices.csproj", "{3CDE6A69-09BA-4714-8DCD-D934BA27EBEB}"
 EndProject
@@ -62,10 +60,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{9FD33E1B-1
 		docs\ResultPatternIntegration.md = docs\ResultPatternIntegration.md
 		docs\RouteGroups.md = docs\RouteGroups.md
 		docs\ServiceEndpointClients.md = docs\ServiceEndpointClients.md
+		docs\WebResultEndpointImplicitOperators.md = docs\WebResultEndpointImplicitOperators.md
 		docs\WebResultEndpointResponseMapping.md = docs\WebResultEndpointResponseMapping.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModEndpoints.TestServer.Customers", "tests\ModEndpoints.TestServer.Customers\ModEndpoints.TestServer.Customers.csproj", "{7D3F2885-9DBE-30EC-4E67-5BCC3AD2EC8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModEndpoints.RemoteServices.Contracts", "src\ModEndpoints.RemoteServices.Contracts\ModEndpoints.RemoteServices.Contracts.csproj", "{460BEC55-4FF5-D1CB-CE8D-C302BCEA230C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,10 +90,6 @@ Global
 		{0F89CC73-32D4-4347-B284-41804A8A54A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F89CC73-32D4-4347-B284-41804A8A54A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F89CC73-32D4-4347-B284-41804A8A54A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80C3DA6D-EDBE-47A5-BC6B-93BC334BEF67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80C3DA6D-EDBE-47A5-BC6B-93BC334BEF67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80C3DA6D-EDBE-47A5-BC6B-93BC334BEF67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80C3DA6D-EDBE-47A5-BC6B-93BC334BEF67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3CDE6A69-09BA-4714-8DCD-D934BA27EBEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3CDE6A69-09BA-4714-8DCD-D934BA27EBEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CDE6A69-09BA-4714-8DCD-D934BA27EBEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -121,6 +118,10 @@ Global
 		{7D3F2885-9DBE-30EC-4E67-5BCC3AD2EC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D3F2885-9DBE-30EC-4E67-5BCC3AD2EC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D3F2885-9DBE-30EC-4E67-5BCC3AD2EC8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{460BEC55-4FF5-D1CB-CE8D-C302BCEA230C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{460BEC55-4FF5-D1CB-CE8D-C302BCEA230C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{460BEC55-4FF5-D1CB-CE8D-C302BCEA230C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{460BEC55-4FF5-D1CB-CE8D-C302BCEA230C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,7 +132,6 @@ Global
 		{BEE453CA-1ECC-4205-B4E6-D911C10F3155} = {74B81852-D3A9-49BA-A62F-A653FBB36665}
 		{3AE2AB1C-C9CE-4F1D-8D73-2BD13864F0D5} = {04A4BF42-A7C5-4D83-A137-90D6C3E68A00}
 		{0F89CC73-32D4-4347-B284-41804A8A54A9} = {04A4BF42-A7C5-4D83-A137-90D6C3E68A00}
-		{80C3DA6D-EDBE-47A5-BC6B-93BC334BEF67} = {04A4BF42-A7C5-4D83-A137-90D6C3E68A00}
 		{3CDE6A69-09BA-4714-8DCD-D934BA27EBEB} = {04A4BF42-A7C5-4D83-A137-90D6C3E68A00}
 		{DE3AA974-14C3-402F-93F4-A4A5D3DC0131} = {74B81852-D3A9-49BA-A62F-A653FBB36665}
 		{286D2D88-E9F9-EB56-64BA-76C95D7ED0D8} = {74B81852-D3A9-49BA-A62F-A653FBB36665}
@@ -139,6 +139,7 @@ Global
 		{31B5E39A-9973-1BFE-42E6-485AE83C4910} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{6789D27E-ECA5-4332-A51C-A68626859465} = {74B81852-D3A9-49BA-A62F-A653FBB36665}
 		{7D3F2885-9DBE-30EC-4E67-5BCC3AD2EC8F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{460BEC55-4FF5-D1CB-CE8D-C302BCEA230C} = {04A4BF42-A7C5-4D83-A137-90D6C3E68A00}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8AD0451A-6029-4173-B7C5-737D09139323}

@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 
 namespace ModEndpoints.Core;
+
+/// <summary>
+/// Abstract base class for service endpoints that return a business result from HandleAsync method wrapped in an HTTP 200 <see cref="IResult"/>.
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response business result type.</typeparam>
 public abstract class BaseServiceEndpoint<TRequest, TResponse>
   : ServiceEndpointConfigurator, IServiceEndpoint
   where TRequest : IServiceRequestMarker
@@ -14,22 +20,22 @@ public abstract class BaseServiceEndpoint<TRequest, TResponse>
     [FromBody] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), typeof(TRequest));
-    var handler = baseHandler as BaseServiceEndpoint<TRequest, TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        typeof(TRequest))
+      as BaseServiceEndpoint<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validationController = context.RequestServices.GetRequiredService<IRequestValidationController>();
+      var validationResult = await validationController.ValidateAsync(req, context, ct);
+      if (validationResult?.IsFailed == true)
       {
         return await HandleInvalidValidationResultAsync(validationResult, context, ct);
       }
     }
-
     //Handler
     return await handler.HandleAsync(req, ct);
   }

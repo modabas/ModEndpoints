@@ -3,7 +3,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using ModEndpoints.RemoteServices;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 using ModResults;
 
 namespace ModEndpoints.Tests.RemoteServices;

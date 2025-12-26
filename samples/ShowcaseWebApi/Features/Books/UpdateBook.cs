@@ -8,6 +8,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record UpdateBookRequest(Guid Id, [FromBody] UpdateBookRequestBody Body);
 
 public record UpdateBookRequestBody(string Title, string Author, decimal Price);
@@ -31,13 +32,13 @@ internal class UpdateBook(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}")
       .Produces<UpdateBookResponse>();
   }
 
-  protected override async Task<Result<UpdateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<UpdateBookResponse>> HandleAsync(
     UpdateBookRequest req,
     CancellationToken ct)
   {
@@ -55,10 +56,10 @@ internal class UpdateBook(ServiceDbContext db)
     var updated = await db.SaveChangesAsync(ct);
     return updated > 0 ?
       Result.Ok(new UpdateBookResponse(
-      Id: req.Id,
-      Title: req.Body.Title,
-      Author: req.Body.Author,
-      Price: req.Body.Price))
+        Id: req.Id,
+        Title: req.Body.Title,
+        Author: req.Body.Author,
+        Price: req.Body.Price))
       : Result<UpdateBookResponse>.NotFound();
   }
 }

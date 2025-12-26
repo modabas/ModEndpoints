@@ -1,7 +1,6 @@
 ﻿# ModEndpoints
 
-[![Nuget downloads](https://img.shields.io/nuget/v/ModEndpoints.svg)](https://www.nuget.org/packages/ModEndpoints/)
-[![Nuget](https://img.shields.io/nuget/dt/ModEndpoints)](https://www.nuget.org/packages/ModEndpoints/)
+[![Nuget](https://img.shields.io/nuget/v/ModEndpoints.svg)](https://www.nuget.org/packages/ModEndpoints/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/modabas/ModEndpoints/blob/main/LICENSE.txt)
 
 **ModEndpoints** provides various base endpoint types to organize ASP.NET Core Minimal APIs in the REPR (Request - Endpoint - Response) pattern. It shapes Minimal APIs into components encapsulating configuration, automatic request validation, request handling, and, depending on endpoint type, response mapping.
@@ -11,11 +10,13 @@
 ## ✨ Features
 
 - **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint and Response components.
-- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, endpoint filters, route groups, etc.
+- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, endpoint filters, etc.
+- **Route Grouping**: Supports grouping endpoints into route groups for better organization and shared configurations.
 - **Auto-Discovery and Registration**: Automatically discovers and registers endpoints and route groups.
-- **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a validator is registered.
-- **Dependency Injection**: Supports constructor-based dependency injection in endpoint implementation types.
+- **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a request validator is registered.
+- **Dependency Injection**: Supports constructor-based dependency injection for handling requests at runtime.
 - **Type-Safe Responses**: Provides response type safety in request handlers.
+- **Performant**: ([Almost](#Performance)) as fast as native Minimal APIs.
 
 ---
 
@@ -68,7 +69,7 @@ Each endpoint must implement two virtual methods:
 - **ModEndpoints.Core**: Provides `MinimalEndpoint` structure and contains the base implementations for organizing Minimal APIs in the REPR format.
 - **ModEndpoints**: Provides `WebResultEndpoint`, `BusinessResultEndpoint`, and `ServiceEndpoint` structures.
 - **ModEndpoints.RemoteServices**: Offers client implementations for `ServiceEndpoint` to facilitate remote service consumption.
-- **ModEndpoints.RemoteServices.Core**: Contains interfaces required for `ServiceEndpoint` request models.
+- **ModEndpoints.RemoteServices.Contracts**: Contains classes and interfaces shared accross ModEndpoints and ModEndpoints.Core server side packages and ModEndpoints.RemoteServices client side package.
 
 ---
 
@@ -90,7 +91,8 @@ In your `Program.cs`:
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>();
-//Validation
+
+//Register validators (from FluentValidation.DependencyInjectionExtensions nuget package, not included)
 builder.Services.AddValidatorsFromAssemblyContaining<MyValidator>(includeInternalTypes: true);
 
 var app = builder.Build();
@@ -101,6 +103,20 @@ app.Run();
 ```
 
 > **Note**: If you are using the `ModEndpoints.Core` package, replace `AddModEndpointsFromAssemblyContaining` with `AddModEndpointsCoreFromAssemblyContaining` and `MapModEndpoints` with `MapModEndpointsCore`.
+``` csharp
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>();
+
+//Register validators (from FluentValidation.DependencyInjectionExtensions nuget package, not included)
+builder.Services.AddValidatorsFromAssemblyContaining<MyValidator>(includeInternalTypes: true);
+
+var app = builder.Build();
+
+app.MapModEndpointsCore();
+
+app.Run();
+```
 
 ### Define a Minimal API in REPR format
 
@@ -111,22 +127,12 @@ Configuration of each endpoint implementation starts with calling one of the Map
 The request is processed in 'HandleAsync' method. Request is passed to handler method as parameter after validation (if a validator is registered for request model). Handler method returns a response model or a string or a Minimal API IResult based response.
 
 ``` csharp
-public record HelloWorldRequest(string Name);
-
-internal class HelloWorldRequestValidator : AbstractValidator<HelloWorldRequest>
-{
-  public HelloWorldRequestValidator()
-  {
-    RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(50);
-  }
-}
-
 internal class HelloWorld
   : MinimalEndpoint<HelloWorldRequest, IResult>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("MinimalEndpoints/HelloWorld/{Name}")
       .Produces<string>();
@@ -137,22 +143,27 @@ internal class HelloWorld
     return Task.FromResult(Results.Ok($"Hello, {req.Name}."));
   }
 }
+
+public record HelloWorldRequest(string Name);
+
+internal class HelloWorldRequestValidator : AbstractValidator<HelloWorldRequest>
+{
+  public HelloWorldRequestValidator()
+  {
+    RuleFor(x => x.Name).NotEmpty().MinimumLength(3).MaximumLength(50);
+  }
+}
 ```
 
 The GetWeatherForecast example from the .NET Core Web API project template can be rewritten using MinimalEndpoints in the REPR format as shown below:
 ``` csharp
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
 internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
 {
   private static readonly string[] _summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/weatherforecast")
       .WithName("GetWeatherForecast")
@@ -173,6 +184,11 @@ internal class GetWeatherForecast : MinimalEndpoint<WeatherForecast[]>
     return Task.FromResult(forecast);
   }
 }
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+  public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
 ```
 
 ### Integration with result pattern: A GET WebResultEndpoint with empty request
@@ -182,22 +198,18 @@ A `WebResultEndpoint` can be utilized to abstract the logic for converting busin
 This sample demonstrates a GET endpoint with basic configuration and without any request model binding. Business result instance returned from handler method is converted to a Minimal API IResult based response by WebResultEndpoint before being sent to client.
 
 ``` csharp
-public record ListBooksResponse(List<ListBooksResponseItem> Books);
-
-public record ListBooksResponseItem(Guid Id, string Title, string Author, decimal Price);
-
 internal class ListBooks(ServiceDbContext db)
   : WebResultEndpointWithEmptyRequest<ListBooksResponse>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/books")
       .Produces<ListBooksResponse>();
   }
 
-  protected override async Task<Result<ListBooksResponse>> HandleAsync(
+  protected override async Task<WebResult<ListBooksResponse>> HandleAsync(
     CancellationToken ct)
   {
     var books = await db.Books
@@ -211,6 +223,10 @@ internal class ListBooks(ServiceDbContext db)
     return new ListBooksResponse(Books: books);
   }
 }
+
+public record ListBooksResponse(List<ListBooksResponseItem> Books);
+
+public record ListBooksResponseItem(Guid Id, string Title, string Author, decimal Price);
 ```
 
 ### Explore More Features
@@ -231,6 +247,7 @@ For documents detailing other features and functionalities, refer to the followi
 - [Result Pattern Integration](./docs/ResultPatternIntegration.md)
 - [IAsyncEnumerable Response](./docs/IAsyncEnumerableResponse.md)
 - [WebResultEndpoint Response Mapping](./docs/WebResultEndpointResponseMapping.md)
+- [WebResultEndpoint Implicit Operators and QoL Features](./docs/WebResultEndpointImplicitOperators.md)
 - [ServiceEndpoint Clients](./docs/ServiceEndpointClients.md)
 
 ---
@@ -249,13 +266,13 @@ For documents detailing other features and functionalities, refer to the followi
 
 ---
 
-## 📊 Performance
+## 📊 Performance {#Performance}
 
 Under load tests with 100 virtual users:  
 - MinimalEndpoints perform nearly the same (~1-2%) as Minimal APIs,
 - WebResultEndpoints introduce a slight overhead (~2-3%) compared to Minimal APIs in terms of requests per second.
 
-The web apis called for tests, perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
+Test web apis perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
 See [test results](./samples/BenchmarkWebApi/BenchmarkFiles/Results/1.3.1/inprocess_benchmark_results.txt) under [BenchmarkFiles](https://github.com/modabas/ModEndpoints/tree/main/samples/BenchmarkWebApi/BenchmarkFiles) folder of BenchmarkWebApi project for detailed results and test scripts.
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
-using ModResults;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 
@@ -16,13 +15,13 @@ internal class ListBooks(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/")
       .Produces<ListBooksResponse>();
   }
 
-  protected override async Task<Result<ListBooksResponse>> HandleAsync(
+  protected override async Task<WebResult<ListBooksResponse>> HandleAsync(
     CancellationToken ct)
   {
     var books = await db.Books

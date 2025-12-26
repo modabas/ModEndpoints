@@ -12,7 +12,7 @@ internal class GetStreamingWeatherForecastSse
 
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/streamingweatherforecastsse")
       .WithName("GetStreamingWeatherForecastSse")
@@ -25,7 +25,7 @@ internal class GetStreamingWeatherForecastSse
     await Task.CompletedTask;
     return Results.ServerSentEvents<WeatherForecast>(GetForecast(ct));
 
-    async IAsyncEnumerable<WeatherForecast> GetForecast([EnumeratorCancellation] CancellationToken ct)
+    static async IAsyncEnumerable<WeatherForecast> GetForecast([EnumeratorCancellation] CancellationToken ct)
     {
       var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast

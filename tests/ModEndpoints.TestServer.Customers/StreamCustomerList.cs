@@ -16,7 +16,7 @@ internal class StreamCustomerList
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapMethods("/stream-list", [HttpMethod.Get.Method]);
   }

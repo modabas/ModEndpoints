@@ -1,11 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 
-public class DefaultServiceChannel(
+internal sealed class DefaultServiceChannel(
   IHttpClientFactory clientFactory,
   IServiceProvider serviceProvider)
   : IServiceChannel
@@ -157,7 +157,6 @@ public class DefaultServiceChannel(
           }
           await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(httpResponse, ct))
           {
-            ct.ThrowIfCancellationRequested();
             yield return resultObject;
           }
         }
@@ -214,7 +213,6 @@ public class DefaultServiceChannel(
           }
           await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(httpResponse, ct))
           {
-            ct.ThrowIfCancellationRequested();
             yield return resultObject;
           }
         }

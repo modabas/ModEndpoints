@@ -7,6 +7,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Books.Configuration;
 
 namespace ShowcaseWebApi.Features.Books;
+
 public record DeleteBookRequest(Guid Id);
 
 internal class DeleteBookRequestValidator : AbstractValidator<DeleteBookRequest>
@@ -23,12 +24,12 @@ internal class DeleteBook(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapDelete("/{Id}");
   }
 
-  protected override async Task<Result> HandleAsync(
+  protected override async Task<WebResult> HandleAsync(
     DeleteBookRequest req,
     CancellationToken ct)
   {

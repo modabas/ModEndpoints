@@ -1,38 +1,26 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace ModEndpoints.Core;
 
-public class RouteGroupConfigurationBuilder(IEndpointRouteBuilder endpointRouteBuilder)
+/// <summary>
+/// Contains necessary methods to configure route groups.
+/// </summary>
+public abstract class RouteGroupConfigurationBuilder
 {
-  internal List<RouteGroupBuilder> GroupBuilders { get; private set; } = new();
-
   /// <summary>
-  /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
+  /// Creates a <see cref="RouteGroupBuilder"/>
   /// for defining endpoints, all prefixed with <paramref name="prefix"/>
   /// </summary>
-  /// <param name="prefix"></param>
+  /// <param name="prefix">The pattern that prefixes all routes in this group.</param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the group.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  public RouteGroupBuilder MapGroup(string prefix)
-  {
-    var groupBuilder = endpointRouteBuilder.MapGroup(prefix);
-    GroupBuilders.Add(groupBuilder);
-    return groupBuilder;
-  }
+  public abstract RouteGroupBuilder MapGroup(RoutePattern prefix);
 
   /// <summary>
-  /// To be used in "Configure" overload method to create a <see cref="RouteGroupBuilder"/>
+  /// Creates a <see cref="RouteGroupBuilder"/>
   /// for defining endpoints, all prefixed with <paramref name="prefix"/>
   /// </summary>
-  /// <param name="prefix"></param>
+  /// <param name="prefix">The pattern that prefixes all routes in this group.</param>
   /// <returns>A <see cref="RouteGroupBuilder"/> that can be used to further customize the group.</returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  public RouteGroupBuilder MapGroup(RoutePattern prefix)
-  {
-    var groupBuilder = endpointRouteBuilder.MapGroup(prefix);
-    GroupBuilders.Add(groupBuilder);
-    return groupBuilder;
-  }
+  public abstract RouteGroupBuilder MapGroup(string prefix);
 }

@@ -7,7 +7,7 @@ internal class FeaturesRouteGroup : RouteGroupConfigurator
 {
   protected override void Configure(
     RouteGroupConfigurationBuilder builder,
-    ConfigurationContext<RouteGroupConfigurationParameters> configurationContext)
+    RouteGroupConfigurationContext configurationContext)
   {
     var groupBuilder = builder.MapGroup("/api/v{version:apiVersion}");
     var apiVersionSet = groupBuilder.NewApiVersionSet()

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Routing;
 
 namespace ModEndpoints.Core;
+
 public abstract class EndpointConfigurator : IEndpointConfigurator
 {
   protected abstract Delegate ExecuteDelegate { get; }
@@ -14,22 +15,22 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <returns>A <see cref="RouteHandlerBuilder"/> that can be used to further customize the endpoint.</returns>
   public RouteHandlerBuilder[] Configure(
     IEndpointRouteBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
-    EndpointConfigurationBuilder configurationBuilder = new(builder, ExecuteDelegate);
+    DefaultEndpointConfigurationBuilder configurationBuilder = new(builder, ExecuteDelegate);
     Configure(configurationBuilder, configurationContext);
     return configurationBuilder.HandlerBuilders.ToArray();
   }
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
-  /// Start configuring endpoint by calling one of the Map[HttpVerb] methods and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
+  /// Start configuring endpoint by calling one of the Map[HttpVerb] methods of <see cref="EndpointConfigurationBuilder"/> parameter and chain additional configuration on top of returned <see cref="RouteHandlerBuilder"/>.
   /// </summary>
-  /// <param name="builder"></param>
-  /// <param name="configurationContext"></param>
+  /// <param name="builder">Endpoint builder.</param>
+  /// <param name="configurationContext">Configuration context.</param>
   protected abstract void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext);
+    EndpointConfigurationContext configurationContext);
 
   /// <summary>
   /// Called during application startup, while registering and configuring endpoints.
@@ -40,7 +41,7 @@ public abstract class EndpointConfigurator : IEndpointConfigurator
   /// <param name="configurationContext"></param>
   public virtual void PostConfigure(
     RouteHandlerBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     return;
   }

@@ -1,4 +1,4 @@
-﻿namespace ModEndpoints.RemoteServices.Core;
+﻿namespace ModEndpoints.RemoteServices.Contracts;
 
 /// <summary>
 /// Attribute to prevent targeted route group (including its children) or endpoint to be registered during server application startup.

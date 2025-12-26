@@ -1,13 +1,14 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
+using ModEndpoints.Core;
 
 namespace ModEndpoints;
 
 /// <summary>
 /// Used to store and retrieve preferred success status codes for Web Result Endpoints with a response model.
 /// </summary>
-public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSuccessStatusCodeCache
+internal sealed class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSuccessStatusCodeCache
 {
   private readonly int?[] _successStatusCodePriorityList =
   [
@@ -19,6 +20,13 @@ public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSucc
   ];
 
   private readonly ConcurrentDictionary<string, int?> _cache = new();
+  private readonly IEndpointNameResolver _endpointNameResolver;
+
+  public DefaultPreferredSuccessStatusCodeCacheForResultOfT(
+    IEndpointNameResolver endpointNameResolver)
+  {
+    _endpointNameResolver = endpointNameResolver;
+  }
 
   public int? GetStatusCode(
     HttpContext context)
@@ -28,16 +36,16 @@ public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSucc
     {
       return null;
     }
-    var endpointString = endpoint.ToString();
-    if (endpointString is null)
+    var endpointName = _endpointNameResolver.GetName(endpoint);
+    if (string.IsNullOrWhiteSpace(endpointName))
     {
       return null;
     }
     return _cache.GetOrAdd(
-      endpointString,
-      (_, endpoint) =>
+      endpointName,
+      (_, state) =>
       {
-        var producesList = endpoint
+        var producesList = state.Endpoint
           .Metadata
           .GetOrderedMetadata<IProducesResponseTypeMetadata>();
 #if NET9_0
@@ -56,7 +64,7 @@ public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSucc
         {
           return null;
         }
-        return _successStatusCodePriorityList
+        return state.StatusCodes
           .Join(
             producesList,
             outer => outer,
@@ -64,6 +72,6 @@ public class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSucc
             (outer, inner) => outer)
           .FirstOrDefault();
       },
-      endpoint);
+      new { Endpoint = endpoint, StatusCodes = _successStatusCodePriorityList });
   }
 }

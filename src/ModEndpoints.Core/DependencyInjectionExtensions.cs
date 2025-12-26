@@ -5,11 +5,14 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 
 namespace ModEndpoints.Core;
+
 public static class DependencyInjectionExtensions
 {
+  private const string LoggerName = "ModEndpoints.Core.DependencyInjection";
+
   /// <summary>
   /// Registers route groups and endpoints from the assembly containing the specified type into the dependency injection container. 
   /// </summary>
@@ -45,14 +48,28 @@ public static class DependencyInjectionExtensions
     ModEndpointsCoreOptions options = new();
     configure?.Invoke(options);
 
-    if (options.AddDefaultRequestValidatorService)
-    {
-      services.TryAddSingleton<IRequestValidator, FluentValidationRequestValidator>();
-    }
-
-    services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
-
     ComponentRegistryAccessor.Instance.Initialize();
+
+    //Request validation
+    var requestValidationOptions = new RequestValidationOptions()
+    {
+      IsEnabled = options.EnableRequestValidation,
+      ServiceName = options.RequestValidationServiceName
+    };
+    if (ComponentRegistryAccessor.Instance.Registry?.TrySetValidationOptions(requestValidationOptions) == true)
+    {
+      services.Configure<RequestValidationOptions>(config =>
+      {
+        config.IsEnabled = requestValidationOptions.IsEnabled;
+        config.ServiceName = requestValidationOptions.ServiceName;
+      });
+    }
+    services.TryAddSingleton<IRequestValidationController, RequestValidationController>();
+    services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(
+      RequestValidationDefinitions.DefaultServiceName);
+
+    //Component registration
+    services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, options)
@@ -64,13 +81,10 @@ public static class DependencyInjectionExtensions
     Assembly assembly,
     ModEndpointsCoreOptions options)
   {
-    //Don't add RootRouteGroup, it's just a marker class to define root
-    //Normally its assembly won't be loaded with this method anyway but just in case
     var routeGroupTypes = assembly
       .DefinedTypes
       .Where(type => type is { IsAbstract: false, IsInterface: false } &&
         type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
-        type != typeof(RootRouteGroup) &&
         !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
     var serviceDescriptors = routeGroupTypes
@@ -233,14 +247,22 @@ public static class DependencyInjectionExtensions
   /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
   /// <param name="throwOnMissingConfiguration"></param>
   /// <returns></returns>
-  public static WebApplication MapModEndpointsCore(
-    this WebApplication app,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
+  public static IEndpointRouteBuilder MapModEndpointsCore(
+    this IEndpointRouteBuilder app,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
-    IEndpointRouteBuilder builder = app;
-    using (var scope = builder.ServiceProvider.CreateScope())
+    using (var scope = app.ServiceProvider.CreateScope())
     {
+      if (ComponentRegistryAccessor.Instance.Registry?.GetRequestValitionOptionsConflict(out var configuredOptions) == true)
+      {
+        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+          .CreateLogger(LoggerName);
+        logger.LogWarning(
+          Constants.ValidationOptionsConflictLogMessage,
+          System.Text.Json.JsonSerializer.Serialize(configuredOptions));
+      }
+
       var routeGroups = ComponentRegistryAccessor.Instance.Registry?.GetRouteGroups()
         .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
         .Where(i => i is not null)
@@ -254,11 +276,11 @@ public static class DependencyInjectionExtensions
       //items that have a membership to root route group (items at root)
       Func<Type, bool> typeIsNotMemberOfAnyRouteGroupPredicate =
         x => !x.GetCustomAttributes(typeof(MapToGroupAttribute<>)).Any() ||
-              x.GetCustomAttributes<MapToGroupAttribute<RootRouteGroup>>().Any();
+              x.GetCustomAttributes<MapToRootGroupAttribute>().Any();
 
       _ = MapComponents(
         scope.ServiceProvider,
-        builder,
+        app,
         typeIsNotMemberOfAnyRouteGroupPredicate,
         null, //we are at root, so no current route group
         null, //we are at root, so no current configuration context
@@ -278,10 +300,10 @@ public static class DependencyInjectionExtensions
     IEndpointRouteBuilder builder,
     Func<Type, bool> filterPredicate,
     IRouteGroupConfigurator? currentRouteGroup,
-    ConfigurationContext<RouteGroupConfigurationParameters>? currentConfigurationContext,
+    RouteGroupConfigurationContext? currentConfigurationContext,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     //Process groups matching filter predicate
@@ -289,14 +311,14 @@ public static class DependencyInjectionExtensions
       x => filterPredicate(x.GetType())))
     {
       var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
-      ConfigurationContext<RouteGroupConfigurationParameters> childConfigurationContext = new(
+      DefaultRouteGroupConfigurationContext childConfigurationContext = new(
         serviceProvider,
-        new(
+        new DefaultRouteGroupConfigurationParameters(
           childRouteGroup,
           componentDiscriminator.GetDiscriminator(childRouteGroup),
           currentConfigurationContext?.Parameters));
-      var routeGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
-      if (routeGroupBuilders.Length == 0)
+      var childRouteGroupBuilders = childRouteGroup.Configure(builder, childConfigurationContext);
+      if (childRouteGroupBuilders.Length == 0)
       {
         if (throwOnMissingConfiguration)
         {
@@ -307,20 +329,19 @@ public static class DependencyInjectionExtensions
         else
         {
           var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
-            .CreateLogger<RouteGroupConfigurator>();
+            .CreateLogger(LoggerName);
           logger.LogWarning(
             Constants.MissingRouteGroupConfigurationLogMessage,
             childRouteGroup.GetType());
         }
       }
 
-      foreach (var routeGroupBuilder in routeGroupBuilders)
+      foreach (var childRouteGroupBuilder in childRouteGroupBuilders)
       {
         _ = MapRouteGroup(
           childRouteGroup,
           serviceProvider,
-          routeGroupBuilder,
-          childRouteGroup,
+          childRouteGroupBuilder,
           childConfigurationContext,
           routeGroups,
           endpoints,
@@ -328,7 +349,7 @@ public static class DependencyInjectionExtensions
           throwOnMissingConfiguration);
 
         childRouteGroup.PostConfigure(
-          routeGroupBuilder,
+          childRouteGroupBuilder,
           childConfigurationContext);
 
         childConfigurationContext.Parameters.SelfDiscriminator =
@@ -356,12 +377,11 @@ public static class DependencyInjectionExtensions
   private static RouteGroupBuilder MapRouteGroup(
     IRouteGroupConfigurator routeGroup,
     IServiceProvider serviceProvider,
-    RouteGroupBuilder builder,
-    IRouteGroupConfigurator parentRouteGroup,
-    ConfigurationContext<RouteGroupConfigurationParameters> parentConfigurationContext,
+    RouteGroupBuilder routeGroupBuilder,
+    RouteGroupConfigurationContext routeGroupConfigurationContext,
     IEnumerable<IRouteGroupConfigurator> routeGroups,
     IEnumerable<IEndpointConfigurator> endpoints,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     //Items having membership to this route group
@@ -372,16 +392,16 @@ public static class DependencyInjectionExtensions
     //Pass this group as current route group
     _ = MapComponents(
       serviceProvider,
-      builder,
+      routeGroupBuilder,
       typeIsMemberOfCurrentGroupPredicate,
-      parentRouteGroup, //process items under this group's hierarchy
-      parentConfigurationContext, //process items under this group's hierarchy
+      routeGroup, //process items under this group's hierarchy
+      routeGroupConfigurationContext, //process items under this group's hierarchy
       routeGroups,
       endpoints,
       globalEndpointConfiguration,
       throwOnMissingConfiguration);
 
-    return builder;
+    return routeGroupBuilder;
   }
 
   private static RouteHandlerBuilder[] MapEndpoint(
@@ -389,14 +409,14 @@ public static class DependencyInjectionExtensions
     IServiceProvider serviceProvider,
     IEndpointRouteBuilder builder,
     IRouteGroupConfigurator? parentRouteGroup,
-    ConfigurationContext<RouteGroupConfigurationParameters>? parentConfigurationContext,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration,
+    RouteGroupConfigurationContext? parentConfigurationContext,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration,
     bool throwOnMissingConfiguration)
   {
     var componentDiscriminator = serviceProvider.GetRequiredService<IComponentDiscriminator>();
-    ConfigurationContext<EndpointConfigurationParameters> endpointConfigurationContext = new(
+    DefaultEndpointConfigurationContext endpointConfigurationContext = new(
       serviceProvider,
-      new(
+      new DefaultEndpointConfigurationParameters(
         endpoint,
         componentDiscriminator.GetDiscriminator(endpoint),
         parentConfigurationContext?.Parameters));
@@ -412,7 +432,7 @@ public static class DependencyInjectionExtensions
       else
       {
         var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
-          .CreateLogger<EndpointConfigurator>();
+          .CreateLogger(LoggerName);
         logger.LogWarning(
           Constants.MissingEndpointConfigurationLogMessage,
           endpoint.GetType());

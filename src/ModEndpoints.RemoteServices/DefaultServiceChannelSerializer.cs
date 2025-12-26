@@ -1,12 +1,12 @@
 ﻿using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
 
-public class DefaultServiceChannelSerializer(
+internal sealed class DefaultServiceChannelSerializer(
   ServiceChannelSerializerOptions options)
   : IServiceChannelSerializer
 {
@@ -91,14 +91,15 @@ public class DefaultServiceChannelSerializer(
     where TResult : IModResult
   {
     using (var contentStream = await response.Content.ReadAsStreamAsync(ct))
-    //close contentStream forcefully if timeout token is cancelled
-    using (ct.Register(() => contentStream.Close()))
     {
-      ct.ThrowIfCancellationRequested();
-      return await JsonSerializer.DeserializeAsync<TResult>(
-        contentStream,
-        options.DeserializationOptions,
-        ct);
+      //close contentStream forcefully if timeout token is cancelled
+      using (ct.Register(() => contentStream.Close()))
+      {
+        return await JsonSerializer.DeserializeAsync<TResult>(
+          contentStream,
+          options.DeserializationOptions,
+          ct);
+      }
     }
   }
 
@@ -125,7 +126,6 @@ public class DefaultServiceChannelSerializer(
     }
     await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem<TResponse>>(response, ct))
     {
-      ct.ThrowIfCancellationRequested();
       yield return responseItemObject
         ?? new StreamingResponseItem<TResponse>(
           Result: Result<TResponse>
@@ -160,7 +160,6 @@ public class DefaultServiceChannelSerializer(
     }
     await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem>(response, ct))
     {
-      ct.ThrowIfCancellationRequested();
       yield return responseItemObject
         ?? new StreamingResponseItem(
           Result: Result
@@ -178,16 +177,17 @@ public class DefaultServiceChannelSerializer(
     [EnumeratorCancellation] CancellationToken ct)
   {
     using (var contentStream = await response.Content.ReadAsStreamAsync(ct))
-    //close contentStream forcefully if timeout token is cancelled
-    using (ct.Register(() => contentStream.Close()))
     {
-      await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<TResult>(
-        contentStream,
-        options.StreamingDeserializationOptions,
-        ct).WithCancellation(ct))
+      //close contentStream forcefully if timeout token is cancelled
+      using (ct.Register(() => contentStream.Close()))
       {
-        ct.ThrowIfCancellationRequested();
-        yield return item;
+        await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<TResult>(
+          contentStream,
+          options.StreamingDeserializationOptions,
+          ct).WithCancellation(ct))
+        {
+          yield return item;
+        }
       }
     }
   }

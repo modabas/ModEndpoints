@@ -1,7 +1,8 @@
-﻿using ModEndpoints.RemoteServices.Core;
+﻿using ModEndpoints.RemoteServices.Contracts;
 using ModResults;
 
 namespace ModEndpoints.RemoteServices;
+
 public interface IServiceChannelSerializer
 {
   Task<Result> DeserializeResultAsync(

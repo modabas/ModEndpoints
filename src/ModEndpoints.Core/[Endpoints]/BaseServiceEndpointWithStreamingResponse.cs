@@ -1,9 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 
 namespace ModEndpoints.Core;
+
+/// <summary>
+/// Abstract base class for service endpoints that return a streaming response of type <see cref="IAsyncEnumerable{TResponse}"/> from HandleAsync method.<br/>
+/// </summary>
+/// <typeparam name="TRequest">Request type.</typeparam>
+/// <typeparam name="TResponse">Response type containing business result.</typeparam>
 public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
   : ServiceEndpointConfigurator, IServiceEndpoint
   where TRequest : IServiceRequestMarker
@@ -14,23 +20,23 @@ public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TRespon
     [FromBody] TRequest req,
     HttpContext context)
   {
-    var baseHandler = context.RequestServices.GetRequiredKeyedService(typeof(IEndpointConfigurator), typeof(TRequest));
-    var handler = baseHandler as BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
+    var handler = context.RequestServices.GetRequiredKeyedService(
+        typeof(IEndpointConfigurator),
+        typeof(TRequest))
+      as BaseServiceEndpointWithStreamingResponse<TRequest, TResponse>
       ?? throw new InvalidOperationException(Constants.RequiredServiceIsInvalidMessage);
     var ct = context.RequestAborted;
 
     //Request validation
-    var validator = context.RequestServices.GetService<IRequestValidator>();
-    if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, context, ct);
-      if (validationResult.IsFailed)
+      var validationController = context.RequestServices.GetRequiredService<IRequestValidationController>();
+      var validationResult = await validationController.ValidateAsync(req, context, ct);
+      if (validationResult?.IsFailed == true)
       {
         yield return await HandleInvalidValidationResultAsync(validationResult, context, ct);
         yield break;
       }
     }
-
     //Handler
     await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
     {

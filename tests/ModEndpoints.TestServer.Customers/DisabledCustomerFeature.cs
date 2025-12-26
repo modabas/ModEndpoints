@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ModEndpoints.Core;
-using ModEndpoints.RemoteServices.Core;
+using ModEndpoints.RemoteServices.Contracts;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
@@ -12,7 +12,7 @@ internal class DisabledCustomerFeature
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/disabled");
   }

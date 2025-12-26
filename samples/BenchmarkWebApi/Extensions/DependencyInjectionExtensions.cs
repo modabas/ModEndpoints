@@ -4,6 +4,7 @@ using FluentValidation;
 using ModEndpoints;
 
 namespace BenchmarkWebApi.Extensions;
+
 internal static class DependencyInjectionExtensions
 {
   public static WebApplicationBuilder AddFeatures(this WebApplicationBuilder builder)

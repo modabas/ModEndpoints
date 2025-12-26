@@ -5,11 +5,13 @@ WebResultEndpoints, BusinessResultEndpoints, and ServiceEndpoints structure ASP.
 ## ✨ Features
 
 - **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint and Response components.
-- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, filters, and more.
-- **Auto-Discovery and Registration**: Automatically discovers and registers endpoints.
-- **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a validator is registered.
-- **Dependency Injection**: Supports constructor-based dependency injection in endpoint implementations.
-- **Type-Safe Responses**: Enforces response model type safety in request handlers.
+- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, endpoint filters, etc.
+- **Route Grouping**: Supports grouping endpoints into route groups for better organization and shared configurations.
+- **Auto-Discovery and Registration**: Automatically discovers and registers endpoints and route groups.
+- **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a request validator is registered.
+- **Dependency Injection**: Supports constructor-based dependency injection for handling requests at runtime.
+- **Type-Safe Responses**: Provides response type safety in request handlers.
+- **Performant**: (Almost) as fast as native Minimal APIs.
 
 ## 🧩 Endpoint Types
 
@@ -28,4 +30,4 @@ WebResultEndpoints, BusinessResultEndpoints, and ServiceEndpoints structure ASP.
 - **Purpose**: Designed for simplifying remote service consumption with strongly typed request and response models.
 - **Usage**: Works in conjunction with the `ModEndpoints.RemoteServices` package to abstract HTTP plumbing on the client side.
 
->**Note**: `ModEndpoints.RemoteServices` package enables clients to consume remote `ServiceEndpoints` with the knowledge of strongly typed request and response models shared between server and client projects. `ModEndpoints.RemoteServices.Core` package contains the interfaces required for ServiceEndpoint request models.
+>**Note**: `ModEndpoints.RemoteServices` package enables clients to consume remote `ServiceEndpoints` with the knowledge of strongly typed request and response models shared between server and client projects. `ModEndpoints.RemoteServices.Contracts` package contains the interfaces required for ServiceEndpoint request models.

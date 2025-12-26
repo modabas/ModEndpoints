@@ -23,14 +23,14 @@ internal class UploadBook
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/upload/{Title}")
       .DisableAntiforgery()
       .Produces<UploadBookResponse>();
   }
 
-  protected override Task<Result<UploadBookResponse>> HandleAsync(
+  protected override Task<WebResult<UploadBookResponse>> HandleAsync(
     UploadBookRequest req,
     CancellationToken ct)
   {
@@ -38,9 +38,11 @@ internal class UploadBook
     // ...
     //
 
-    return Task.FromResult(Result.Ok(new UploadBookResponse(
-      req.BookFile.FileName,
-      req.BookFile.Length)));
+    return Task.FromResult(
+      WebResults.FromResult(
+        new UploadBookResponse(
+          req.BookFile.FileName,
+          req.BookFile.Length)));
   }
 }
 ```
@@ -70,7 +72,7 @@ internal class DownloadCustomers(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/download/{FileName}");
   }

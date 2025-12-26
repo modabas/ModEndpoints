@@ -7,6 +7,7 @@ using ShowcaseWebApi.Features.Customers.Configuration;
 using ShowcaseWebApi.Features.Customers.Data;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record CreateCustomerRequest([FromBody] CreateCustomerRequestBody Body);
 
 public record CreateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);
@@ -28,7 +29,7 @@ internal class CreateCustomer(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/");
   }

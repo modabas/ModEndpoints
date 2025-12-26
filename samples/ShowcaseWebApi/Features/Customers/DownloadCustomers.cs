@@ -4,6 +4,7 @@ using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
 
 namespace ShowcaseWebApi.Features.Customers;
+
 public record DownloadCustomersRequest(string FileName);
 
 internal class DownloadCustomersRequestValidator : AbstractValidator<DownloadCustomersRequest>
@@ -23,7 +24,7 @@ internal class DownloadCustomers(ServiceDbContext db)
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/download/{FileName}");
   }

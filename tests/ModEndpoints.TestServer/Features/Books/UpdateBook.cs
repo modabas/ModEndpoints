@@ -5,6 +5,7 @@ using ModEndpoints.TestServer.Features.Books.Configuration;
 using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
+
 public record UpdateBookRequest(Guid Id, [FromBody] UpdateBookRequestBody Body);
 
 public record UpdateBookRequestBody(string Title, string Author, decimal Price);
@@ -26,15 +27,15 @@ internal class UpdateBook
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPut("/{Id}");
   }
 
-  protected override Task<Result> HandleAsync(
+  protected override async Task<WebResult> HandleAsync(
     UpdateBookRequest req,
     CancellationToken ct)
   {
-    return Task.FromResult(Result.Ok());
+    return Result.Ok();
   }
 }

@@ -6,6 +6,7 @@ using ModEndpoints.Core;
 using ModEndpoints.TestServer.Customers.Configuration;
 
 namespace ModEndpoints.TestServer.Customers;
+
 public record CreateCustomerRequest([FromBody] CreateCustomerRequestBody Body);
 
 public record CreateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);
@@ -27,7 +28,7 @@ internal class CreateCustomer
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/");
   }

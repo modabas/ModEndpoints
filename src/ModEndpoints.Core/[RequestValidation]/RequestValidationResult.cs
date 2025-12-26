@@ -1,14 +1,12 @@
 ﻿namespace ModEndpoints.Core;
-public class RequestValidationResult
+
+public record RequestValidationResult(bool IsOk, List<RequestValidationFailure>? Errors)
 {
-  public bool IsFailed { get; set; } = false;
-  public List<RequestValidationFailure> Errors { get; set; } = [];
+  public bool IsFailed => !IsOk;
 }
 
-public class RequestValidationFailure
-{
-  public string PropertyName { get; set; } = string.Empty;
-  public string ErrorMessage { get; set; } = string.Empty;
-  public string ErrorCode { get; set; } = string.Empty;
-  public object? AttemptedValue { get; set; }
-}
+public record RequestValidationFailure(
+  string PropertyName,
+  string ErrorMessage,
+  string ErrorCode,
+  object? AttemptedValue);

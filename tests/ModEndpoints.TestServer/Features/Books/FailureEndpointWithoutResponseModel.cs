@@ -8,13 +8,13 @@ internal class FailureEndpointWithoutResponseModel
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/failure/withoutResponseModel");
   }
 
-  protected override Task<Result> HandleAsync(CancellationToken ct)
+  protected override async Task<WebResult> HandleAsync(CancellationToken ct)
   {
-    return Task.FromResult(Result.NotFound("Item not found."));
+    return Result.NotFound("Item not found.");
   }
 }

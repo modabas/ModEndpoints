@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using ModEndpoints.Core;
 using ModEndpoints.TestServer.Features.Books.Configuration;
-using ModResults;
 
 namespace ModEndpoints.TestServer.Features.Books;
+
 public record CreateBookRequest([FromBody] CreateBookRequestBody Body);
 
 public record CreateBookRequestBody(string Title, string Author, decimal Price);
@@ -22,26 +22,25 @@ internal class CreateBookRequestValidator : AbstractValidator<CreateBookRequest>
 }
 
 [MapToGroup<BooksRouteGroup>()]
-internal class CreateBook(ILocationStore location)
+internal class CreateBook
   : WebResultEndpoint<CreateBookRequest, CreateBookResponse>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/")
       .Produces<CreateBookResponse>(StatusCodes.Status201Created);
   }
-  protected override async Task<Result<CreateBookResponse>> HandleAsync(
+  protected override async Task<WebResult<CreateBookResponse>> HandleAsync(
     CreateBookRequest req,
     CancellationToken ct)
   {
     var bookId = Guid.NewGuid();
 
-    await location.SetValueAsync(
+    return WebResults.WithLocationRouteOnSuccess(
+      new CreateBookResponse(bookId),
       typeof(GetBookById).FullName,
-      new { id = bookId },
-      ct);
-    return Result.Ok(new CreateBookResponse(bookId));
+      new { id = bookId });
   }
 }

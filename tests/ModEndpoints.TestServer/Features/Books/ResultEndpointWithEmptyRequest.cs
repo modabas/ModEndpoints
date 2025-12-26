@@ -10,12 +10,12 @@ internal class ResultEndpointWithEmptyRequest
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
-    ConfigurationContext<EndpointConfigurationParameters> configurationContext)
+    EndpointConfigurationContext configurationContext)
   {
     builder.MapDelete("/").Produces(StatusCodes.Status204NoContent);
   }
 
-  protected override async Task<Result> HandleAsync(
+  protected override async Task<WebResult> HandleAsync(
     CancellationToken ct)
   {
     await Task.CompletedTask; // Simulate async work

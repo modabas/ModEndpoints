@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModEndpoints.Core;
 using ModEndpoints.RemoteServices;
 
 namespace ModEndpoints;
+
 public static class DependencyInjectionExtensions
 {
   /// <summary>
@@ -44,14 +46,11 @@ public static class DependencyInjectionExtensions
     configure?.Invoke(options);
 
     //WebResultEndpoint components
-    services.TryAddKeyedSingleton<IResultToResponseMapper, DefaultResultToResponseMapper>(
-      WebResultEndpointDefinitions.DefaultResultToResponseMapperName);
+    services.TryAddSingleton<IEndpointNameResolver, DefaultEndpointNameResolver>();
     services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResult>(
       WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResult);
     services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResultOfT>(
       WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResultOfT);
-    services.TryAddScoped<ILocationStore, DefaultLocationStore>();
-    services.TryAddSingleton<IResultToResponseMapProvider, DefaultResultToResponseMapProvider>();
 
     //ServiceEndpoint components
     services.TryAddKeyedSingleton<IServiceEndpointUriResolver, DefaultServiceEndpointUriResolver>(
@@ -65,7 +64,8 @@ public static class DependencyInjectionExtensions
       {
         conf.EndpointLifetime = options.CoreOptions.EndpointLifetime;
         conf.RouteGroupConfiguratorLifetime = options.CoreOptions.RouteGroupConfiguratorLifetime;
-        conf.AddDefaultRequestValidatorService = options.CoreOptions.AddDefaultRequestValidatorService;
+        conf.EnableRequestValidation = options.CoreOptions.EnableRequestValidation;
+        conf.RequestValidationServiceName = options.CoreOptions.RequestValidationServiceName;
         conf.ThrowOnDuplicateUseOfServiceEndpointRequest = options.CoreOptions.ThrowOnDuplicateUseOfServiceEndpointRequest;
       });
   }
@@ -80,9 +80,9 @@ public static class DependencyInjectionExtensions
   /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
   /// <param name="throwOnMissingConfiguration"></param>
   /// <returns></returns>
-  public static WebApplication MapModEndpoints(
-    this WebApplication app,
-    Action<RouteHandlerBuilder, ConfigurationContext<EndpointConfigurationParameters>>? globalEndpointConfiguration = null,
+  public static IEndpointRouteBuilder MapModEndpoints(
+    this IEndpointRouteBuilder app,
+    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
     bool throwOnMissingConfiguration = false)
   {
     return app.MapModEndpointsCore(

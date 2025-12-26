@@ -1,6 +1,6 @@
 ﻿namespace ModEndpoints.Core;
 
-internal class ComponentRegistryAccessor
+internal sealed class ComponentRegistryAccessor
 {
   private static readonly AsyncLocal<ComponentRegistryHolder> _registry = new();
 
