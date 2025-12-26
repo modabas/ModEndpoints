@@ -58,11 +58,11 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
 
 ## Customizing Request Validation Behavior Globally
 
-Global request validation behavior can be customized during application startup:
+Global request validation behavior can be customized during application startup. Default values for these settings make use of built-in FluentValidation request validation service.
 - `EnableRequestValidation` property (default value: true) turns on/off request validation globally for all endpoints, 
-- `DefaultRequestValidationServiceName` property changes the default service used for request validation for all endpoints. Default values for these settings make use of built-in FluentValidation request validation service.
+- `RequestValidationServiceName` property changes the service used for request validation for all endpoints. 
 
-By implementing your own request validation service that adheres to `IRequestValidationService` interface, you can register it in the DI container with a custom service name and set `DefaultRequestValidationServiceName` to that name, so that all endpoints will use your custom request validation service by default.
+By implementing your own request validation service that adheres to `IRequestValidationService` interface, you can register it in the DI container with a custom service name and set `RequestValidationServiceName` to that name, so that all endpoints will use your custom request validation service by default.
 
 If you are using `ModEndpoints.Core` package:
 ```csharp
@@ -97,47 +97,3 @@ builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 
 // ... add other services
 ```
-
-## Custom Request Validation Behavior per Endpoint
-
-Individual endpoint request validation behaviour can be set during endpoint configuration via route builder extension methods:
-- **`DisableRequestValidation()` method:** Disables request validation for that endpoint.
-- **`ValidateRequestWithOptions(string? validationServiceName)` method:** Use this method to require that incoming requests to the endpoint are validated according to the rules defined by the specified validation service instead of the default validation service set by global options. Has no effect if request validation is globally turned off.
-
-```csharp
-internal class CreateCustomer(ServiceDbContext db)
-  : MinimalEndpoint<CreateCustomerRequest, Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>>
-{
-  protected override void Configure(
-    EndpointConfigurationBuilder builder,
-    EndpointConfigurationContext configurationContext)
-  {
-    builder
-      .MapPost("/")
-      .DisableRequestValidation();
-  }
-
-  protected override async Task<Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>> HandleAsync(
-    CreateCustomerRequest req,
-    CancellationToken ct)
-  {
-    //Handler implementation
-  }
-}
-
-public record CreateCustomerRequest([FromBody] CreateCustomerRequestBody Body);
-
-public record CreateCustomerRequestBody(string FirstName, string? MiddleName, string LastName);
-
-public record CreateCustomerResponse(Guid Id);
-
-internal class CreateCustomerRequestValidator : AbstractValidator<CreateCustomerRequest>
-{
-  public CreateCustomerRequestValidator()
-  {
-    RuleFor(x => x.Body.FirstName).NotEmpty();
-    RuleFor(x => x.Body.LastName).NotEmpty();
-  }
-}
-```
-

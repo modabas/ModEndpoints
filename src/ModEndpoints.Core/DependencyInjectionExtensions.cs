@@ -50,7 +50,7 @@ public static class DependencyInjectionExtensions
     services.Configure<RequestValidationOptions>(config =>
     {
       config.IsEnabled = options.EnableRequestValidation;
-      config.DefaultServiceName = options.DefaultRequestValidationServiceName;
+      config.ServiceName = options.RequestValidationServiceName;
     });
     services.TryAddSingleton<IRequestValidationController, RequestValidationController>();
     services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(

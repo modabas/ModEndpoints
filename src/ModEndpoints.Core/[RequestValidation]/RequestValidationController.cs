@@ -7,7 +7,6 @@ namespace ModEndpoints.Core;
 internal sealed class RequestValidationController : IRequestValidationController
 {
   private readonly IOptions<RequestValidationOptions> _options;
-  private static readonly RequestValidationMetadata _defaultMetadata = new();
   private const string ServiceNotRegistered =
     "Request validation service with name '{0}' is not registered.";
 
@@ -25,20 +24,14 @@ internal sealed class RequestValidationController : IRequestValidationController
   {
     if (_options.Value.IsEnabled)
     {
-      var validationMetadata = context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationMetadata>()
-          ?? _defaultMetadata;
-      if (validationMetadata.IsEnabled)
+      var validationServiceName = _options.Value.ServiceName;
+      var validationService = context.RequestServices.GetKeyedService<IRequestValidationService>(validationServiceName);
+      if (validationService is null)
       {
-        var validationServiceName = validationMetadata.ServiceName ?? _options.Value.DefaultServiceName;
-        var validationService = context.RequestServices.GetKeyedService<IRequestValidationService>(validationServiceName);
-        if (validationService is null)
-        {
-          throw new RequestValidationException(string.Format(
-            ServiceNotRegistered, validationServiceName));
-        }
-        return await validationService.ValidateAsync(req, context, ct);
+        throw new RequestValidationException(string.Format(
+          ServiceNotRegistered, validationServiceName));
       }
-      return null;
+      return await validationService.ValidateAsync(req, context, ct);
     }
     return null;
   }
