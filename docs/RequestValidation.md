@@ -97,3 +97,5 @@ builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 
 // ... add other services
 ```
+
+>**Note:** You can invoke any version of the `AddModEndpoints()` methods multiple times to register components from various assemblies. If you specify different request validation option parameters in these calls, a warning will be logged at application startup, and only the parameters from the first call will be applied.
