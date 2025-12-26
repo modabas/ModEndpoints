@@ -16,4 +16,7 @@ internal static class Constants
     "Missing endpoint configuration! Start configuring {endpointType} endpoint by calling one of the Map[HttpVerb] methods of the builder.";
   public const string ServiceEndpointAlreadyRegisteredMessage =
     "An endpoint for request type {0} is already registered.";
+  public const string ValidationOptionsConflictLogMessage =
+    "Request validation options have been configured multiple times and with conflicting values. Only first one will be used. Configured options: {requestValidationOptions}";
+
 }

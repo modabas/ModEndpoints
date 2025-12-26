@@ -11,6 +11,8 @@ namespace ModEndpoints.Core;
 
 public static class DependencyInjectionExtensions
 {
+  private const string LoggerName = "ModEndpoints.Core.DependencyInjection";
+
   /// <summary>
   /// Registers route groups and endpoints from the assembly containing the specified type into the dependency injection container. 
   /// </summary>
@@ -46,20 +48,28 @@ public static class DependencyInjectionExtensions
     ModEndpointsCoreOptions options = new();
     configure?.Invoke(options);
 
+    ComponentRegistryAccessor.Instance.Initialize();
+
     //Request validation
-    services.Configure<RequestValidationOptions>(config =>
+    var requestValidationOptions = new RequestValidationOptions()
     {
-      config.IsEnabled = options.EnableRequestValidation;
-      config.ServiceName = options.RequestValidationServiceName;
-    });
+      IsEnabled = options.EnableRequestValidation,
+      ServiceName = options.RequestValidationServiceName
+    };
+    if (ComponentRegistryAccessor.Instance.Registry?.TrySetValidationOptions(requestValidationOptions) == true)
+    {
+      services.Configure<RequestValidationOptions>(config =>
+      {
+        config.IsEnabled = requestValidationOptions.IsEnabled;
+        config.ServiceName = requestValidationOptions.ServiceName;
+      });
+    }
     services.TryAddSingleton<IRequestValidationController, RequestValidationController>();
     services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(
       RequestValidationDefinitions.DefaultServiceName);
 
     //Component registration
     services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
-
-    ComponentRegistryAccessor.Instance.Initialize();
 
     return services
       .AddRouteGroupsCoreFromAssembly(assembly, options)
@@ -244,6 +254,15 @@ public static class DependencyInjectionExtensions
   {
     using (var scope = app.ServiceProvider.CreateScope())
     {
+      if (ComponentRegistryAccessor.Instance.Registry?.GetRequestValitionOptionsConflict(out var configuredOptions) == true)
+      {
+        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+          .CreateLogger(LoggerName);
+        logger.LogWarning(
+          Constants.ValidationOptionsConflictLogMessage,
+          System.Text.Json.JsonSerializer.Serialize(configuredOptions));
+      }
+
       var routeGroups = ComponentRegistryAccessor.Instance.Registry?.GetRouteGroups()
         .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
         .Where(i => i is not null)
@@ -310,7 +329,7 @@ public static class DependencyInjectionExtensions
         else
         {
           var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
-            .CreateLogger<RouteGroupConfigurator>();
+            .CreateLogger(LoggerName);
           logger.LogWarning(
             Constants.MissingRouteGroupConfigurationLogMessage,
             childRouteGroup.GetType());
@@ -413,7 +432,7 @@ public static class DependencyInjectionExtensions
       else
       {
         var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
-          .CreateLogger<EndpointConfigurator>();
+          .CreateLogger(LoggerName);
         logger.LogWarning(
           Constants.MissingEndpointConfigurationLogMessage,
           endpoint.GetType());
