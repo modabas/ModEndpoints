@@ -20,14 +20,14 @@ internal sealed class DefaultRouteGroupConfigurationBuilder(
 
   public override RouteGroupBuilder MapGroup(string prefix)
   {
-    var groupBuilder = endpointRouteBuilder.MapGroup(prefix);
+    var groupBuilder = endpointRouteBuilder.MapGroup(prefix).AddConfigurationMetadata();
     GroupBuilders.Add(groupBuilder);
     return groupBuilder;
   }
 
   public override RouteGroupBuilder MapGroup(RoutePattern prefix)
   {
-    var groupBuilder = endpointRouteBuilder.MapGroup(prefix);
+    var groupBuilder = endpointRouteBuilder.MapGroup(prefix).AddConfigurationMetadata();
     GroupBuilders.Add(groupBuilder);
     return groupBuilder;
   }

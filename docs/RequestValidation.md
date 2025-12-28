@@ -61,6 +61,7 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
 Global request validation behavior can be customized during application startup. Default values for these settings make use of built-in FluentValidation request validation service.
 - `EnableRequestValidation` property (default value: true) turns on/off request validation globally for all endpoints, 
 - `RequestValidationServiceName` property changes the service used for request validation for all endpoints. 
+- `EnablePerEndpointRequestValidationCustomization` property (default value: false) turns on/off custom per endpoint request validation settings
 
 By implementing your own request validation service that adheres to `IRequestValidationService` interface, you can register it in the DI container with a custom service name and set `RequestValidationServiceName` to that name, so that all endpoints will use your custom request validation service by default.
 
@@ -99,3 +100,33 @@ builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 ```
 
 >**Note:** You can invoke any version of the `AddModEndpoints()` methods multiple times to register components from various assemblies. If you specify different request validation option parameters in these calls, a warning will be logged at application startup, and only the parameters from the first call will be applied.
+
+## Customizing Request Validation for Individual Endpoints
+
+When both the `EnableRequestValidation` and `EnablePerEndpointRequestValidationCustomization` options are enabled, you can tailor request validation settings for specific endpoints or route groups within their respective `Configure` methods using configuration extension methods.
+
+- `DisableRequestValidation()`: Turns off request validation for a particular endpoint or for all endpoints within a route group.
+- `EnableRequestValidation()`: Activates request validation for a specific endpoint or all endpoints in a route group, with the option to specify a particular validation service by name.
+
+```csharp
+internal class CreateCustomer
+  : MinimalEndpoint<CreateCustomerRequest, Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>>
+{
+  protected override void Configure(
+    EndpointConfigurationBuilder builder,
+    EndpointConfigurationContext configurationContext)
+  {
+    builder.MapPost("/")
+      .DisableRequestValidation();
+  }
+
+  protected override async Task<Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>> HandleAsync(
+    CreateCustomerRequest req,
+    CancellationToken ct)
+  {
+    //Handler implementation...
+  }
+}
+```
+
+>**Note:** You can call these configuration extension methods multiple times for an endpoint, but only the most recent call will take effect.

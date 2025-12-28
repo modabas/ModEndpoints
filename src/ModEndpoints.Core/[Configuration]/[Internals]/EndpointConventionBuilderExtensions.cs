@@ -8,9 +8,15 @@ public static partial class EndpointConventionBuilderExtensions
   {
     internal TBuilder AddConfigurationMetadata()
     {
-      builder.Add(b => b.Metadata.Add(
-        new EndpointConfigurationMetadata(
-          EndpointUniqueName: b.DisplayName)));
+      builder.Add(b =>
+      {
+        if (!b.Metadata.OfType<EndpointConfigurationMetadata>().Any())
+        {
+          b.Metadata.Add(
+            new EndpointConfigurationMetadata(
+              EndpointUniqueName: b.DisplayName));
+        }
+      });
       return builder;
     }
   }
