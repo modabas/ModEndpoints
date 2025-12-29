@@ -9,8 +9,8 @@ internal sealed class RequestValidationController : IRequestValidationController
   private readonly RequestValidationOptions _options;
   private const string ServiceNotRegistered =
     "Request validation service with name '{0}' is not registered.";
-  private static readonly RequestValidationEndpointMetadata _enabledEndpointMetadata = new(IsEnabled: true);
-  private static readonly RequestValidationEndpointMetadata _disabledEndpointMetadata = new(IsEnabled: false);
+  private readonly RequestValidationEndpointMetadata _enabledEndpointMetadata = new(IsEnabled: true);
+  private readonly RequestValidationEndpointMetadata _disabledEndpointMetadata = new(IsEnabled: false);
 
   public RequestValidationController(
     IOptions<RequestValidationOptions> options)
@@ -18,13 +18,7 @@ internal sealed class RequestValidationController : IRequestValidationController
     _options = options.Value;
   }
 
-  private RequestValidationEndpointMetadata GetEndpointMetadata(HttpContext context)
-  {
-    return context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationEndpointMetadata>() ??
-      (_options.IsEnabled ? _enabledEndpointMetadata : _disabledEndpointMetadata);
-  }
-
-  public async Task<RequestValidationResult?> ValidateAsync<TRequest>(
+  public Task<RequestValidationResult?> ValidateAsync<TRequest>(
     TRequest req,
     HttpContext context,
     CancellationToken ct)
@@ -32,15 +26,25 @@ internal sealed class RequestValidationController : IRequestValidationController
   {
     if (_options.IsEnabled || _options.IsPerEndpointCustomizationEnabled)
     {
-      string validationServiceName = _options.ServiceName;
+      string? validationServiceName;
       if (_options.IsPerEndpointCustomizationEnabled)
       {
-        var metadata = GetEndpointMetadata(context);
-        if (!metadata.IsEnabled)
+        //Get endpoint metadata
+        var metadata = context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationEndpointMetadata>() ??
+          (_options.IsEnabled ? _enabledEndpointMetadata : _disabledEndpointMetadata);
+
+        if (metadata.IsEnabled)
         {
-          return null;
+          validationServiceName = metadata.ServiceName ?? _options.ServiceName;
         }
-        validationServiceName = metadata.ServiceName ?? _options.ServiceName;
+        else
+        {
+          return Task.FromResult<RequestValidationResult?>(null);
+        }
+      }
+      else
+      {
+        validationServiceName = _options.ServiceName;
       }
       var validationService = context.RequestServices.GetKeyedService<IRequestValidationService>(validationServiceName);
       if (validationService is null)
@@ -48,8 +52,8 @@ internal sealed class RequestValidationController : IRequestValidationController
         throw new RequestValidationException(string.Format(
           ServiceNotRegistered, validationServiceName));
       }
-      return await validationService.ValidateAsync(req, context, ct);
+      return validationService.ValidateAsync(req, context, ct);
     }
-    return null;
+    return Task.FromResult<RequestValidationResult?>(null);
   }
 }
