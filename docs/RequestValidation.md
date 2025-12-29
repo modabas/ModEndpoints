@@ -60,8 +60,8 @@ internal class GetBookByIdRequestValidator : AbstractValidator<GetBookByIdReques
 
 Global request validation behavior can be customized during application startup. Default values for these settings make use of built-in FluentValidation request validation service.
 - `EnableRequestValidation` property (default value: true) turns on/off request validation globally for all endpoints, 
-- `RequestValidationServiceName` property changes the service used for request validation for all endpoints. 
-- `EnablePerEndpointRequestValidationCustomization` property (default value: false) turns on/off custom per endpoint request validation settings
+- `RequestValidationServiceName` property changes the service used for request validation for all endpoints. Default value points to built-in FluentValidation request validation service,
+- `EnablePerEndpointRequestValidationCustomization` property (default value: false) turns on/off custom per endpoint request validation settings.
 
 By implementing your own request validation service that adheres to `IRequestValidationService` interface, you can register it in the DI container with a custom service name and set `RequestValidationServiceName` to that name, so that all endpoints will use your custom request validation service by default.
 
@@ -76,7 +76,7 @@ builder.Services.AddKeyedSingleton<IRequestValidationService, MyValidationServic
 
 builder.Services.AddModEndpointsCoreFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.DefaultRequestValidationServiceName = "MyValidationServiceName";
+  conf.RequestValidationServiceName = "MyValidationServiceName";
 });
 
 // ... add other services
@@ -93,7 +93,7 @@ builder.Services.AddKeyedSingleton<IRequestValidationService, MyValidationServic
 
 builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 {
-  conf.CoreOptions.DefaultRequestValidationServiceName = "MyValidationServiceName";
+  conf.CoreOptions.RequestValidationServiceName = "MyValidationServiceName";
 });
 
 // ... add other services
@@ -106,7 +106,7 @@ builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 When both the `EnableRequestValidation` and `EnablePerEndpointRequestValidationCustomization` options are enabled, you can tailor request validation settings for specific endpoints or route groups within their respective `Configure` methods using configuration extension methods.
 
 - `DisableRequestValidation()`: Turns off request validation for a particular endpoint or for all endpoints within a route group.
-- `EnableRequestValidation()`: Activates request validation for a specific endpoint or all endpoints in a route group, with the option to specify a particular validation service by name.
+- `UseRequestValidation()`: Activates request validation for a specific endpoint or all endpoints in a route group, with the option to specify a particular validation service by name.
 
 ```csharp
 internal class CreateCustomer
