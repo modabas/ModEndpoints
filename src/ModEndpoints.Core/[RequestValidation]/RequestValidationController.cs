@@ -9,7 +9,8 @@ internal sealed class RequestValidationController : IRequestValidationController
   private readonly RequestValidationOptions _options;
   private const string ServiceNotRegistered =
     "Request validation service with name '{0}' is not registered.";
-  private static readonly RequestValidationEndpointMetadata _defaultEndpointMetadata = new(IsEnabled: true);
+  private static readonly RequestValidationEndpointMetadata _enabledEndpointMetadata = new(IsEnabled: true);
+  private static readonly RequestValidationEndpointMetadata _disabledEndpointMetadata = new(IsEnabled: false);
 
   public RequestValidationController(
     IOptions<RequestValidationOptions> options)
@@ -20,7 +21,7 @@ internal sealed class RequestValidationController : IRequestValidationController
   private RequestValidationEndpointMetadata GetEndpointMetadata(HttpContext context)
   {
     return context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationEndpointMetadata>() ??
-      _defaultEndpointMetadata;
+      (_options.IsEnabled ? _enabledEndpointMetadata : _disabledEndpointMetadata);
   }
 
   public async Task<RequestValidationResult?> ValidateAsync<TRequest>(
@@ -29,7 +30,7 @@ internal sealed class RequestValidationController : IRequestValidationController
     CancellationToken ct)
     where TRequest : notnull
   {
-    if (_options.IsEnabled)
+    if (_options.IsEnabled || _options.IsPerEndpointCustomizationEnabled)
     {
       string validationServiceName = _options.ServiceName;
       if (_options.IsPerEndpointCustomizationEnabled)
