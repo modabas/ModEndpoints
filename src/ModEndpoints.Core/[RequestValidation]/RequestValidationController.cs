@@ -57,7 +57,7 @@ internal sealed class RequestValidationController : IRequestValidationController
       T req,
       HttpContext context,
       string validationServiceName,
-      CancellationToken ct) 
+      CancellationToken ct)
       where T : notnull
     {
       var validationService = context.RequestServices.GetKeyedService<IRequestValidationService>(validationServiceName);

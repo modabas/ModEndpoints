@@ -19,7 +19,7 @@ public class ModEndpointsCoreOptions
   /// Enables/disables the capacity to customize request validation on endpoint basis via configuration extension methods.
   /// </summary>
   public bool EnablePerEndpointRequestValidationCustomization { get; set; } = false;
-  
+
   /// <summary>
   /// Sets service name to be used for request validation. This is the DI key used during service registry.
   /// </summary>
