@@ -24,28 +24,42 @@ internal sealed class RequestValidationController : IRequestValidationController
     CancellationToken ct)
     where TRequest : notnull
   {
-    if (_options.IsEnabled || _options.IsPerEndpointCustomizationEnabled)
+    //Request validation is enabled but per endpoint customization is disabled
+    //This is the default setting
+    if (_options.IsEnabled && !_options.IsPerEndpointCustomizationEnabled)
     {
-      string? validationServiceName;
-      if (_options.IsPerEndpointCustomizationEnabled)
-      {
-        //Get endpoint metadata
-        var metadata = context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationEndpointMetadata>() ??
-          (_options.IsEnabled ? _enabledEndpointMetadata : _disabledEndpointMetadata);
+      return ValidateInternalAsync(req,
+        context,
+        _options.ServiceName,
+        ct);
+    }
+    //else
+    //Per endpoint customization is enabled
+    if (_options.IsPerEndpointCustomizationEnabled)
+    {
+      //Get endpoint metadata
+      var metadata = context.GetEndpoint()?.Metadata.GetMetadata<RequestValidationEndpointMetadata>() ??
+        (_options.IsEnabled ? _enabledEndpointMetadata : _disabledEndpointMetadata);
 
-        if (metadata.IsEnabled)
-        {
-          validationServiceName = metadata.ServiceName ?? _options.ServiceName;
-        }
-        else
-        {
-          return Task.FromResult<RequestValidationResult?>(null);
-        }
-      }
-      else
+      if (metadata.IsEnabled)
       {
-        validationServiceName = _options.ServiceName;
+        return ValidateInternalAsync(
+          req,
+          context,
+          metadata.ServiceName ?? _options.ServiceName,
+          ct);
       }
+    }
+    //request validation is disabled
+    return Task.FromResult<RequestValidationResult?>(null);
+
+    static Task<RequestValidationResult?> ValidateInternalAsync<T>(
+      T req,
+      HttpContext context,
+      string validationServiceName,
+      CancellationToken ct) 
+      where T : notnull
+    {
       var validationService = context.RequestServices.GetKeyedService<IRequestValidationService>(validationServiceName);
       if (validationService is null)
       {
@@ -54,6 +68,5 @@ internal sealed class RequestValidationController : IRequestValidationController
       }
       return validationService.ValidateAsync(req, context, ct);
     }
-    return Task.FromResult<RequestValidationResult?>(null);
   }
 }

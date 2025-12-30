@@ -270,7 +270,7 @@ For documents detailing other features and functionalities, refer to the followi
 
 Under load tests with 100 virtual users:  
 - MinimalEndpoints perform nearly the same (~1-2%) as Minimal APIs,
-- WebResultEndpoints introduce a slight overhead (~2-4%) compared to Minimal APIs in terms of requests per second.
+- WebResultEndpoints introduce a slight overhead (~2-3%) compared to Minimal APIs in terms of requests per second.
 
 Test web apis perform only in-process operations like resolving dependency, validating input, calling local methods with no network or disk I/O.
 
