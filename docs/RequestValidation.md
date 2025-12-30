@@ -105,8 +105,8 @@ builder.Services.AddModEndpointsFromAssemblyContaining<MyEndpoint>(conf =>
 
 When the `EnablePerEndpointRequestValidationCustomization` option is set to true, you can tailor request validation settings for specific endpoints or route groups within their respective `Configure` methods using configuration extension methods.
 
-- `DisableRequestValidation()`: Turns off request validation for a specific endpoint or all endpoints within a route group.
-- `EnableRequestValidation()`: Activates request validation for a specific endpoint or all endpoints in a route group, with the option to specify a particular validation service by name.
+- `DisableModRequestValidation()`: Turns off request validation for a specific endpoint or all endpoints within a route group.
+- `EnableModRequestValidation()`: Activates request validation for a specific endpoint or all endpoints in a route group, with the option to specify a particular validation service by name.
 
 ```csharp
 internal class CreateCustomer
@@ -117,7 +117,7 @@ internal class CreateCustomer
     EndpointConfigurationContext configurationContext)
   {
     builder.MapPost("/")
-      .DisableRequestValidation();
+      .DisableModRequestValidation();
   }
 
   protected override async Task<Results<CreatedAtRoute<CreateCustomerResponse>, ValidationProblem, ProblemHttpResult>> HandleAsync(
