@@ -1,10 +1,12 @@
 ﻿
+
 namespace ModEndpoints.Core;
 
 internal class RequestValidationOptions : IEquatable<RequestValidationOptions?>
 {
   public required bool IsEnabled { get; set; }
   public required string ServiceName { get; set; }
+  public required bool IsPerEndpointCustomizationEnabled { get; set; }
 
   public override bool Equals(object? obj)
   {
@@ -15,12 +17,13 @@ internal class RequestValidationOptions : IEquatable<RequestValidationOptions?>
   {
     return other is not null &&
            IsEnabled == other.IsEnabled &&
-           ServiceName == other.ServiceName;
+           ServiceName == other.ServiceName &&
+           IsPerEndpointCustomizationEnabled == other.IsPerEndpointCustomizationEnabled;
   }
 
   public override int GetHashCode()
   {
-    return HashCode.Combine(IsEnabled, ServiceName);
+    return HashCode.Combine(IsEnabled, ServiceName, IsPerEndpointCustomizationEnabled);
   }
 
   public static bool operator ==(RequestValidationOptions? left, RequestValidationOptions? right)

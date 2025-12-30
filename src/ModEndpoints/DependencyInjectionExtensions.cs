@@ -46,7 +46,7 @@ public static class DependencyInjectionExtensions
     configure?.Invoke(options);
 
     //WebResultEndpoint components
-    services.TryAddSingleton<IEndpointNameResolver, DefaultEndpointNameResolver>();
+    services.TryAddSingleton<IEndpointConfigurationResolver, EndpointConfigurationResolver>();
     services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResult>(
       WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResult);
     services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResultOfT>(
@@ -65,6 +65,7 @@ public static class DependencyInjectionExtensions
         conf.EndpointLifetime = options.CoreOptions.EndpointLifetime;
         conf.RouteGroupConfiguratorLifetime = options.CoreOptions.RouteGroupConfiguratorLifetime;
         conf.EnableRequestValidation = options.CoreOptions.EnableRequestValidation;
+        conf.EnablePerEndpointRequestValidationCustomization = options.CoreOptions.EnablePerEndpointRequestValidationCustomization;
         conf.RequestValidationServiceName = options.CoreOptions.RequestValidationServiceName;
         conf.ThrowOnDuplicateUseOfServiceEndpointRequest = options.CoreOptions.ThrowOnDuplicateUseOfServiceEndpointRequest;
       });

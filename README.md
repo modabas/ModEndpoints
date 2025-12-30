@@ -16,7 +16,7 @@
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a request validator is registered.
 - **Dependency Injection**: Supports constructor-based dependency injection for handling requests at runtime.
 - **Type-Safe Responses**: Provides response type safety in request handlers.
-- **Performant**: ([Almost](#Performance)) as fast as native Minimal APIs.
+- **Performant**: ([Almost](#-performance)) as fast as native Minimal APIs.
 
 ---
 
@@ -266,7 +266,7 @@ For documents detailing other features and functionalities, refer to the followi
 
 ---
 
-## 📊 Performance {#Performance}
+## 📊 Performance
 
 Under load tests with 100 virtual users:  
 - MinimalEndpoints perform nearly the same (~1-2%) as Minimal APIs,

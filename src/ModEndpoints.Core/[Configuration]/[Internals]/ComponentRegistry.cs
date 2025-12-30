@@ -9,7 +9,7 @@ internal sealed class ComponentRegistry
   private RequestValidationOptions? _validationOptions;
   private bool _requestValidationOptionsConflict = false;
 
-  public bool TrySetValidationOptions(RequestValidationOptions validationOptions)
+  public bool TrySetRequestValidationOptions(RequestValidationOptions validationOptions)
   {
     if (_validationOptions == null)
     {

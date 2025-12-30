@@ -54,14 +54,16 @@ public static class DependencyInjectionExtensions
     var requestValidationOptions = new RequestValidationOptions()
     {
       IsEnabled = options.EnableRequestValidation,
-      ServiceName = options.RequestValidationServiceName
+      ServiceName = options.RequestValidationServiceName,
+      IsPerEndpointCustomizationEnabled = options.EnablePerEndpointRequestValidationCustomization
     };
-    if (ComponentRegistryAccessor.Instance.Registry?.TrySetValidationOptions(requestValidationOptions) == true)
+    if (ComponentRegistryAccessor.Instance.Registry?.TrySetRequestValidationOptions(requestValidationOptions) == true)
     {
       services.Configure<RequestValidationOptions>(config =>
       {
         config.IsEnabled = requestValidationOptions.IsEnabled;
         config.ServiceName = requestValidationOptions.ServiceName;
+        config.IsPerEndpointCustomizationEnabled = requestValidationOptions.IsPerEndpointCustomizationEnabled;
       });
     }
     services.TryAddSingleton<IRequestValidationController, RequestValidationController>();
