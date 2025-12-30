@@ -20,12 +20,12 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferr
   ];
 
   private readonly ConcurrentDictionary<string, int?> _cache = new();
-  private readonly IEndpointNameResolver _endpointNameResolver;
+  private readonly IEndpointConfigurationResolver _endpointConfResolver;
 
   public DefaultPreferredSuccessStatusCodeCacheForResult(
-    IEndpointNameResolver endpointNameResolver)
+    IEndpointConfigurationResolver endpointNameResolver)
   {
-    _endpointNameResolver = endpointNameResolver;
+    _endpointConfResolver = endpointNameResolver;
   }
 
   public int? GetStatusCode(
@@ -36,10 +36,14 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferr
     {
       return null;
     }
-    var endpointName = _endpointNameResolver.GetName(endpoint);
+    var endpointName = _endpointConfResolver.GetUniqueName(endpoint);
     if (string.IsNullOrWhiteSpace(endpointName))
     {
-      return null;
+      endpointName = endpoint.ToString();
+      if (string.IsNullOrWhiteSpace(endpointName))
+      {
+        return null;
+      }
     }
     return _cache.GetOrAdd(
       endpointName,
