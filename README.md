@@ -20,12 +20,48 @@
 
 ---
 
+## When Should I Use ModEndpoints?
+
+Use **ModEndpoints** when:
+
+* You like **ASP.NET Core Minimal APIs**, but your API is growing and `Program.cs` is becoming hard to manage
+* You want **structure and discoverability** without switching to controllers or a full framework
+* You prefer **explicit, ASP.NET-native code** over framework-specific DSLs
+* You want endpoints to be **small, testable, DI-friendly units**
+* You already have (or plan to have) a **clean separation** between HTTP concerns and business logic
+* You want to **opt into conventions gradually**, instead of being forced into them
+
+You may **not** need ModEndpoints if:
+
+* Your API is very small and unlikely to grow
+* You are happy organizing everything directly in `Program.cs`
+* You want a **highly opinionated, batteries-included endpoint framework**
+* You prefer controller-based MVC APIs
+
+In short:
+
+> Use ModEndpoints when you want Minimal APIs to **scale in structure, not in framework complexity**.
+
+📘 **Read the full design philosophy:**  
+[Design Philosophy](docs/DesignPhilosophy.md)
+
+---
+
 ## 🧩 Endpoint Types
+
+ModEndpoints provides multiple endpoint base types with increasing levels of opinion.
+
+`MinimalEndpoint` represents the foundational design philosophy of the project:
+explicit, ASP.NET-native, and minimally abstracted.
+
+Other endpoint types build on this foundation by adding opt-in conventions
+such as result mapping or remote service integration.
+These types trade some explicitness for convenience by design.
 
 ### MinimalEndpoint  
 
 - **Purpose**: Enables full flexibility and capability of Minimal APIs within a structured approach.  
-- **Usage**: Suitable for implementing any Minimal API in endpoint format, from simple to complex scenarios.
+- **Usage**: Suitable for implementing any Minimal API in endpoint format, from simple to complex scenarios. This is effectively Minimal APIs with structure, not a higher-level abstraction.
 - **Package**: `ModEndpoints.Core`
 
 ### WebResultEndpoint
