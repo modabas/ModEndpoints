@@ -57,7 +57,6 @@ public static class DependencyInjectionExtensions
       RemoteServiceDefinitions.DefaultUriResolverName);
     services.TryAddSingleton<IUriResolverProvider, DefaultUriResolverProvider>();
 
-    services.AddHttpContextAccessor();
     return services.AddModEndpointsCoreFromAssembly(
       assembly,
       conf =>

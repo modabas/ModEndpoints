@@ -43,7 +43,6 @@ public static class WebApplicationBuilderExtensions
 
   public static WebApplicationBuilder AddWebServices(this WebApplicationBuilder builder)
   {
-    //builder.Services.AddHttpContextAccessor();
     builder.Services.AddProblemDetails(options =>
     {
       options.CustomizeProblemDetails = context =>
