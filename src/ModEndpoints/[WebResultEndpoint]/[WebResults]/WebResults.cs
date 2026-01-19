@@ -224,4 +224,75 @@ public static class WebResults
     return new WebResultWithLocationRouteOnSuccess<TValue>(value, routeName, routeValues);
   }
   #endregion
+
+  #region "ServerSentEvents"
+#if NET10_0_OR_GREATER
+  /// <summary>
+  /// Creates a web result that streams server-sent events from the specified result containing asynchronous event sequence.
+  /// </summary>
+  /// <remarks>Use this method to enable real-time, push-based communication from the server to the client over
+  /// HTTP using the Server-Sent Events (SSE) protocol. The response is formatted as an SSE stream, allowing clients to
+  /// receive events as they are emitted by the server.</remarks>
+  /// <typeparam name="TValue">The type of the data payload contained in each server-sent event. Must not be null.</typeparam>
+  /// <param name="result">A result containing an asynchronous sequence of server-sent event items to be streamed to the client.</param>
+  /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
+  public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
+    Result<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> result)
+    where TValue : notnull
+  {
+    return ServerSentEventsWebResult<TValue>.Create(result);
+  }
+
+  /// <summary>
+  /// Creates a web result that streams server-sent events to the client using the specified asynchronous event
+  /// sequence.
+  /// </summary>
+  /// <remarks>Use this method to enable real-time, push-based communication from the server to the client over
+  /// HTTP using the Server-Sent Events (SSE) protocol. The response is formatted as an SSE stream, allowing clients to
+  /// receive events as they are emitted by the server.</remarks>
+  /// <typeparam name="TValue">The type of the data payload contained in each server-sent event. Must not be null.</typeparam>
+  /// <param name="events">An asynchronous sequence of server-sent event items to be streamed to the client. Cannot be null.</param>
+  /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
+  public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
+    IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>> events)
+    where TValue : notnull
+  {
+    return ServerSentEventsWebResult<TValue>.Create(Result<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>>.Ok(events));
+  }
+
+  /// <summary>
+  /// Creates a web result that streams server-sent events (SSE) from the specified result containing an asynchronous sequence of event data items.
+  /// </summary>
+  /// <remarks>Use this method to enable real-time, push-based communication from the server to the client over
+  /// HTTP using the Server-Sent Events (SSE) protocol. The response is formatted as an SSE stream, allowing clients to
+  /// receive events as they are emitted by the server.</remarks>
+  /// <typeparam name="TValue">The type of the data payload contained in each server-sent event. Must not be null.</typeparam>
+  /// <param name="result">A result containing an asynchronous sequence of event data items to be streamed to the client.</param>
+  /// <param name="eventType">The event type to associate with each server-sent event. If null, the default event type is used.</param>
+  /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
+  public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
+    Result<IAsyncEnumerable<TValue>> result, string? eventType = null)
+    where TValue : notnull
+  {
+    return ServerSentEventsWebResult<TValue>.Create(result, eventType);
+  }
+
+  /// <summary>
+  /// Creates a web result that streams server-sent events (SSE) from the specified asynchronous sequence.
+  /// </summary>
+  /// <remarks>Use this method to enable real-time, push-based communication from the server to the client over
+  /// HTTP using the Server-Sent Events (SSE) protocol. The response is formatted as an SSE stream, allowing clients to
+  /// receive events as they are emitted by the server.</remarks>
+  /// <typeparam name="TValue">The type of the data payload contained in each server-sent event. Must not be null.</typeparam>
+  /// <param name="events">An asynchronous sequence of event data items to be sent to the client as server-sent events. Cannot be null.</param>
+  /// <param name="eventType">The event type to associate with each server-sent event. If null, the default event type is used.</param>
+  /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
+  public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
+    IAsyncEnumerable<TValue> events, string? eventType = null)
+    where TValue : notnull
+  {
+    return ServerSentEventsWebResult<TValue>.Create(Result<IAsyncEnumerable<TValue>>.Ok(events), eventType);
+  }
+#endif
+  #endregion
 }
