@@ -110,4 +110,60 @@ public class HandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status204NoContent, (int)httpResponse.StatusCode);
   }
+
+#if NET10_0_OR_GREATER
+  [Fact]
+  public async Task EndpointWithSseResponse_Returns_SuccessAsync()
+  {
+    var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/books/listSse");
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
+
+    List<System.Net.ServerSentEvents.SseItem<ListBooksResponseItem?>> response = new();
+    await foreach (var item in System.Net.ServerSentEvents.SseParser.Create(
+      await httpResponse.Content.ReadAsStreamAsync(),
+      (_, bytes) => JsonSerializer.Deserialize<ListBooksResponseItem>(bytes, _defaultJsonDeserializationOptions))
+      .EnumerateAsync())
+    {
+      response.Add(item);
+    }
+
+    Assert.NotNull(response);
+    Assert.Equal(2, response.Count);
+    var book2 = response[1].Data;
+    Assert.NotNull(book2);
+    Assert.Equal("Book 2", book2.Title);
+    Assert.Equal("Author 2", book2.Author);
+    Assert.Equal(29.99m, book2.Price);
+  }
+
+  [Fact]
+  public async Task EndpointWithStreamingResponse_Returns_SuccessAsync()
+  {
+    var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/books/listWithStreamingResponse");
+    var httpResponse = await _testClient.SendAsync(httpRequest);
+
+    Assert.True(httpResponse.IsSuccessStatusCode);
+    Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
+
+    List<System.Net.ServerSentEvents.SseItem<ListBooksResponseItem?>> response = new();
+    await foreach (var item in System.Net.ServerSentEvents.SseParser.Create(
+      await httpResponse.Content.ReadAsStreamAsync(),
+      (_, bytes) => JsonSerializer.Deserialize<ListBooksResponseItem>(bytes, _defaultJsonDeserializationOptions))
+      .EnumerateAsync())
+    {
+      response.Add(item);
+    }
+
+    Assert.NotNull(response);
+    Assert.Equal(2, response.Count);
+    var book2 = response[1].Data;
+    Assert.NotNull(book2);
+    Assert.Equal("Book 2", book2.Title);
+    Assert.Equal("Author 2", book2.Author);
+    Assert.Equal(29.99m, book2.Price);
+  }
+#endif
 }
