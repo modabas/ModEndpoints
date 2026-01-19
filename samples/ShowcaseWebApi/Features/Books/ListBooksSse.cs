@@ -9,14 +9,14 @@ using ShowcaseWebApi.Features.Books.Configuration;
 namespace ShowcaseWebApi.Features.Books;
 
 [MapToGroup<BooksV1RouteGroup>()]
-internal class ListStreamingBooks(ServiceDbContext db)
+internal class ListBooksSse(ServiceDbContext db)
   : WebResultEndpointWithEmptyRequest<IAsyncEnumerable<SseItem<ListBooksResponseItem>>>
 {
   protected override void Configure(
     EndpointConfigurationBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    builder.MapGet("/listStreaming/")
+    builder.MapGet("/listSse/")
       .Produces<SseItem<ListBooksResponseItem>>(contentType: "text/event-stream");
   }
 

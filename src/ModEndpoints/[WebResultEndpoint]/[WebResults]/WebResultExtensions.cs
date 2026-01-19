@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using ModResults;
 using ModResults.MinimalApis;
 
 namespace ModEndpoints;
@@ -37,11 +36,6 @@ public static class WebResultExtensions
   extension<TValue>(WebResult<TValue> webResult)
     where TValue : notnull
   {
-    public WebResult ToWebResult()
-    {
-      return new DefaultWebResult(webResult.Result.ToResult());
-    }
-
     internal IResult ExecuteInternal(HttpContext context, string? location)
     {
       if (webResult.Result.IsFailed)
