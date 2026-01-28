@@ -80,9 +80,4 @@ public abstract class WebResult<TValue>
   {
     return new DefaultWebResult<TValue>(result);
   }
-
-  public static implicit operator WebResult(WebResult<TValue> webResult)
-  {
-    return webResult.ToWebResult();
-  }
 }
