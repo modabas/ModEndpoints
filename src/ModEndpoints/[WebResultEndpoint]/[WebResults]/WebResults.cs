@@ -238,7 +238,6 @@ public static class WebResults
   /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
   public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
     Result<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> result)
-    where TValue : notnull
   {
     return ServerSentEventsWebResult<TValue>.Create(result);
   }
@@ -255,7 +254,6 @@ public static class WebResults
   /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
   public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
     IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>> events)
-    where TValue : notnull
   {
     return ServerSentEventsWebResult<TValue>.Create(Result<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>>.Ok(events));
   }
@@ -272,7 +270,6 @@ public static class WebResults
   /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
   public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
     Result<IAsyncEnumerable<TValue>> result, string? eventType = null)
-    where TValue : notnull
   {
     return ServerSentEventsWebResult<TValue>.Create(result, eventType);
   }
@@ -289,7 +286,6 @@ public static class WebResults
   /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
   public static WebResult<IAsyncEnumerable<System.Net.ServerSentEvents.SseItem<TValue>>> ServerSentEvents<TValue>(
     IAsyncEnumerable<TValue> events, string? eventType = null)
-    where TValue : notnull
   {
     return ServerSentEventsWebResult<TValue>.Create(Result<IAsyncEnumerable<TValue>>.Ok(events), eventType);
   }
@@ -297,7 +293,6 @@ public static class WebResults
   #endregion
 
   #region "WithStreamingResponse"
-#if NET10_0_OR_GREATER
   /// <summary>
   /// Creates a web result that streams server-sent events (SSE) from the specified result containing an asynchronous sequence of event data items.
   /// </summary>
@@ -306,13 +301,11 @@ public static class WebResults
   /// receive events as they are emitted by the server.</remarks>
   /// <typeparam name="TValue">The type of the data payload contained in each server-sent event. Must not be null.</typeparam>
   /// <param name="result">A result containing an asynchronous sequence of event data items to be streamed to the client.</param>
-  /// <param name="eventType">The event type to associate with each server-sent event. If null, the default event type is used.</param>
   /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
   public static WebResult<IAsyncEnumerable<TValue>> WithStreamingResponse<TValue>(
-    Result<IAsyncEnumerable<TValue>> result, string? eventType = null)
-    where TValue : notnull
+    Result<IAsyncEnumerable<TValue>> result)
   {
-    return new WebResultWithStreamingResponse<TValue>(result, eventType);
+    return new WebResultWithStreamingResponse<TValue>(result);
   }
 
   /// <summary>
@@ -323,14 +316,11 @@ public static class WebResults
   /// receive events as they are emitted by the server.</remarks>
   /// <typeparam name="TValue">The type of the data payload contained in each server-sent event. Must not be null.</typeparam>
   /// <param name="events">An asynchronous sequence of event data items to be sent to the client as server-sent events. Cannot be null.</param>
-  /// <param name="eventType">The event type to associate with each server-sent event. If null, the default event type is used.</param>
   /// <returns>A web result that streams the provided events to the client using the server-sent events protocol.</returns>
   public static WebResult<IAsyncEnumerable<TValue>> WithStreamingResponse<TValue>(
-    IAsyncEnumerable<TValue> events, string? eventType = null)
-    where TValue : notnull
+    IAsyncEnumerable<TValue> events)
   {
-    return new WebResultWithStreamingResponse<TValue>(Result<IAsyncEnumerable<TValue>>.Ok(events), eventType);
+    return new WebResultWithStreamingResponse<TValue>(Result<IAsyncEnumerable<TValue>>.Ok(events));
   }
-#endif
   #endregion
 }

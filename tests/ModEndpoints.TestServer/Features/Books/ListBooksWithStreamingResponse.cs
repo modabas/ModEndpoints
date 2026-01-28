@@ -1,5 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using ModEndpoints.Core;
 using ModEndpoints.TestServer.Features.Books.Configuration;
 
@@ -13,8 +12,7 @@ internal class ListBooksWithStreamingResponse
     EndpointConfigurationBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    builder.MapGet("/listWithStreamingResponse/")
-      .Produces<ListBooksResponse>();
+    builder.MapGet("/listWithStreamingResponse/");
   }
 
   protected override async Task<WebResult<IAsyncEnumerable<ListBooksResponseItem>>> HandleAsync(
@@ -38,4 +36,3 @@ internal class ListBooksWithStreamingResponse
     }
   }
 }
-#endif

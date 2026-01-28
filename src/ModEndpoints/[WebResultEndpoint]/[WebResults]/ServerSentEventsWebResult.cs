@@ -11,7 +11,6 @@ namespace ModEndpoints;
 /// </summary>
 /// <typeparam name="TValue">The underlying type of the events emitted.</typeparam>
 internal sealed class ServerSentEventsWebResult<TValue> : WebResult<IAsyncEnumerable<SseItem<TValue>>>
-  where TValue : notnull
 {
   private ServerSentEventsWebResult(Result<IAsyncEnumerable<SseItem<TValue>>> result) : base(result)
   {

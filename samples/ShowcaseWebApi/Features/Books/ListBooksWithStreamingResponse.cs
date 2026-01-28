@@ -1,5 +1,4 @@
-﻿using System.Net.ServerSentEvents;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using ModEndpoints;
 using ModEndpoints.Core;
@@ -16,8 +15,7 @@ internal class ListBooksWithStreamingResponse(ServiceDbContext db)
     EndpointConfigurationBuilder builder,
     EndpointConfigurationContext configurationContext)
   {
-    builder.MapGet("/listWithStreamingResponse/")
-      .Produces<SseItem<ListBooksResponseItem>>(contentType: "text/event-stream");
+    builder.MapGet("/listWithStreamingResponse/");
   }
 
   protected override async Task<WebResult<IAsyncEnumerable<ListBooksResponseItem>>> HandleAsync(

@@ -15,7 +15,7 @@ internal class ListBooksSse
     EndpointConfigurationContext configurationContext)
   {
     builder.MapGet("/listSse/")
-      .Produces<ListBooksResponse>();
+      .Produces<SseItem<ListBooksResponseItem>>(contentType: "text/event-stream");
   }
 
   protected override async Task<WebResult<IAsyncEnumerable<SseItem<ListBooksResponseItem>>>> HandleAsync(

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
+using ModEndpoints.TestServer.Customers;
 using ModEndpoints.TestServer.Features.Books;
 using ModResults;
 
@@ -138,6 +139,7 @@ public class HandlerTests
     Assert.Equal("Author 2", book2.Author);
     Assert.Equal(29.99m, book2.Price);
   }
+#endif
 
   [Fact]
   public async Task EndpointWithStreamingResponse_Returns_SuccessAsync()
@@ -148,22 +150,16 @@ public class HandlerTests
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    List<System.Net.ServerSentEvents.SseItem<ListBooksResponseItem?>> response = new();
-    await foreach (var item in System.Net.ServerSentEvents.SseParser.Create(
+    var response = await JsonSerializer.DeserializeAsync<List<ListBooksResponseItem>>(
       await httpResponse.Content.ReadAsStreamAsync(),
-      (_, bytes) => JsonSerializer.Deserialize<ListBooksResponseItem>(bytes, _defaultJsonDeserializationOptions))
-      .EnumerateAsync())
-    {
-      response.Add(item);
-    }
+      _defaultJsonDeserializationOptions);
 
     Assert.NotNull(response);
     Assert.Equal(2, response.Count);
-    var book2 = response[1].Data;
+    var book2 = response[1];
     Assert.NotNull(book2);
     Assert.Equal("Book 2", book2.Title);
     Assert.Equal("Author 2", book2.Author);
     Assert.Equal(29.99m, book2.Price);
   }
-#endif
 }
