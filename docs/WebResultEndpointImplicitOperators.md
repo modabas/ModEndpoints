@@ -7,7 +7,6 @@
 - `Result<TValue>` to default implementation of `WebResult<TValue>` (equivalent to calling `WebResults.FromResult()`),
 - `Result` to default implementation of `WebResult` (equivalent to calling `WebResults.FromResult()`),
 - `TValue` to default implementation of `WebResult<TValue>` encapsulating a successful `Result<TValue>` (equivalent to calling `WebResults.FromResult()`),
-- `WebResult<TValue>` to `WebResult`.
 
 ## QoL Features
 
