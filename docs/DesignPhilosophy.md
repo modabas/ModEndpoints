@@ -24,9 +24,9 @@ At the foundation is:
 
 On top of that foundation, the project offers **opt-in endpoint types** that add conventions for specific use cases, such as:
 
-* Result → HTTP mapping
-* Business-oriented return types
-* Remote service integration
+* **`WebResultEndpoint`** — Business result → HTTP mapping
+* **`BusinessResultEndpoint`** — Business-oriented return types
+* **`ServiceEndpoint`** — Simplified remote service integration
 
 These higher-level endpoint types intentionally trade some explicitness for convenience.
 They **do not redefine the core philosophy** — they build on it.
@@ -124,21 +124,7 @@ This model aligns naturally with:
 
 ---
 
-### 5. Business Logic Should Be HTTP-Agnostic
-
-While `MinimalEndpoint` allows full control over HTTP responses, ModEndpoints encourages a clear separation:
-
-* **Business logic** lives in application or domain layers
-* **Endpoints** translate HTTP concerns to application behavior
-
-Returning `IResult` keeps HTTP semantics explicit,
-while higher-level endpoint types may offer structured result mapping when desired.
-
-HTTP is treated as a delivery mechanism — not the center of the system.
-
----
-
-### 6. Opt-In Conventions, Not Mandatory Ones
+### 5. Opt-In Conventions, Not Mandatory Ones
 
 ModEndpoints deliberately avoids enforcing:
 
@@ -155,69 +141,3 @@ Instead:
 * Teams choose how opinionated they want to be
 
 > Consistency should be a **team decision**, not a framework mandate.
-
----
-
-### 7. Discoverability Beats Centralization
-
-A common failure mode of Minimal APIs is excessive logic in `Program.cs`.
-
-ModEndpoints addresses this by:
-
-* Moving endpoints into dedicated classes
-* Co-locating routing with behavior
-* Keeping application startup small and declarative
-
-Endpoints should be:
-
-* Easy to find
-* Easy to navigate
-* Easy to delete
-
----
-
-## What ModEndpoints Is Not
-
-To avoid confusion, ModEndpoints is **not**:
-
-* A controller replacement
-* A full endpoint framework
-* A DSL for HTTP APIs
-* A platform with its own ecosystem
-* A place for every possible web feature
-
-There are excellent libraries that serve those goals.
-
-ModEndpoints intentionally stays focused.
-
----
-
-## Design Trade-offs (Acknowledged)
-
-Every abstraction has costs.
-ModEndpoints consciously accepts:
-
-* Some boilerplate compared to inline Minimal APIs
-* Responsibility on teams to define conventions
-* Explicit HTTP handling when using `MinimalEndpoint`
-
-These trade-offs are intentional.
-
-> **Clarity, control, and platform alignment has been chosen over convenience shortcuts.**
-
----
-
-## Summary
-
-**ModEndpoints exists to make Minimal APIs scalable without making them foreign.**
-
-It provides:
-
-* Structure without lock-in
-* Organization without magic
-* Power without overreach
-
-If ModEndpoints ever feels like it is *taking over* an application,
-it has gone too far.
-
-That boundary matters — and this project is designed to respect it.

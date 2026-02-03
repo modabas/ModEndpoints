@@ -10,7 +10,7 @@
 ## ✨ Features
 
 - **REPR Pattern Implementation**: Organizes Minimal APIs into Request, Endpoint and Response components.
-- **Seamless Integration**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, endpoint filters, etc.
+- **Seamless Integration With ASP.NET**: Fully compatible with ASP.NET Core Minimal APIs, supporting configurations, parameter binding, authentication, OpenAPI tooling, endpoint filters, etc.
 - **Route Grouping**: Supports grouping endpoints into route groups for better organization and shared configurations.
 - **Auto-Discovery and Registration**: Automatically discovers and registers endpoints and route groups.
 - **FluentValidation Support**: Built-in validation using FluentValidation; requests are automatically validated if a request validator is registered.
@@ -18,32 +18,7 @@
 - **Type-Safe Responses**: Provides response type safety in request handlers.
 - **Performant**: ([Almost](#-performance)) as fast as native Minimal APIs.
 
----
-
-## When Should I Use ModEndpoints?
-
-Use **ModEndpoints** when:
-
-* You like **ASP.NET Core Minimal APIs**, but your API is growing and `Program.cs` is becoming hard to manage
-* You want **structure and discoverability** without switching to controllers or a full framework
-* You prefer **explicit, ASP.NET-native code** over framework-specific DSLs
-* You want endpoints to be **small, testable, DI-friendly units**
-* You already have (or plan to have) a **clean separation** between HTTP concerns and business logic
-* You want to **opt into conventions gradually**, instead of being forced into them
-
-You may **not** need ModEndpoints if:
-
-* Your API is very small and unlikely to grow
-* You are happy organizing everything directly in `Program.cs`
-* You want a **highly opinionated, batteries-included endpoint framework**
-* You prefer controller-based MVC APIs
-
-In short:
-
-> Use ModEndpoints when you want Minimal APIs to **scale in structure, not in framework complexity**.
-
-📘 **Read the full design philosophy:**  
-[Design Philosophy](docs/DesignPhilosophy.md)
+> 📘 **Read the full design philosophy:** [Design Philosophy](docs/DesignPhilosophy.md)
 
 ---
 
