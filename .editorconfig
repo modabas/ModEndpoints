@@ -164,9 +164,15 @@ csharp_style_prefer_primary_constructors = true:suggestion
 csharp_prefer_system_threading_lock = true:suggestion
 csharp_style_expression_bodied_lambdas = true:silent
 csharp_style_expression_bodied_local_functions = false:silent
+csharp_style_prefer_simple_property_accessors = true:suggestion
 ###############################
 # VB Coding Conventions       #
 ###############################
 [*.vb]
 # Modifier preferences
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion
+###########################################
+# Common Library Coding Conventions       #
+###########################################
+[/src/**/*.{cs,vb}]
+dotnet_diagnostic.CA2007.severity = error

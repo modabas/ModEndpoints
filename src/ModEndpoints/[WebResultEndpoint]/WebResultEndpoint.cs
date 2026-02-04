@@ -28,9 +28,9 @@ public abstract class WebResultEndpoint<TRequest, TResponse>
     CancellationToken ct)
   {
     return await ConvertResultToResponseAsync(
-      await HandleValidationFailureAsync(validationResult, context, ct),
+      await HandleValidationFailureAsync(validationResult, context, ct).ConfigureAwait(false),
       context,
-      ct);
+      ct).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -74,9 +74,9 @@ public abstract class WebResultEndpoint<TRequest>
     CancellationToken ct)
   {
     return await ConvertResultToResponseAsync(
-      await HandleValidationFailureAsync(validationResult, context, ct),
+      await HandleValidationFailureAsync(validationResult, context, ct).ConfigureAwait(false),
       context,
-      ct);
+      ct).ConfigureAwait(false);
   }
 
   /// <summary>

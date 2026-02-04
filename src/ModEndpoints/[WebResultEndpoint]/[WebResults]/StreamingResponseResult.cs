@@ -45,17 +45,17 @@ internal sealed class StreamingResponseResult<T> : IResult, IStatusCodeHttpResul
 
     httpContext.Response.StatusCode = StatusCode;
 
-    await httpContext.Response.Body.WriteAsync(_start, ct);
+    await httpContext.Response.Body.WriteAsync(_start, ct).ConfigureAwait(false);
     await foreach (var @event in _events.WithCancellation(ct))
     {
       if (!isFirstItem)
       {
-        await httpContext.Response.Body.WriteAsync(_seperator, ct);
+        await httpContext.Response.Body.WriteAsync(_seperator, ct).ConfigureAwait(false);
       }
-      await WriteAsJsonAsync(@event, httpContext.Response.Body, jsonOptions, ct);
+      await WriteAsJsonAsync(@event, httpContext.Response.Body, jsonOptions, ct).ConfigureAwait(false);
       isFirstItem = false;
     }
-    await httpContext.Response.Body.WriteAsync(_end, ct);
+    await httpContext.Response.Body.WriteAsync(_end, ct).ConfigureAwait(false);
   }
 
   private static async Task WriteAsJsonAsync(T item, Stream writer, JsonOptions jsonOptions, CancellationToken ct)
@@ -63,7 +63,7 @@ internal sealed class StreamingResponseResult<T> : IResult, IStatusCodeHttpResul
     if (item is null)
     {
       var nullBytes = JsonSerializer.SerializeToUtf8Bytes<object?>(null, jsonOptions.SerializerOptions);
-      await writer.WriteAsync(nullBytes, ct);
+      await writer.WriteAsync(nullBytes, ct).ConfigureAwait(false);
       return;
     }
 
@@ -75,6 +75,6 @@ internal sealed class StreamingResponseResult<T> : IResult, IStatusCodeHttpResul
         : jsonOptions.SerializerOptions.GetTypeInfo(typeof(object));
 
     var json = JsonSerializer.SerializeToUtf8Bytes(item, typeInfo);
-    await writer.WriteAsync(json, ct);
+    await writer.WriteAsync(json, ct).ConfigureAwait(false);
   }
 }

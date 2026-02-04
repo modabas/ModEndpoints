@@ -15,7 +15,7 @@ internal sealed class FluentValidationRequestValidationService : IRequestValidat
     var validator = context.RequestServices.GetService<IValidator<TRequest>>();
     if (validator is not null)
     {
-      var validationResult = await validator.ValidateAsync(req, ct);
+      var validationResult = await validator.ValidateAsync(req, ct).ConfigureAwait(false);
       if (validationResult.IsValid)
       {
         return RequestValidationDefinitions.SuccessfulValidationResult;

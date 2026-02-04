@@ -28,16 +28,16 @@ public abstract class BaseWebResultEndpoint<TRequest, THandlerResult>
     //Request validation
     {
       var validationController = context.RequestServices.GetRequiredService<IRequestValidationController>();
-      var validationResult = await validationController.ValidateAsync(req, context, ct);
+      var validationResult = await validationController.ValidateAsync(req, context, ct).ConfigureAwait(false);
       if (validationResult?.IsFailed == true)
       {
-        return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+        return await HandleInvalidValidationResultAsync(validationResult, context, ct).ConfigureAwait(false);
       }
     }
     //Handler
-    var result = await handler.HandleAsync(req, ct);
+    var result = await handler.HandleAsync(req, ct).ConfigureAwait(false);
     //Post handler mapping
-    return await handler.ConvertResultToResponseAsync(result, context, ct);
+    return await handler.ConvertResultToResponseAsync(result, context, ct).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -98,9 +98,9 @@ public abstract class BaseWebResultEndpoint<THandlerResult>
     var ct = context.RequestAborted;
 
     //Handler
-    var result = await handler.HandleAsync(ct);
+    var result = await handler.HandleAsync(ct).ConfigureAwait(false);
     //Post handler mapping
-    return await handler.ConvertResultToResponseAsync(result, context, ct);
+    return await handler.ConvertResultToResponseAsync(result, context, ct).ConfigureAwait(false);
   }
 
   /// <summary>

@@ -42,19 +42,19 @@ internal sealed class DefaultServiceChannel(
         HttpMethod.Post,
         Combine(endpointUriPrefix, requestUriResult.Value)))
       {
-        httpReq.Content = await serializer.CreateContentAsync(req, ct);
+        httpReq.Content = await serializer.CreateContentAsync(req, ct).ConfigureAwait(false);
         if (httpRequestInterceptor is not null)
         {
-          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct);
+          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct).ConfigureAwait(false);
         }
         var client = clientFactory.CreateClient(clientName);
-        using (var httpResponse = await client.SendAsync(httpReq, ct))
+        using (var httpResponse = await client.SendAsync(httpReq, ct).ConfigureAwait(false))
         {
           if (httpResponseInterceptor is not null)
           {
-            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
+            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct).ConfigureAwait(false);
           }
-          return await serializer.DeserializeResultAsync<TResponse>(httpResponse, ct);
+          return await serializer.DeserializeResultAsync<TResponse>(httpResponse, ct).ConfigureAwait(false);
         }
       }
     }
@@ -89,19 +89,19 @@ internal sealed class DefaultServiceChannel(
         HttpMethod.Post,
         Combine(endpointUriPrefix, requestUriResult.Value)))
       {
-        httpReq.Content = await serializer.CreateContentAsync(req, ct);
+        httpReq.Content = await serializer.CreateContentAsync(req, ct).ConfigureAwait(false);
         if (httpRequestInterceptor is not null)
         {
-          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct);
+          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct).ConfigureAwait(false);
         }
         var client = clientFactory.CreateClient(clientName);
-        using (var httpResponse = await client.SendAsync(httpReq, ct))
+        using (var httpResponse = await client.SendAsync(httpReq, ct).ConfigureAwait(false))
         {
           if (httpResponseInterceptor is not null)
           {
-            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
+            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct).ConfigureAwait(false);
           }
-          return await serializer.DeserializeResultAsync(httpResponse, ct);
+          return await serializer.DeserializeResultAsync(httpResponse, ct).ConfigureAwait(false);
         }
       }
     }
@@ -143,19 +143,19 @@ internal sealed class DefaultServiceChannel(
         HttpMethod.Post,
         Combine(endpointUriPrefix, requestUriResult.Value)))
       {
-        httpReq.Content = await serializer.CreateContentAsync(req, ct);
+        httpReq.Content = await serializer.CreateContentAsync(req, ct).ConfigureAwait(false);
         if (httpRequestInterceptor is not null)
         {
-          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct);
+          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct).ConfigureAwait(false);
         }
         var client = clientFactory.CreateClient(clientName);
-        using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+        using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false))
         {
           if (httpResponseInterceptor is not null)
           {
-            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
+            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct).ConfigureAwait(false);
           }
-          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(httpResponse, ct))
+          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(httpResponse, ct).ConfigureAwait(false))
           {
             yield return resultObject;
           }
@@ -199,19 +199,19 @@ internal sealed class DefaultServiceChannel(
         HttpMethod.Post,
         Combine(endpointUriPrefix, requestUriResult.Value)))
       {
-        httpReq.Content = await serializer.CreateContentAsync(req, ct);
+        httpReq.Content = await serializer.CreateContentAsync(req, ct).ConfigureAwait(false);
         if (httpRequestInterceptor is not null)
         {
-          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct);
+          await httpRequestInterceptor(scope.ServiceProvider, httpReq, ct).ConfigureAwait(false);
         }
         var client = clientFactory.CreateClient(clientName);
-        using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct))
+        using (var httpResponse = await client.SendAsync(httpReq, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false))
         {
           if (httpResponseInterceptor is not null)
           {
-            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct);
+            await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct).ConfigureAwait(false);
           }
-          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(httpResponse, ct))
+          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(httpResponse, ct).ConfigureAwait(false))
           {
             yield return resultObject;
           }
