@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
-using ModEndpoints.TestServer.Customers;
 using ModEndpoints.TestServer.Features.Books;
 using ModResults;
 
@@ -29,14 +28,14 @@ public class HandlerTests
   {
     var bookId = Guid.NewGuid();
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/books/{bookId}");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<GetBookByIdResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(bookId, response.Id);
@@ -49,7 +48,7 @@ public class HandlerTests
   public async Task FailureEndpointWithEmptyRequestOfTResponse_Returns_ErrorAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/books/failure/withResponseModel");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status404NotFound, (int)httpResponse.StatusCode);
@@ -60,7 +59,7 @@ public class HandlerTests
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/api/books/failure/withoutResponseModel");
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status404NotFound, (int)httpResponse.StatusCode);
   }
@@ -74,7 +73,7 @@ public class HandlerTests
       Content = JsonContent.Create(new UpdateBookRequestBody("Title 1", "Author 1", 19.99m))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status204NoContent, (int)httpResponse.StatusCode);
   }
@@ -83,14 +82,14 @@ public class HandlerTests
   public async Task EndpointWithEmptyRequestOfTResponse_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/books");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<ListBooksResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.NotNull(response.Books);
@@ -107,7 +106,7 @@ public class HandlerTests
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "/api/books");
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status204NoContent, (int)httpResponse.StatusCode);
   }
@@ -117,16 +116,16 @@ public class HandlerTests
   public async Task EndpointWithSseResponse_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/books/listSse");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     List<System.Net.ServerSentEvents.SseItem<ListBooksResponseItem?>> response = new();
     await foreach (var item in System.Net.ServerSentEvents.SseParser.Create(
-      await httpResponse.Content.ReadAsStreamAsync(),
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
       (_, bytes) => JsonSerializer.Deserialize<ListBooksResponseItem>(bytes, _defaultJsonDeserializationOptions))
-      .EnumerateAsync())
+      .EnumerateAsync(TestContext.Current.CancellationToken))
     {
       response.Add(item);
     }
@@ -145,14 +144,14 @@ public class HandlerTests
   public async Task EndpointWithStreamingResponse_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/books/listWithStreamingResponse");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<List<ListBooksResponseItem>>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(2, response.Count);

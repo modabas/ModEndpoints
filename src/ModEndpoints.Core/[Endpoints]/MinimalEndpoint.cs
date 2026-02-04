@@ -35,14 +35,14 @@ public abstract class MinimalEndpoint<TRequest, TResponse>
     //Request validation
     {
       var validationController = context.RequestServices.GetRequiredService<IRequestValidationController>();
-      var validationResult = await validationController.ValidateAsync(req, context, ct);
+      var validationResult = await validationController.ValidateAsync(req, context, ct).ConfigureAwait(false);
       if (validationResult?.IsFailed == true)
       {
-        return await HandleInvalidValidationResultAsync(validationResult, context, ct);
+        return await HandleInvalidValidationResultAsync(validationResult, context, ct).ConfigureAwait(false);
       }
     }
     //Handler
-    return await handler.HandleAsync(req, ct);
+    return await handler.HandleAsync(req, ct).ConfigureAwait(false);
   }
 
   /// <summary>
@@ -174,7 +174,7 @@ public abstract class MinimalEndpoint<TResponse>
     var ct = context.RequestAborted;
 
     //Handler
-    return await handler.HandleAsync(ct);
+    return await handler.HandleAsync(ct).ConfigureAwait(false);
   }
 
   /// <summary>

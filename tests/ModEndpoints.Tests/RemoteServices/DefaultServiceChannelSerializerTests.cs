@@ -38,10 +38,10 @@ public class DefaultServiceChannelSerializerTests
   public async Task CreateContentAsync_SerializesRequestAsync()
   {
     var request = new DummyRequest { Name = "TestName" };
-    var content = await _serializer.CreateContentAsync(request, CancellationToken.None);
+    var content = await _serializer.CreateContentAsync(request, TestContext.Current.CancellationToken);
 
     Assert.NotNull(content);
-    var json = await content.ReadAsStringAsync();
+    var json = await content.ReadAsStringAsync(TestContext.Current.CancellationToken);
     Assert.Contains("TestName", json);
   }
 
@@ -53,7 +53,7 @@ public class DefaultServiceChannelSerializerTests
       ReasonPhrase = "Bad request",
       RequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost/test")
     };
-    var result = await _serializer.DeserializeResultAsync<DummyResponse>(response, CancellationToken.None);
+    var result = await _serializer.DeserializeResultAsync<DummyResponse>(response, TestContext.Current.CancellationToken);
 
     Assert.True(result.IsFailed);
     Assert.Equal(FailureType.CriticalError, result.Failure.Type);
@@ -71,7 +71,7 @@ public class DefaultServiceChannelSerializerTests
       RequestMessage = new HttpRequestMessage(HttpMethod.Post, "http://localhost/test2")
     };
 
-    await Assert.ThrowsAsync<JsonException>(async () => await _serializer.DeserializeResultAsync<DummyResponse>(response, CancellationToken.None));
+    await Assert.ThrowsAsync<JsonException>(async () => await _serializer.DeserializeResultAsync<DummyResponse>(response, TestContext.Current.CancellationToken));
   }
 
   [Fact]
@@ -82,7 +82,7 @@ public class DefaultServiceChannelSerializerTests
       ReasonPhrase = "Server error",
       RequestMessage = new HttpRequestMessage(HttpMethod.Put, "http://localhost/test3")
     };
-    var result = await _serializer.DeserializeResultAsync(response, CancellationToken.None);
+    var result = await _serializer.DeserializeResultAsync(response, TestContext.Current.CancellationToken);
 
     Assert.True(result.IsFailed);
     Assert.Equal(FailureType.CriticalError, result.Failure.Type);
@@ -100,7 +100,7 @@ public class DefaultServiceChannelSerializerTests
       RequestMessage = new HttpRequestMessage(HttpMethod.Delete, "http://localhost/test4")
     };
 
-    await Assert.ThrowsAsync<JsonException>(async () => await _serializer.DeserializeResultAsync(response, CancellationToken.None));
+    await Assert.ThrowsAsync<JsonException>(async () => await _serializer.DeserializeResultAsync(response, TestContext.Current.CancellationToken));
   }
 
   [Fact]
@@ -111,9 +111,9 @@ public class DefaultServiceChannelSerializerTests
       ReasonPhrase = "Forbidden",
       RequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost/stream")
     };
-    var items = _serializer.DeserializeStreamingResponseItemAsync<DummyResponse>(response, CancellationToken.None);
+    var items = _serializer.DeserializeStreamingResponseItemAsync<DummyResponse>(response, TestContext.Current.CancellationToken);
 
-    var enumerator = items.GetAsyncEnumerator();
+    var enumerator = items.GetAsyncEnumerator(TestContext.Current.CancellationToken);
     Assert.True(await enumerator.MoveNextAsync());
     var item = enumerator.Current;
     Assert.True(item.Result.IsFailed);
@@ -134,7 +134,7 @@ public class DefaultServiceChannelSerializerTests
 
     await Assert.ThrowsAsync<JsonException>(async () =>
     {
-      await foreach (var item in _serializer.DeserializeStreamingResponseItemAsync<DummyResponse>(response, CancellationToken.None))
+      await foreach (var item in _serializer.DeserializeStreamingResponseItemAsync<DummyResponse>(response, TestContext.Current.CancellationToken))
       {
         // This should not be reached, as an exception is expected
         throw new UnreachableException("This code should not be reached due to expected exception.");
@@ -150,9 +150,9 @@ public class DefaultServiceChannelSerializerTests
       ReasonPhrase = "Not Found",
       RequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://localhost/stream3")
     };
-    var items = _serializer.DeserializeStreamingResponseItemAsync(response, CancellationToken.None);
+    var items = _serializer.DeserializeStreamingResponseItemAsync(response, TestContext.Current.CancellationToken);
 
-    var enumerator = items.GetAsyncEnumerator();
+    var enumerator = items.GetAsyncEnumerator(TestContext.Current.CancellationToken);
     Assert.True(await enumerator.MoveNextAsync());
     var item = enumerator.Current;
     Assert.True(item.Result.IsFailed);
@@ -173,7 +173,7 @@ public class DefaultServiceChannelSerializerTests
 
     await Assert.ThrowsAsync<JsonException>(async () =>
     {
-      await foreach (var item in _serializer.DeserializeStreamingResponseItemAsync(response, CancellationToken.None))
+      await foreach (var item in _serializer.DeserializeStreamingResponseItemAsync(response, TestContext.Current.CancellationToken))
       {
         // This should not be reached, as an exception is expected
         throw new UnreachableException("This code should not be reached due to expected exception.");

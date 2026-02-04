@@ -51,7 +51,7 @@ internal sealed class DefaultServiceChannelSerializer(
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result<TResponse>>(response, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result<TResponse>>(response, ct).ConfigureAwait(false);
     return resultObject ?? Result<TResponse>
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -76,7 +76,7 @@ internal sealed class DefaultServiceChannelSerializer(
           response.RequestMessage?.Method,
           response.RequestMessage?.RequestUri));
     }
-    var resultObject = await DeserializeResultInternalAsync<Result>(response, ct);
+    var resultObject = await DeserializeResultInternalAsync<Result>(response, ct).ConfigureAwait(false);
     return resultObject ?? Result
       .CriticalError(DeserializationErrorMessage)
       .WithFact(string.Format(
@@ -90,7 +90,7 @@ internal sealed class DefaultServiceChannelSerializer(
     CancellationToken ct)
     where TResult : IModResult
   {
-    using (var contentStream = await response.Content.ReadAsStreamAsync(ct))
+    using (var contentStream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false))
     {
       //close contentStream forcefully if timeout token is cancelled
       using (ct.Register(() => contentStream.Close()))
@@ -98,7 +98,7 @@ internal sealed class DefaultServiceChannelSerializer(
         return await JsonSerializer.DeserializeAsync<TResult>(
           contentStream,
           options.DeserializationOptions,
-          ct);
+          ct).ConfigureAwait(false);
       }
     }
   }
@@ -124,7 +124,9 @@ internal sealed class DefaultServiceChannelSerializer(
         ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
       yield break;
     }
-    await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem<TResponse>>(response, ct))
+    await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem<TResponse>>(
+      response,
+      ct).WithCancellation(ct).ConfigureAwait(false))
     {
       yield return responseItemObject
         ?? new StreamingResponseItem<TResponse>(
@@ -158,7 +160,9 @@ internal sealed class DefaultServiceChannelSerializer(
         ResponseType: StreamingResponseItemDefinitions.DefaultClientSideErrorResponseType);
       yield break;
     }
-    await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem>(response, ct))
+    await foreach (var responseItemObject in DeserializeStreamingResponseItemInternalAsync<StreamingResponseItem>(
+      response,
+      ct).WithCancellation(ct).ConfigureAwait(false))
     {
       yield return responseItemObject
         ?? new StreamingResponseItem(
@@ -176,7 +180,7 @@ internal sealed class DefaultServiceChannelSerializer(
     HttpResponseMessage response,
     [EnumeratorCancellation] CancellationToken ct)
   {
-    using (var contentStream = await response.Content.ReadAsStreamAsync(ct))
+    using (var contentStream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false))
     {
       //close contentStream forcefully if timeout token is cancelled
       using (ct.Register(() => contentStream.Close()))
@@ -184,7 +188,7 @@ internal sealed class DefaultServiceChannelSerializer(
         await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<TResult>(
           contentStream,
           options.StreamingDeserializationOptions,
-          ct).WithCancellation(ct))
+          ct).WithCancellation(ct).ConfigureAwait(false))
         {
           yield return item;
         }

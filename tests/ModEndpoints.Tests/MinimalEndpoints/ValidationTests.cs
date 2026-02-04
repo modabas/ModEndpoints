@@ -18,7 +18,7 @@ public class ValidationTests
   {
     var customerId = Guid.Empty;
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/customers/{customerId}");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status400BadRequest, (int)httpResponse.StatusCode);
@@ -32,7 +32,7 @@ public class ValidationTests
       Content = JsonContent.Create(new CreateCustomerRequestBody("", null, ""))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status400BadRequest, (int)httpResponse.StatusCode);
   }
@@ -46,7 +46,7 @@ public class ValidationTests
       Content = JsonContent.Create(new UpdateCustomerRequestBody("", null, ""))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status400BadRequest, (int)httpResponse.StatusCode);
   }
@@ -60,7 +60,7 @@ public class ValidationTests
       Content = JsonContent.Create(new PartialUpdateCustomerRequestBody(""))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status500InternalServerError, (int)httpResponse.StatusCode);
   }
@@ -68,13 +68,12 @@ public class ValidationTests
   [Fact]
   public async Task InvalidParameters_ForStreamingResponseEndpoint_ThrowsAsync()
   {
-    var customerId = Guid.Empty;
     var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"/api/customers/filter-and-stream-list")
     {
       Content = JsonContent.Create(new FilterAndStreamCustomerListRequestBody(""))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status500InternalServerError, (int)httpResponse.StatusCode);
   }

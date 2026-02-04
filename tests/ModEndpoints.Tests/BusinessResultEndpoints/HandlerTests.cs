@@ -28,14 +28,14 @@ public class HandlerTests
   {
     var bookId = Guid.NewGuid();
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/stores/{bookId}");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<Result<GetStoreByIdResponse>>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.True(response.IsOk);
@@ -49,14 +49,14 @@ public class HandlerTests
   public async Task EndpointWithEmptyRequestOfTResponse_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/stores");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<Result<ListStoresResponse>>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.True(response.IsOk);
@@ -74,13 +74,13 @@ public class HandlerTests
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "/api/stores");
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<Result>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.True(response.IsOk);
@@ -96,13 +96,13 @@ public class HandlerTests
       Content = JsonContent.Create(new UpdateStoreRequestBody("Name 1"))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<Result>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.True(response.IsOk);

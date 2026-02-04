@@ -50,7 +50,7 @@ public class DefaultServiceChannelTests
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
 
-      var result = await channel.SendAsync(req, null, CancellationToken.None);
+      var result = await channel.SendAsync(req, null, TestContext.Current.CancellationToken);
 
       Assert.True(result.IsFailed);
     }
@@ -68,7 +68,7 @@ public class DefaultServiceChannelTests
       var channel = new DefaultServiceChannel(
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
-      var result = await channel.SendAsync(req, null, CancellationToken.None);
+      var result = await channel.SendAsync(req, null, TestContext.Current.CancellationToken);
 
       Assert.True(result.IsFailed);
       Assert.Equal(FailureType.CriticalError, result.Failure.Type);
@@ -89,7 +89,7 @@ public class DefaultServiceChannelTests
       var channel = new DefaultServiceChannel(
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
-      var result = await channel.SendAsync(req, null, CancellationToken.None);
+      var result = await channel.SendAsync(req, null, TestContext.Current.CancellationToken);
 
       Assert.True(result.IsFailed);
     }
@@ -108,7 +108,7 @@ public class DefaultServiceChannelTests
       var channel = new DefaultServiceChannel(
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
-      var result = await channel.SendAsync(req, null, CancellationToken.None);
+      var result = await channel.SendAsync(req, null, TestContext.Current.CancellationToken);
 
       Assert.True(result.IsFailed);
       Assert.Equal(FailureType.CriticalError, result.Failure.Type);
@@ -129,7 +129,7 @@ public class DefaultServiceChannelTests
       var channel = new DefaultServiceChannel(
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
-      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+      var results = await channel.SendAsync(req, null, TestContext.Current.CancellationToken).ToListAsync(TestContext.Current.CancellationToken);
 
       Assert.Single(results);
       Assert.True(results[0].Result.IsFailed);
@@ -150,7 +150,7 @@ public class DefaultServiceChannelTests
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
 
-      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+      var results = await channel.SendAsync(req, null, TestContext.Current.CancellationToken).ToListAsync(TestContext.Current.CancellationToken);
 
       Assert.Single(results);
       Assert.True(results[0].Result.IsFailed);
@@ -171,7 +171,7 @@ public class DefaultServiceChannelTests
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
 
-      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+      var results = await channel.SendAsync(req, null, TestContext.Current.CancellationToken).ToListAsync(TestContext.Current.CancellationToken);
 
       Assert.Single(results);
       Assert.True(results[0].Result.IsFailed);
@@ -191,7 +191,7 @@ public class DefaultServiceChannelTests
       var channel = new DefaultServiceChannel(
         scope.ServiceProvider.GetRequiredService<IHttpClientFactory>(),
         serviceProvider);
-      var results = await channel.SendAsync(req, null, CancellationToken.None).ToListAsync();
+      var results = await channel.SendAsync(req, null, TestContext.Current.CancellationToken).ToListAsync(TestContext.Current.CancellationToken);
 
       Assert.Single(results);
       Assert.True(results[0].Result.IsFailed);

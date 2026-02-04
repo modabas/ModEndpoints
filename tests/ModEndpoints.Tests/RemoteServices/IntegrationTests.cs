@@ -21,7 +21,7 @@ public class IntegrationTests
     var response = await _serviceChannel.SendAsync(
       new GetStoreByIdRequest(storeId),
       "/api/storesWithServiceEndpoint/",
-      CancellationToken.None);
+      TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.True(response.IsOk);
@@ -38,7 +38,7 @@ public class IntegrationTests
     var response = await _serviceChannel.SendAsync(
       new DeleteStoreRequest(storeId),
       "/api/storesWithServiceEndpoint/",
-      CancellationToken.None);
+      TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.True(response.IsOk);
@@ -51,7 +51,7 @@ public class IntegrationTests
     var response = await _serviceChannel.SendAsync(
       new FilterAndStreamStoreListRequest("Name 2"),
       "/api/storesWithServiceEndpoint/",
-      CancellationToken.None).ToListAsync();
+      TestContext.Current.CancellationToken).ToListAsync(TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Single(response);
@@ -66,7 +66,7 @@ public class IntegrationTests
     var response = await _serviceChannel.SendAsync(
       new StreamStoreStatusListRequest("Name"),
       "/api/storesWithServiceEndpoint/",
-      CancellationToken.None).ToListAsync();
+      TestContext.Current.CancellationToken).ToListAsync(TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(2, response.Count);

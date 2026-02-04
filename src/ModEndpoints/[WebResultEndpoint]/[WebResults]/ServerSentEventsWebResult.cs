@@ -35,7 +35,7 @@ internal sealed class ServerSentEventsWebResult<TValue> : WebResult<IAsyncEnumer
 
   private static async IAsyncEnumerable<SseItem<TValue>> WrapEventsAsync(IAsyncEnumerable<TValue> events, string? eventType)
   {
-    await foreach (var item in events)
+    await foreach (var item in events.ConfigureAwait(false))
     {
       yield return new SseItem<TValue>(item, eventType);
     }
