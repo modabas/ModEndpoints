@@ -155,7 +155,9 @@ internal sealed class DefaultServiceChannel(
           {
             await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct).ConfigureAwait(false);
           }
-          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(httpResponse, ct).ConfigureAwait(false))
+          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync<TResponse>(
+            httpResponse,
+            ct).WithCancellation(ct).ConfigureAwait(false))
           {
             yield return resultObject;
           }
@@ -211,7 +213,9 @@ internal sealed class DefaultServiceChannel(
           {
             await httpResponseInterceptor(scope.ServiceProvider, httpResponse, ct).ConfigureAwait(false);
           }
-          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(httpResponse, ct).ConfigureAwait(false))
+          await foreach (var resultObject in serializer.DeserializeStreamingResponseItemAsync(
+            httpResponse,
+            ct).WithCancellation(ct).ConfigureAwait(false))
           {
             yield return resultObject;
           }

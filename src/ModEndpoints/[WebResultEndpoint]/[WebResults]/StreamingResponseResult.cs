@@ -46,7 +46,7 @@ internal sealed class StreamingResponseResult<T> : IResult, IStatusCodeHttpResul
     httpContext.Response.StatusCode = StatusCode;
 
     await httpContext.Response.Body.WriteAsync(_start, ct).ConfigureAwait(false);
-    await foreach (var @event in _events.WithCancellation(ct))
+    await foreach (var @event in _events.WithCancellation(ct).ConfigureAwait(false))
     {
       if (!isFirstItem)
       {

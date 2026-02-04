@@ -38,7 +38,7 @@ public abstract class BaseServiceEndpointWithStreamingResponse<TRequest, TRespon
       }
     }
     //Handler
-    await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
+    await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct).ConfigureAwait(false))
     {
       yield return item;
     }

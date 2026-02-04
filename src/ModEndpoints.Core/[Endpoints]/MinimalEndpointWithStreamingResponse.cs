@@ -37,7 +37,7 @@ public abstract class MinimalEndpointWithStreamingResponse<TRequest, TResponse>
       }
     }
     //Handler
-    await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct))
+    await foreach (var item in handler.HandleAsync(req, ct).WithCancellation(ct).ConfigureAwait(false))
     {
       yield return item;
     }
@@ -93,7 +93,7 @@ public abstract class MinimalEndpointWithStreamingResponse<TResponse>
     var ct = context.RequestAborted;
 
     //Handler
-    await foreach (var item in handler.HandleAsync(ct).WithCancellation(ct))
+    await foreach (var item in handler.HandleAsync(ct).WithCancellation(ct).ConfigureAwait(false))
     {
       yield return item;
     }
