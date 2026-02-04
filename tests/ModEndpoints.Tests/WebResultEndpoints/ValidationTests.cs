@@ -18,7 +18,7 @@ public class ValidationTests
   {
     var bookId = Guid.Empty;
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/books/{bookId}");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status400BadRequest, (int)httpResponse.StatusCode);
@@ -33,7 +33,7 @@ public class ValidationTests
       Content = JsonContent.Create(new UpdateBookRequestBody("", "", 0))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status400BadRequest, (int)httpResponse.StatusCode);
   }

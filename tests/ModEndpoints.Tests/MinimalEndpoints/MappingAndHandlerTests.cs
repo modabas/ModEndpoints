@@ -27,14 +27,14 @@ public class MappingAndHandlerTests
   {
     var customerId = Guid.NewGuid();
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/customers/{customerId}");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<GetCustomerByIdResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(customerId, response.Id);
@@ -47,14 +47,14 @@ public class MappingAndHandlerTests
   public async Task GetWithEmptyRequest_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/customers");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<ListCustomersResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.NotNull(response.Customers);
@@ -70,14 +70,14 @@ public class MappingAndHandlerTests
   public async Task GetStreamingResponseWithEmptyRequest_Returns_SuccessAsync()
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/customers/stream-list");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<List<StreamCustomerListResponse>>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(2, response.Count);
@@ -96,7 +96,7 @@ public class MappingAndHandlerTests
       Content = JsonContent.Create(new CreateCustomerRequestBody("John", "Doe", "Smith"))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status201Created, (int)httpResponse.StatusCode);
 
@@ -105,8 +105,8 @@ public class MappingAndHandlerTests
     Assert.NotEmpty(locationHeader.ToString());
 
     var response = await JsonSerializer.DeserializeAsync<CreateCustomerResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.NotEqual(Guid.Empty, response.Id);
@@ -119,14 +119,14 @@ public class MappingAndHandlerTests
     {
       Content = JsonContent.Create(new FilterAndStreamCustomerListRequestBody("Jane"))
     };
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<List<FilterAndStreamCustomerListResponse>>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Single(response);
@@ -146,13 +146,13 @@ public class MappingAndHandlerTests
       Content = JsonContent.Create(new UpdateCustomerRequestBody("John", "Doe", "Smith"))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<UpdateCustomerResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(customerId, response.Id);
@@ -170,13 +170,13 @@ public class MappingAndHandlerTests
       Content = JsonContent.Create(new PartialUpdateCustomerRequestBody("John"))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
     var response = await JsonSerializer.DeserializeAsync<PartialUpdateCustomerResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.Equal(customerId, response.Id);
@@ -189,7 +189,7 @@ public class MappingAndHandlerTests
     var customerId = Guid.NewGuid();
     var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"/api/customers/{customerId}");
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status204NoContent, (int)httpResponse.StatusCode);
   }
@@ -199,7 +199,7 @@ public class MappingAndHandlerTests
   {
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, "/api/customers/disabled");
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.False(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status400BadRequest, (int)httpResponse.StatusCode);
   }

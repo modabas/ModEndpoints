@@ -30,7 +30,7 @@ public class LocationStoreTests
       Content = JsonContent.Create(new CreateBookRequestBody("Book 1", "Author 1", 19.99m))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status201Created, (int)httpResponse.StatusCode);
 
@@ -39,8 +39,8 @@ public class LocationStoreTests
     Assert.NotEmpty(locationHeader.ToString());
 
     var response = await JsonSerializer.DeserializeAsync<CreateBookResponse>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.NotEqual(Guid.Empty, response.Id);

@@ -28,15 +28,14 @@ public class ValidationTests
   {
     var storeId = Guid.Empty;
     var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"/api/stores/{storeId}");
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
 
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<Result>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.False(response.IsOk);
@@ -54,14 +53,13 @@ public class ValidationTests
       Content = JsonContent.Create(new UpdateStoreRequestBody(""))
     };
 
-    var httpResponse = await _testClient.SendAsync(httpRequest);
+    var httpResponse = await _testClient.SendAsync(httpRequest, TestContext.Current.CancellationToken);
     Assert.True(httpResponse.IsSuccessStatusCode);
     Assert.Equal(StatusCodes.Status200OK, (int)httpResponse.StatusCode);
 
-    var responseContent = await httpResponse.Content.ReadAsStringAsync();
     var response = await JsonSerializer.DeserializeAsync<Result>(
-      await httpResponse.Content.ReadAsStreamAsync(),
-      _defaultJsonDeserializationOptions);
+      await httpResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+      _defaultJsonDeserializationOptions, TestContext.Current.CancellationToken);
 
     Assert.NotNull(response);
     Assert.False(response.IsOk);
