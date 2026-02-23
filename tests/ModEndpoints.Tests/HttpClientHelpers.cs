@@ -4,10 +4,13 @@ namespace ModEndpoints.Tests;
 
 internal static class HttpClientHelpers
 {
-  internal static HttpClientHandler GetHandler(this HttpClient source)
+  extension(HttpClient source)
   {
-    return Unsafe.As<HttpClientHandler>(get_handler(source))
-  ;
+    internal HttpClientHandler GetHandler()
+    {
+      return Unsafe.As<HttpClientHandler>(get_handler(source))
+    ;
+    }
   }
 
   [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_handler")]

@@ -12,75 +12,78 @@ namespace ShowcaseWebApi.Extensions;
 
 public static class WebApplicationBuilderExtensions
 {
-  public static WebApplicationBuilder AddSwagger(this WebApplicationBuilder builder)
+  extension(WebApplicationBuilder builder)
   {
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
-    builder.Services.AddSwaggerGen(options =>
+    public WebApplicationBuilder AddSwagger()
     {
-      options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+      builder.Services.AddEndpointsApiExplorer();
+      builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+      builder.Services.AddSwaggerGen(options =>
       {
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Description = "Bearer Authentication with JWT Token",
-        Type = SecuritySchemeType.Http
-      });
-      options.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
-      {
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+        {
+          Scheme = "Bearer",
+          BearerFormat = "JWT",
+          In = ParameterLocation.Header,
+          Name = "Authorization",
+          Description = "Bearer Authentication with JWT Token",
+          Type = SecuritySchemeType.Http
+        });
+        options.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
+        {
         {
           new OpenApiSecuritySchemeReference("Bearer", document),
           new List<string>()
         }
+        });
+
+        options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+        options.CustomSchemaIds(type => type.ToString());
       });
+      return builder;
+    }
 
-      options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
-      options.CustomSchemaIds(type => type.ToString());
-    });
-    return builder;
-  }
-
-  public static WebApplicationBuilder AddWebServices(this WebApplicationBuilder builder)
-  {
-    builder.Services.AddProblemDetails(options =>
+    public WebApplicationBuilder AddWebServices()
     {
-      options.CustomizeProblemDetails = context =>
+      builder.Services.AddProblemDetails(options =>
       {
-        context.ProblemDetails.Instance =
-          $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+        options.CustomizeProblemDetails = context =>
+        {
+          context.ProblemDetails.Instance =
+            $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
 
-        context.ProblemDetails.Extensions.TryAdd("requestId",
-          context.HttpContext.TraceIdentifier);
+          context.ProblemDetails.Extensions.TryAdd("requestId",
+            context.HttpContext.TraceIdentifier);
 
-        var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
-        context.ProblemDetails.Extensions.TryAdd("traceId",
-          activity?.Id);
-      };
-    });
-    builder.Services
-      .AddApiVersioning(opt =>
-      {
-        opt.ApiVersionReader = new UrlSegmentApiVersionReader();
-      })
-      .AddApiExplorer(options =>
-      {
-        // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-        // note: the specified format code will format the version as "'v'major[.minor][-status]"
-        options.GroupNameFormat = "'v'VVV";
-
-        // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
-        // can also be used to control the format of the API version in route templates
-        options.SubstituteApiVersionInUrl = true;
+          var activity = context.HttpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+          context.ProblemDetails.Extensions.TryAdd("traceId",
+            activity?.Id);
+        };
       });
-    return builder;
-  }
+      builder.Services
+        .AddApiVersioning(opt =>
+        {
+          opt.ApiVersionReader = new UrlSegmentApiVersionReader();
+        })
+        .AddApiExplorer(options =>
+        {
+          // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+          // note: the specified format code will format the version as "'v'major[.minor][-status]"
+          options.GroupNameFormat = "'v'VVV";
 
-  public static WebApplicationBuilder AddFeatures(this WebApplicationBuilder builder)
-  {
-    builder.Services.AddModEndpointsFromAssemblyContaining<GetBookById>();
-    builder.Services.AddValidatorsFromAssemblyContaining<GetBookByIdRequestValidator>(includeInternalTypes: true);
+          // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+          // can also be used to control the format of the API version in route templates
+          options.SubstituteApiVersionInUrl = true;
+        });
+      return builder;
+    }
 
-    return builder;
+    public WebApplicationBuilder AddFeatures()
+    {
+      builder.Services.AddModEndpointsFromAssemblyContaining<GetBookById>();
+      builder.Services.AddValidatorsFromAssemblyContaining<GetBookByIdRequestValidator>(includeInternalTypes: true);
+
+      return builder;
+    }
   }
 }

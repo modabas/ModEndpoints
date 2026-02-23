@@ -13,110 +13,107 @@ public static class DependencyInjectionExtensions
 {
   private const string LoggerName = "ModEndpoints.Core.DependencyInjection";
 
-  /// <summary>
-  /// Registers route groups and endpoints from the assembly containing the specified type into the dependency injection container. 
-  /// </summary>
-  /// <remarks>This method scans the assembly containing the specified type for components and registers them with the
-  /// dependency injection container.</remarks>
-  /// <typeparam name="T"></typeparam>
-  /// <param name="services">The <see cref="IServiceCollection"/> to which the services will be added.</param>
-  /// <param name="configure">An optional delegate to configure <see cref="ModEndpointsCoreOptions"/> for customizing the behavior of the
-  /// registration process.</param>
-  /// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
-  public static IServiceCollection AddModEndpointsCoreFromAssemblyContaining<T>(
-    this IServiceCollection services,
-    Action<ModEndpointsCoreOptions>? configure = null)
+  extension(IServiceCollection services)
   {
-    return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, configure);
-  }
-
-  /// <summary>
-  /// Registers route groups and endpoints from the specified assembly into the dependency injection container.
-  /// </summary>
-  /// <remarks>This method scans the specified assembly for components and registers them with the
-  /// dependency injection container.</remarks>
-  /// <param name="services">The <see cref="IServiceCollection"/> to which the services will be added.</param>
-  /// <param name="assembly">The assembly containing components to be registered.</param>
-  /// <param name="configure">An optional delegate to configure <see cref="ModEndpointsCoreOptions"/> for customizing the behavior of the
-  /// registration process.</param>
-  /// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
-  public static IServiceCollection AddModEndpointsCoreFromAssembly(
-    this IServiceCollection services,
-    Assembly assembly,
-    Action<ModEndpointsCoreOptions>? configure = null)
-  {
-    ModEndpointsCoreOptions options = new();
-    configure?.Invoke(options);
-
-    ComponentRegistryAccessor.Instance.Initialize();
-
-    //Request validation
-    var requestValidationOptions = new RequestValidationOptions()
+    /// <summary>
+    /// Registers route groups and endpoints from the assembly containing the specified type into the dependency injection container. 
+    /// </summary>
+    /// <remarks>This method scans the assembly containing the specified type for components and registers them with the
+    /// dependency injection container.</remarks>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="configure">An optional delegate to configure <see cref="ModEndpointsCoreOptions"/> for customizing the behavior of the
+    /// registration process.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
+    public IServiceCollection AddModEndpointsCoreFromAssemblyContaining<T>(
+      Action<ModEndpointsCoreOptions>? configure = null)
     {
-      IsEnabled = options.EnableRequestValidation,
-      ServiceName = options.RequestValidationServiceName,
-      IsPerEndpointCustomizationEnabled = options.EnablePerEndpointRequestValidationCustomization
-    };
-    if (ComponentRegistryAccessor.Instance.Registry?.TrySetRequestValidationOptions(requestValidationOptions) == true)
-    {
-      services.Configure<RequestValidationOptions>(config =>
-      {
-        config.IsEnabled = requestValidationOptions.IsEnabled;
-        config.ServiceName = requestValidationOptions.ServiceName;
-        config.IsPerEndpointCustomizationEnabled = requestValidationOptions.IsPerEndpointCustomizationEnabled;
-      });
+      return services.AddModEndpointsCoreFromAssembly(typeof(T).Assembly, configure);
     }
-    services.TryAddSingleton<IRequestValidationController, RequestValidationController>();
-    services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(
-      RequestValidationDefinitions.DefaultServiceName);
 
-    //Component registration
-    services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
+    /// <summary>
+    /// Registers route groups and endpoints from the specified assembly into the dependency injection container.
+    /// </summary>
+    /// <remarks>This method scans the specified assembly for components and registers them with the
+    /// dependency injection container.</remarks>
+    /// <param name="assembly">The assembly containing components to be registered.</param>
+    /// <param name="configure">An optional delegate to configure <see cref="ModEndpointsCoreOptions"/> for customizing the behavior of the
+    /// registration process.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/> instance.</returns>
+    public IServiceCollection AddModEndpointsCoreFromAssembly(
+      Assembly assembly,
+      Action<ModEndpointsCoreOptions>? configure = null)
+    {
+      ModEndpointsCoreOptions options = new();
+      configure?.Invoke(options);
 
-    return services
-      .AddRouteGroupsCoreFromAssembly(assembly, options)
-      .AddEndpointsCoreFromAssembly(assembly, options);
-  }
+      ComponentRegistryAccessor.Instance.Initialize();
 
-  private static IServiceCollection AddRouteGroupsCoreFromAssembly(
-    this IServiceCollection services,
-    Assembly assembly,
-    ModEndpointsCoreOptions options)
-  {
-    var routeGroupTypes = assembly
-      .DefinedTypes
-      .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-        type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
-        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
+      //Request validation
+      var requestValidationOptions = new RequestValidationOptions()
+      {
+        IsEnabled = options.EnableRequestValidation,
+        ServiceName = options.RequestValidationServiceName,
+        IsPerEndpointCustomizationEnabled = options.EnablePerEndpointRequestValidationCustomization
+      };
+      if (ComponentRegistryAccessor.Instance.Registry?.TrySetRequestValidationOptions(requestValidationOptions) == true)
+      {
+        services.Configure<RequestValidationOptions>(config =>
+        {
+          config.IsEnabled = requestValidationOptions.IsEnabled;
+          config.ServiceName = requestValidationOptions.ServiceName;
+          config.IsPerEndpointCustomizationEnabled = requestValidationOptions.IsPerEndpointCustomizationEnabled;
+        });
+      }
+      services.TryAddSingleton<IRequestValidationController, RequestValidationController>();
+      services.TryAddKeyedSingleton<IRequestValidationService, FluentValidationRequestValidationService>(
+        RequestValidationDefinitions.DefaultServiceName);
 
-    var serviceDescriptors = routeGroupTypes
-      .Select(type => ServiceDescriptor.DescribeKeyed(
-        typeof(IRouteGroupConfigurator),
-        type,
-        type,
-        options.RouteGroupConfiguratorLifetime))
-      .ToArray();
+      //Component registration
+      services.TryAddScoped<IComponentDiscriminator, ComponentDiscriminator>();
 
-    services.TryAddEnumerable(serviceDescriptors);
-    ComponentRegistryAccessor.Instance.Registry?.TryAddRouteGroups(routeGroupTypes);
+      return services
+        .AddRouteGroupsCoreFromAssembly(assembly, options)
+        .AddEndpointsCoreFromAssembly(assembly, options);
+    }
 
-    return services;
-  }
+    private IServiceCollection AddRouteGroupsCoreFromAssembly(
+      Assembly assembly,
+      ModEndpointsCoreOptions options)
+    {
+      var routeGroupTypes = assembly
+        .DefinedTypes
+        .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+          type.IsAssignableTo(typeof(IRouteGroupConfigurator)) &&
+          !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
 
-  private static IServiceCollection AddEndpointsCoreFromAssembly(
-    this IServiceCollection services,
-    Assembly assembly,
-    ModEndpointsCoreOptions options)
-  {
-    var endpointTypes = assembly
-      .DefinedTypes
-      .Where(type => type is { IsAbstract: false, IsInterface: false } &&
-        type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
-        !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
+      var serviceDescriptors = routeGroupTypes
+        .Select(type => ServiceDescriptor.DescribeKeyed(
+          typeof(IRouteGroupConfigurator),
+          type,
+          type,
+          options.RouteGroupConfiguratorLifetime))
+        .ToArray();
 
-    AddEndpoints(services, endpointTypes, options);
+      services.TryAddEnumerable(serviceDescriptors);
+      ComponentRegistryAccessor.Instance.Registry?.TryAddRouteGroups(routeGroupTypes);
 
-    return services;
+      return services;
+    }
+
+    private IServiceCollection AddEndpointsCoreFromAssembly(
+      Assembly assembly,
+      ModEndpointsCoreOptions options)
+    {
+      var endpointTypes = assembly
+        .DefinedTypes
+        .Where(type => type is { IsAbstract: false, IsInterface: false } &&
+          type.IsAssignableTo(typeof(IEndpointConfigurator)) &&
+          !type.GetCustomAttributes<DoNotRegisterAttribute>().Any());
+
+      AddEndpoints(services, endpointTypes, options);
+
+      return services;
+    }
   }
 
   private static void AddEndpoints(
@@ -239,61 +236,62 @@ public static class DependencyInjectionExtensions
     }
   }
 
-  /// <summary>
-  /// Maps and configures route groups and endpoints. Configuration processing order:
-  /// Group's Configuration -> Endpoint's Configuration -> Global Endpoint Configuration -> Endpoint's PostConfigure -> Group's EndpointPostConfigure -> Group's PostConfigure.
-  /// Global Endpoint Configuration apply to all endpoints.
-  /// Group's EndpointPostConfigure apply to endpoints directly under that group (not if they are under a child group of current group).
-  /// </summary>
-  /// <param name="app"></param>
-  /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
-  /// <param name="throwOnMissingConfiguration"></param>
-  /// <returns></returns>
-  public static IEndpointRouteBuilder MapModEndpointsCore(
-    this IEndpointRouteBuilder app,
-    Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
-    bool throwOnMissingConfiguration = false)
+  extension(IEndpointRouteBuilder app)
   {
-    using (var scope = app.ServiceProvider.CreateScope())
+    /// <summary>
+    /// Maps and configures route groups and endpoints. Configuration processing order:
+    /// Group's Configuration -> Endpoint's Configuration -> Global Endpoint Configuration -> Endpoint's PostConfigure -> Group's EndpointPostConfigure -> Group's PostConfigure.
+    /// Global Endpoint Configuration apply to all endpoints.
+    /// Group's EndpointPostConfigure apply to endpoints directly under that group (not if they are under a child group of current group).
+    /// </summary>
+    /// <param name="globalEndpointConfiguration">Endpoint configuration to be applied to all endpoints.</param>
+    /// <param name="throwOnMissingConfiguration"></param>
+    /// <returns></returns>
+    public IEndpointRouteBuilder MapModEndpointsCore(
+      Action<RouteHandlerBuilder, EndpointConfigurationContext>? globalEndpointConfiguration = null,
+      bool throwOnMissingConfiguration = false)
     {
-      if (ComponentRegistryAccessor.Instance.Registry?.GetRequestValitionOptionsConflict(out var configuredOptions) == true)
+      using (var scope = app.ServiceProvider.CreateScope())
       {
-        var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
-          .CreateLogger(LoggerName);
-        logger.LogWarning(
-          Constants.ValidationOptionsConflictLogMessage,
-          System.Text.Json.JsonSerializer.Serialize(configuredOptions));
+        if (ComponentRegistryAccessor.Instance.Registry?.GetRequestValitionOptionsConflict(out var configuredOptions) == true)
+        {
+          var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+            .CreateLogger(LoggerName);
+          logger.LogWarning(
+            Constants.ValidationOptionsConflictLogMessage,
+            System.Text.Json.JsonSerializer.Serialize(configuredOptions));
+        }
+
+        var routeGroups = ComponentRegistryAccessor.Instance.Registry?.GetRouteGroups()
+          .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
+          .Where(i => i is not null)
+          .Select(i => i!) ?? [];
+        var endpoints = ComponentRegistryAccessor.Instance.Registry?.GetEndpoints()
+          .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator)
+          .Where(i => i is not null)
+          .Select(i => i!) ?? [];
+
+        //Items that don't have a membership to any route group or
+        //items that have a membership to root route group (items at root)
+        Func<Type, bool> typeIsNotMemberOfAnyRouteGroupPredicate =
+          x => !x.GetCustomAttributes(typeof(MapToGroupAttribute<>)).Any() ||
+                x.GetCustomAttributes<MapToRootGroupAttribute>().Any();
+
+        _ = MapComponents(
+          scope.ServiceProvider,
+          app,
+          typeIsNotMemberOfAnyRouteGroupPredicate,
+          null, //we are at root, so no current route group
+          null, //we are at root, so no current configuration context
+          routeGroups,
+          endpoints,
+          globalEndpointConfiguration,
+          throwOnMissingConfiguration);
+
+        ComponentRegistryAccessor.Instance.Clear();
+
+        return app;
       }
-
-      var routeGroups = ComponentRegistryAccessor.Instance.Registry?.GetRouteGroups()
-        .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IRouteGroupConfigurator)
-        .Where(i => i is not null)
-        .Select(i => i!) ?? [];
-      var endpoints = ComponentRegistryAccessor.Instance.Registry?.GetEndpoints()
-        .Select(t => RuntimeHelpers.GetUninitializedObject(t) as IEndpointConfigurator)
-        .Where(i => i is not null)
-        .Select(i => i!) ?? [];
-
-      //Items that don't have a membership to any route group or
-      //items that have a membership to root route group (items at root)
-      Func<Type, bool> typeIsNotMemberOfAnyRouteGroupPredicate =
-        x => !x.GetCustomAttributes(typeof(MapToGroupAttribute<>)).Any() ||
-              x.GetCustomAttributes<MapToRootGroupAttribute>().Any();
-
-      _ = MapComponents(
-        scope.ServiceProvider,
-        app,
-        typeIsNotMemberOfAnyRouteGroupPredicate,
-        null, //we are at root, so no current route group
-        null, //we are at root, so no current configuration context
-        routeGroups,
-        endpoints,
-        globalEndpointConfiguration,
-        throwOnMissingConfiguration);
-
-      ComponentRegistryAccessor.Instance.Clear();
-
-      return app;
     }
   }
 

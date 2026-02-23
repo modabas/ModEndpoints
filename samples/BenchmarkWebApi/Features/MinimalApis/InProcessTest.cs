@@ -25,23 +25,26 @@ internal class InProcessTestRequestValidator : AbstractValidator<InProcessTestRe
 
 internal static class InProcessTest
 {
-  public static RouteHandlerBuilder MapMinimalApiForInProcessTest(this IEndpointRouteBuilder builder)
+  extension(IEndpointRouteBuilder builder)
   {
-    return builder.MapPost("/MinimalApis/InProcessTest/{Id}",
-      async Task<IResult> (
-        [AsParameters] InProcessTestRequest req,
-        [FromServices] IValidator<InProcessTestRequest> validator,
-        [FromServices] IGetMeAStringService svc,
-        CancellationToken cancellationToken) =>
+    public RouteHandlerBuilder MapMinimalApiForInProcessTest()
     {
-      var validationResult = await validator.ValidateAsync(req, cancellationToken);
-      if (!validationResult.IsValid)
+      return builder.MapPost("/MinimalApis/InProcessTest/{Id}",
+        async Task<IResult> (
+          [AsParameters] InProcessTestRequest req,
+          [FromServices] IValidator<InProcessTestRequest> validator,
+          [FromServices] IGetMeAStringService svc,
+          CancellationToken cancellationToken) =>
       {
-        return validationResult.ToMinimalApiResult();
-      }
+        var validationResult = await validator.ValidateAsync(req, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+          return validationResult.ToMinimalApiResult();
+        }
 
-      var result = await svc.GetMeAResultOfStringAsync(req.Body.Name, cancellationToken);
-      return result.ToResult(x => new InProcessTestResponse(x)).ToResponse();
-    }).Produces<InProcessTestResponse>();
+        var result = await svc.GetMeAResultOfStringAsync(req.Body.Name, cancellationToken);
+        return result.ToResult(x => new InProcessTestResponse(x)).ToResponse();
+      }).Produces<InProcessTestResponse>();
+    }
   }
 }
