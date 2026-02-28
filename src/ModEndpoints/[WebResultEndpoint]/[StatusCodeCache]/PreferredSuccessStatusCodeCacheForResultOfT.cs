@@ -7,7 +7,7 @@ namespace ModEndpoints;
 /// <summary>
 /// Used to store and retrieve preferred success status codes for Web Result Endpoints with a response model.
 /// </summary>
-internal sealed class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPreferredSuccessStatusCodeCache
+internal sealed class PreferredSuccessStatusCodeCacheForResultOfT : IPreferredSuccessStatusCodeCache
 {
   private readonly int?[] _successStatusCodePriorityList =
   [
@@ -21,7 +21,7 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResultOfT : IPref
   private readonly ConcurrentDictionary<string, int?> _cache = new();
   private readonly IEndpointConfigurationResolver _endpointConfResolver;
 
-  public DefaultPreferredSuccessStatusCodeCacheForResultOfT(
+  public PreferredSuccessStatusCodeCacheForResultOfT(
     IEndpointConfigurationResolver endpointNameResolver)
   {
     _endpointConfResolver = endpointNameResolver;

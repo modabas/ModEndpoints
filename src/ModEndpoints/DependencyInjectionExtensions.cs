@@ -45,9 +45,9 @@ public static class DependencyInjectionExtensions
 
       //WebResultEndpoint components
       services.TryAddSingleton<IEndpointConfigurationResolver, EndpointConfigurationResolver>();
-      services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResult>(
+      services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, PreferredSuccessStatusCodeCacheForResult>(
         WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResult);
-      services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, DefaultPreferredSuccessStatusCodeCacheForResultOfT>(
+      services.TryAddKeyedSingleton<IPreferredSuccessStatusCodeCache, PreferredSuccessStatusCodeCacheForResultOfT>(
         WebResultEndpointDefinitions.DefaultPreferredSuccessStatusCodeCacheNameForResultOfT);
 
       //ServiceEndpoint components
