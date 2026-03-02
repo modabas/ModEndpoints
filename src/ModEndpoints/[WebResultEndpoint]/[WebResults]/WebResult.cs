@@ -12,14 +12,13 @@ namespace ModEndpoints;
 /// and error reporting.</remarks>
 public abstract class WebResult
 {
-  private readonly Result _result;
   /// <summary>
   /// Get the encapsulated <see cref="Result"/> instance.
   /// </summary>
-  public Result Result => _result;
+  public Result Result { get; init; }
   protected WebResult(Result result)
   {
-    _result = result;
+    Result = result;
   }
 
   /// <summary>
@@ -50,14 +49,13 @@ public abstract class WebResult
 public abstract class WebResult<TValue>
   where TValue : notnull
 {
-  private readonly Result<TValue> _result;
   /// <summary>
   /// Get the encapsulated <see cref="Result{TValue}"/> instance.
   /// </summary>
-  public Result<TValue> Result => _result;
+  public Result<TValue> Result { get; init; }
   protected WebResult(Result<TValue> result)
   {
-    _result = result;
+    Result = result;
   }
 
   /// <summary>

@@ -1,14 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
-using ModEndpoints.Core;
 
 namespace ModEndpoints;
 
 /// <summary>
 /// Used to store and retrieve preferred success status codes for Web Result Endpoints without a response model.
 /// </summary>
-internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferredSuccessStatusCodeCache
+internal sealed class PreferredSuccessStatusCodeCacheForResult : IPreferredSuccessStatusCodeCache
 {
   private readonly int?[] _successStatusCodePriorityList =
   [
@@ -22,7 +21,7 @@ internal sealed class DefaultPreferredSuccessStatusCodeCacheForResult : IPreferr
   private readonly ConcurrentDictionary<string, int?> _cache = new();
   private readonly IEndpointConfigurationResolver _endpointConfResolver;
 
-  public DefaultPreferredSuccessStatusCodeCacheForResult(
+  public PreferredSuccessStatusCodeCacheForResult(
     IEndpointConfigurationResolver endpointNameResolver)
   {
     _endpointConfResolver = endpointNameResolver;

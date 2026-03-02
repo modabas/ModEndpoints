@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using ModEndpoints.Core;
 using ShowcaseWebApi.Data;
 using ShowcaseWebApi.Features.Customers.Configuration;
@@ -24,14 +25,23 @@ internal class ListCustomers(ServiceDbContext db)
 
   protected override IAsyncEnumerable<ListCustomersResponse> HandleAsync(CancellationToken ct)
   {
-    var customers = db.Customers
-      .Select(c => new ListCustomersResponse(
-        c.Id,
-        c.FirstName,
-        c.MiddleName,
-        c.LastName))
-      .AsAsyncEnumerable();
+    return GetCustomers(ct);
 
-    return customers;
+    async IAsyncEnumerable<ListCustomersResponse> GetCustomers(
+      [EnumeratorCancellation] CancellationToken ct)
+    {
+      await foreach (var customer in db.Customers
+        .Select(c => new ListCustomersResponse(
+          c.Id,
+          c.FirstName,
+          c.MiddleName,
+          c.LastName))
+        .AsAsyncEnumerable()
+        .WithCancellation(ct))
+      {
+        await Task.Delay(1000, ct);
+        yield return customer;
+      }
+    }
   }
 }

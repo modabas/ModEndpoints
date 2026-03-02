@@ -2,12 +2,15 @@
 
 internal static class BasicTest
 {
-  public static RouteHandlerBuilder MapMinimalApiForBasicTest(this IEndpointRouteBuilder builder)
+  extension(IEndpointRouteBuilder builder)
   {
-    return builder.MapGet("/MinimalApis/BasicTest",
-      IResult () =>
+    public RouteHandlerBuilder MapMinimalApiForBasicTest()
     {
-      return Results.Ok("Hello World");
-    }).Produces<string>();
+      return builder.MapGet("/MinimalApis/BasicTest",
+        IResult () =>
+      {
+        return Results.Ok("Hello World");
+      }).Produces<string>();
+    }
   }
 }
