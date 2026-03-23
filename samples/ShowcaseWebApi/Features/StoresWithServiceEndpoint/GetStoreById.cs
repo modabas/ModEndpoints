@@ -28,7 +28,7 @@ internal class GetStoreById(ServiceDbContext db)
     var entity = await db.Stores.FirstOrDefaultAsync(s => s.Id == req.Id, ct);
 
     var result = entity is null ?
-      Result<GetStoreByIdResponse>.NotFound() :
+      FailureResult.NotFound() :
       Result.Ok(new GetStoreByIdResponse(
         Id: entity.Id,
         Name: entity.Name));

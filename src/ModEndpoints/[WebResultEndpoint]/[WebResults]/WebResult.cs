@@ -36,6 +36,11 @@ public abstract class WebResult
   {
     return new DefaultWebResult(result);
   }
+
+  public static implicit operator WebResult(FailureResult result)
+  {
+    return new DefaultWebResult(result);
+  }
 }
 
 /// <summary>
@@ -75,6 +80,11 @@ public abstract class WebResult<TValue>
   }
 
   public static implicit operator WebResult<TValue>(Result<TValue> result)
+  {
+    return new DefaultWebResult<TValue>(result);
+  }
+
+  public static implicit operator WebResult<TValue>(FailureResult result)
   {
     return new DefaultWebResult<TValue>(result);
   }
