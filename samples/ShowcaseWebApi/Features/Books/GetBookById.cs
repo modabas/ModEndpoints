@@ -39,7 +39,7 @@ internal class GetBookById(ServiceDbContext db)
     var entity = await db.Books.FirstOrDefaultAsync(b => b.Id == req.Id, ct);
 
     var result = entity is null ?
-      Result<GetBookByIdResponse>.NotFound() :
+      FailureResult.NotFound() :
       Result.Ok(new GetBookByIdResponse(
         Id: entity.Id,
         Title: entity.Title,

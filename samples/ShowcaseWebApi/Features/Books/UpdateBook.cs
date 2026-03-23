@@ -46,7 +46,7 @@ internal class UpdateBook(ServiceDbContext db)
 
     if (entity is null)
     {
-      return Result<UpdateBookResponse>.NotFound();
+      return FailureResult.NotFound();
     }
 
     entity.Title = req.Body.Title;
@@ -60,6 +60,6 @@ internal class UpdateBook(ServiceDbContext db)
         Title: req.Body.Title,
         Author: req.Body.Author,
         Price: req.Body.Price))
-      : Result<UpdateBookResponse>.NotFound();
+      : FailureResult.NotFound();
   }
 }

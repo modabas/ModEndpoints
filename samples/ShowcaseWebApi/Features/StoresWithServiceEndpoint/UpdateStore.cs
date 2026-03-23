@@ -30,7 +30,7 @@ internal class UpdateStore(ServiceDbContext db)
 
     if (entity is null)
     {
-      return Result<UpdateStoreResponse>.NotFound();
+      return FailureResult.NotFound();
     }
 
     entity.Name = req.Name;
@@ -40,6 +40,6 @@ internal class UpdateStore(ServiceDbContext db)
       Result.Ok(new UpdateStoreResponse(
         Id: req.Id,
         Name: req.Name))
-      : Result<UpdateStoreResponse>.NotFound();
+      : FailureResult.NotFound();
   }
 }
