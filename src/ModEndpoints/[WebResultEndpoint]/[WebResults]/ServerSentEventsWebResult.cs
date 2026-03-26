@@ -28,7 +28,7 @@ internal sealed class ServerSentEventsWebResult<TValue> : WebResult<IAsyncEnumer
 
   private static Result<IAsyncEnumerable<SseItem<TValue>>> WrapEvents(Result<IAsyncEnumerable<TValue>> result, string? eventType)
   {
-    return result.ToResult(
+    return result.AsResult(
       static (value, state) => WrapEventsAsync(value, state.eventType),
       new { eventType });
   }
