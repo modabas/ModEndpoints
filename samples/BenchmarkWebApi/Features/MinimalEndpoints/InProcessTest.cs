@@ -38,6 +38,6 @@ internal class InProcessTest(IGetMeAStringService svc)
     CancellationToken ct)
   {
     var result = await svc.GetMeAResultOfStringAsync(req.Body.Name, ct);
-    return result.ToResult(x => new InProcessTestResponse(x)).ToResponse();
+    return result.AsResult(x => new InProcessTestResponse(x)).ToResponse();
   }
 }

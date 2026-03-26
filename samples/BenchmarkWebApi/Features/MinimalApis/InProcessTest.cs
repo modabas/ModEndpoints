@@ -43,7 +43,7 @@ internal static class InProcessTest
         }
 
         var result = await svc.GetMeAResultOfStringAsync(req.Body.Name, cancellationToken);
-        return result.ToResult(x => new InProcessTestResponse(x)).ToResponse();
+        return result.AsResult(x => new InProcessTestResponse(x)).ToResponse();
       }).Produces<InProcessTestResponse>();
     }
   }

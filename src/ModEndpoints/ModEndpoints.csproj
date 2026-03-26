@@ -21,7 +21,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="ModResults.MinimalApis" Version="1.3.1" />
+    <PackageReference Include="ModResults.MinimalApis" Version="1.3.2" />
   </ItemGroup>
 
   <ItemGroup>
