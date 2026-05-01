@@ -42,7 +42,7 @@ internal class FilterAndStreamStoreList
 
     foreach (var store in stores.Where(c => c.Name == req.Name))
     {
-      yield return new StreamingResponseItem<FilterAndStreamStoreListResponse>(store);
+      yield return StreamingResponseItem.FromResult(store);
       await Task.Delay(1000, ct); // Simulate async work
     }
   }

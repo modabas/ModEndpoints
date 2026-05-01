@@ -26,7 +26,7 @@ internal class ListStores(ServiceDbContext db)
     await foreach (var store in stores.WithCancellation(ct))
     {
       await Task.Delay(1000, ct);
-      yield return new StreamingResponseItem<ListStoresResponse>(store, "store");
+      yield return StreamingResponseItem.FromResult(store, "store");
     }
   }
 }

@@ -25,8 +25,8 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest, TResultValu
     HttpContext context,
     CancellationToken ct)
   {
-    return new ValueTask<StreamingResponseItem<TResultValue>>(
-      new StreamingResponseItem<TResultValue>(
+    return ValueTask.FromResult(
+      StreamingResponseItem.FromResult(
         validationResult.ToInvalidResult<TResultValue>()));
   }
 
@@ -63,8 +63,8 @@ public abstract class ServiceEndpointWithStreamingResponse<TRequest>
     HttpContext context,
     CancellationToken ct)
   {
-    return new ValueTask<StreamingResponseItem>(
-      new StreamingResponseItem(
+    return ValueTask.FromResult(
+      StreamingResponseItem.FromResult(
         validationResult.ToInvalidResult()));
   }
 
