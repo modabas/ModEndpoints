@@ -1,6 +1,7 @@
-﻿using ModResults;
+﻿using ModEndpoints.RemoteServices;
+using ModResults;
 
-namespace ModEndpoints.RemoteServices;
+namespace ModEndpoints;
 
 public static class StreamingResponseItemExtensions
 {

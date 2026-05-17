@@ -6,6 +6,14 @@
 GET {{BaseUrl}}/api/v1/books
 Accept: application/json
 
+###ListBooks - ServerSentEvents
+GET {{BaseUrl}}/api/v1/books/listSse
+Accept: application/json
+
+###ListBooks - listWithStreamingResponse
+GET {{BaseUrl}}/api/v1/books/listWithStreamingResponse
+Accept: application/json
+
 ###GetBookById
 GET {{BaseUrl}}/api/v1/books/00000000-0000-0000-0000-000000000001
 Accept: application/json
