@@ -29,7 +29,7 @@ internal class StreamStoreStatusList
   {
     for (int i = 0; i < 2; i++)
     {
-      yield return new StreamingResponseItem(Result.Ok());
+      yield return StreamingResponseItem.FromResult(Result.Ok());
       await Task.Delay(1000, ct); // Simulate async work
     }
   }

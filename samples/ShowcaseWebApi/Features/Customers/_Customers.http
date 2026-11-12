@@ -1,0 +1,7 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+@BaseUrl =https://localhost:7012
+
+###ListCustomers
+GET {{BaseUrl}}/api/v1/customers
+Accept: application/json
