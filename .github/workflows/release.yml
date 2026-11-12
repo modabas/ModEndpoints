@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   COREENDPOINTS_PROJECTNAME: "ModEndpoints.Core"
   ENDPOINTS_PROJECTNAME: "ModEndpoints"
@@ -15,19 +19,21 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: release
     timeout-minutes: 5
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: | 
           8.0.x
           9.0.x
           10.0.x
+          11.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -44,7 +50,7 @@ jobs:
       working-directory: src
 
     - name: Test
-      run: dotnet test ${{ env.ENDPOINTSTESTPROJECTNAME }} --no-restore --verbosity normal
+      run: dotnet test --project ModEndpoints.Tests/ModEndpoints.Tests.csproj --no-restore --verbosity normal
       working-directory: tests
 
     - name: Package nuget remote services core
@@ -59,6 +65,11 @@ jobs:
     - name: Package nuget endpoints
       run: dotnet pack ${{ env.ENDPOINTS_PROJECTNAME }} --configuration Release --no-build -o:package
       working-directory: src
+    - name: NuGet login (OIDC → temp API key)
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: ${{secrets.NUGET_USER}}
     - name: Push to NuGet
-      run: dotnet nuget push ./package/*.nupkg --api-key ${{secrets.nuget_api_key}} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./package/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
       working-directory: src
